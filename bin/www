@@ -24,8 +24,10 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
-server.listen(port);
+var ip = '0.0.0.0';
+server.listen(port, ip, function() {
+  console.log("listening on *:3004")
+});
 server.on('error', onError);
 server.on('listening', onListening);
 

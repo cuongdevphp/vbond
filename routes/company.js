@@ -1,8 +1,8 @@
 var express = require('express');
+var cors = require('cors');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_CONGTY]';
-
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
     try {

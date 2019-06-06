@@ -1,7 +1,7 @@
 var express = require('express');
-const { poolPromise } = require('../db')
+const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_PREFIX]';
+const tbl = '[dbo].[TB_CONGTY]';
 
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
@@ -16,10 +16,16 @@ router.get('/', async (req, res) => {
 
 router.post('/create', async (req, res) => {
     try {
-        const KYTU_PREFIX = req.body.KYTU_PREFIX;
-        const GHICHU = req.body.GHICHU;
+        const TEN_DN = req.body.TEN_DN;
+        const DIACHI = req.body.DIACHI;
+        const DIENTHOAI = req.body.DIENTHOAI;
+        const EMAIL = req.body.EMAIL;
+        const NGUOI_DGPL = req.body.NGUOI_DGPL;
+        const TRANGTHAI = req.body.TRANGTHAI;
         const pool = await poolPromise;
-        const sql = "INSERT INTO "+ tbl +" (KYTU_PREFIX, GHICHU, FLAG) VALUES ('"+KYTU_PREFIX+"', '"+GHICHU+"', '1')";
+        const sql = `"INSERT INTO "+ tbl +" 
+            (TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DGPL, TRANGTHAI, FLAG) VALUES 
+            ('${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', ${GETDATE()}, '${NGUOI_DGPL}', '${TRANGTHAI}', '1')";`
         const result = await pool.request().query(sql);
         res.send('Create data successful!');
     } catch (err) {

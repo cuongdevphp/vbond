@@ -2,7 +2,7 @@ var express = require('express');
 const { poolPromise } = require('../db')
 var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
-
+require('../header');
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
     try {

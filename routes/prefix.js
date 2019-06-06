@@ -1,5 +1,5 @@
 var express = require('express');
-var header = require('../header');
+//var header = require('../header');
 const { poolPromise } = require('../db')
 var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
@@ -7,7 +7,7 @@ const tbl = '[dbo].[TB_PREFIX]';
 
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
-    header.setHeader(res);
+    //header.setHeader(res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +'');

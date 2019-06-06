@@ -11,6 +11,8 @@ var usersRouter = require('./routes/users');
 var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
 
+var cors = require('cors');
+
 
 /**
  * Get port from environment and store in Express.
@@ -32,6 +34,10 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
+
+
+// use it before all route definitions
+app.use(cors({origin: 'http://10.11.0.113:3001'}));
 
 
 // catch 404 and forward to error handler

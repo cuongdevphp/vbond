@@ -4,8 +4,8 @@ var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
 
 /* GET prefix listing. */
-router.get('/', async (req, res) => {
-    // Website you wish to allow to connect
+router.get('/', async (req, res, next) => {
+      // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow

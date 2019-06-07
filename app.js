@@ -20,7 +20,6 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -87,8 +86,8 @@ function setHeader(res, next) {
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true);
-
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  //res.header("Content-Type", "application/json; charset=utf-8");
+  
   next();
 }
 

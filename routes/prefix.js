@@ -22,7 +22,9 @@ router.post('/create', async (req, res) => {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU;
         const pool = await poolPromise;
-        const sql = "INSERT INTO "+ tbl +" (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES ('"+KYTU_PREFIX+"', '"+GHICHU+"', '"+ new Date(Date.now()).toISOString() +"', '1')";
+        const sql = `INSERT INTO ${tbl}  
+                    (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
+                    (N'${KYTU_PREFIX}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', '1')`;
         const result = await pool.request().query(sql);
         res.send('Create data successful!');
     } catch (err) {

@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
+var interestRateRouter = require('./routes/interest_rate');
 /**
  * Get port from environment and store in Express.
  */
@@ -25,29 +26,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// error handler
 app.use('/*', function(req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
+  setHeader(res, next);
 });
-
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
+app.use('/interest', interestRateRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -82,6 +69,26 @@ server.listen(port, hostname, () => {
 });
 server.on('error', onError);
 server.on('listening', onListening);
+
+
+/**
+ * set Header
+ */
+function setHeader(res, next) {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+}
 
 /**
  * Normalize a port into a number, string, or false.

@@ -22,7 +22,7 @@ router.post('/create', async (req, res) => {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU;
         const pool = await poolPromise;
-        const sql = "INSERT INTO "+ tbl +" (KYTU_PREFIX, GHICHU, FLAG) VALUES ('"+KYTU_PREFIX+"', '"+GHICHU+"', '1')";
+        const sql = "INSERT INTO "+ tbl +" (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES ('"+KYTU_PREFIX+"', '"+GHICHU+"', '"+ new Date(Date.now()).toISOString() +"' '1')";
         const result = await pool.request().query(sql);
         res.send('Create data successful!');
     } catch (err) {
@@ -36,7 +36,7 @@ router.put('/update', async (req, res) => {
         const GHICHU = req.body.GHICHU;
         const PREFIX_ID = req.body.PREFIX_ID;
         const pool = await poolPromise;
-        const sql = "UPDATE "+tbl+" SET KYTU_PREFIX = '" +KYTU_PREFIX+ "', GHICHU = '" +GHICHU+ "' WHERE PREFIX_ID = "+PREFIX_ID+"";
+        const sql = "UPDATE "+tbl+" SET KYTU_PREFIX = '" +KYTU_PREFIX+ "', GHICHU = '" +GHICHU+ "', NGAYUPDATE ='" + new Date(Date.now()).toISOString()+"' WHERE PREFIX_ID = "+PREFIX_ID+"";
         const result = await pool.request().query(sql);
         res.send('Update data successfully');
     } catch (err) {
@@ -44,7 +44,7 @@ router.put('/update', async (req, res) => {
     }
 });
 
-router.put('/delete', async (req, res) => {
+router.delete('/delete', async (req, res) => {
     try {
         const PREFIX_ID = req.body.PREFIX_ID;
         const sql = "UPDATE "+tbl+" SET FLAG = '0' WHERE PREFIX_ID = "+PREFIX_ID+"";

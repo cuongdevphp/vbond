@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     //header.setHeader(res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +'');
+        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [PREFIX_ID] DESC');
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).send(err.message);

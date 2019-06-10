@@ -15,13 +15,14 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const TEN_NH = req.body.MSDN;
-        const LAISUAT_HH = req.body.TEN_DN;
+        const TEN_NH = req.body.TEN_NH;
+        const LAISUAT_HH = req.body.LAISUAT_HH;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
             (TEN_NH, LAISUAT_HH, NGAYTAO, FLAG) VALUES 
-            ('${TEN_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`
+            ('${TEN_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`;
+        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -35,8 +36,8 @@ router.post('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
     try {
-        const TEN_NH = req.body.MSDN;
-        const LAISUAT_HH = req.body.TEN_DN;
+        const TEN_NH = req.body.TEN_NH;
+        const LAISUAT_HH = req.body.LAISUAT_HH;
         const LAISUAT_ID = req.body.LAISUAT_ID;
 
         const pool = await poolPromise;

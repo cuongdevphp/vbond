@@ -62,7 +62,6 @@ router.delete('/', async (req, res) => {
         const PREFIX_ID = req.body.PREFIX_ID;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE PREFIX_ID = ${PREFIX_ID}`;
         const pool = await poolPromise;
-        //const result = await pool.request().query(sql);
         try {
             await pool.request().query(sql);
             res.send('Delete data successfully');

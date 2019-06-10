@@ -1,12 +1,12 @@
 var express = require('express');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_LAISUATNGANHANG]';
+const tbl = '[dbo].[TB_PHIGIAODICH]';
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [LAISUAT_ID] DESC');
+        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSPHI] DESC');
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).send(err.message);
@@ -15,13 +15,15 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const TEN_NH = req.body.MSDN;
-        const LAISUAT_HH = req.body.TEN_DN;
+        const TENPHI = req.body.TENPHI;
+        const TYLETINH = req.body.TYLETINH;
+        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const GHICHU = req.body.GHICHU;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
-            (TEN_NH, LAISUAT_HH, NGAYTAO, FLAG) VALUES 
-            ('${TEN_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`
+            (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, NGAYTAO, FLAG) VALUES 
+            ('${TENPHI}', '${TYLETINH}', '${NGAYAPDUNG}', '${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -35,16 +37,20 @@ router.post('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
     try {
-        const TEN_NH = req.body.MSDN;
-        const LAISUAT_HH = req.body.TEN_DN;
-        const LAISUAT_ID = req.body.LAISUAT_ID;
+        const MSPHI = req.body.MSPHI;
+        const TENPHI = req.body.TENPHI;
+        const TYLETINH = req.body.TYLETINH;
+        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const GHICHU = req.body.GHICHU;
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TEN_NH = '${TEN_NH}', 
-                        LAISUAT_HH = '${LAISUAT_HH}', 
+                        TENPHI = '${TENPHI}', 
+                        TYLETINH = '${TYLETINH}', 
+                        NGAYAPDUNG = '${NGAYAPDUNG}', 
+                        GHICHU = '${GHICHU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
-                    WHERE LAISUAT_ID = '${LAISUAT_ID}' `;
+                    WHERE MSPHI = '${MSPHI}' `;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -57,11 +63,10 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
-        const LAISUAT_ID = req.body.LAISUAT_ID;
-
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE LAISUAT_ID = ${LAISUAT_ID}`;
+        const MSPHI = req.body.MSPHI;
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

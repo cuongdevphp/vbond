@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU;
@@ -35,7 +35,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.put('/update', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU;
@@ -57,7 +57,7 @@ router.put('/update', async (req, res) => {
     }
 });
 
-router.delete('/delete', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
         const PREFIX_ID = req.body.PREFIX_ID;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE PREFIX_ID = ${PREFIX_ID}`;

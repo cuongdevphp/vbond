@@ -6,14 +6,14 @@ const tbl = '[dbo].[TB_CONGTY]';
 router.get('/', async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +'');
+        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSDN] DESC');
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const MSDN = req.body.MSDN;
         const TEN_DN = req.body.TEN_DN;
@@ -23,18 +23,23 @@ router.post('/create', async (req, res) => {
         const EMAIL = req.body.EMAIL;
         const NGUOI_DGPL = req.body.NGUOI_DGPL;
         const TRANGTHAI = req.body.TRANGTHAI;
+
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
             (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DGPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${NGAYCAP_GP}', '${NGUOI_DGPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', '1');`
-        const result = await pool.request().query(sql);
-        res.send('Create data successful!');
+            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${NGAYCAP_GP}', '${NGUOI_DGPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+        try {
+            await pool.request().query(sql);
+            res.send('Create data successful!');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
-router.put('/update', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
         const MSDN = req.body.MSDN;
         const TEN_DN = req.body.TEN_DN;
@@ -47,7 +52,6 @@ router.put('/update', async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        MSDN = '${MSDN}', 
                         TEN_DN = '${TEN_DN}', 
                         DIACHI = '${DIACHI}', 
                         DIENTHOAI = '${DIENTHOAI}', 
@@ -58,20 +62,31 @@ router.put('/update', async (req, res) => {
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
                         MSDN = '${MSDN}'
                     WHERE MSDN = '${MSDN}' `;
-        const result = await pool.request().query(sql);
-        res.send('Update data successfully');
+        console.log(sql, "sql");
+        try {
+            await pool.request().query(sql);
+            res.send('Update data successfully');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
-router.put('/delete', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
         const MSDN = req.body.MSDN;
-        const sql = "UPDATE "+tbl+" SET FLAG = '0' WHERE MSDN = "+MSDN+"";
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSDN = ${MSDN}`;
         const pool = await poolPromise;
-        const result = await pool.request().query(sql);
-        res.send('Delete data successfully');
+        try {
+            await pool.request().query(sql);
+            res.send('Delete data successfully');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+
     } catch (err) {
         res.status(500);
         res.send(err.message);

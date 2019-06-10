@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
 var interestRateRouter = require('./routes/interest_rate');
+var feeTradeRouter = require('./routes/fee_trade');
 /**
  * Get port from environment and store in Express.
  */
@@ -34,6 +35,7 @@ app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
 app.use('/interest', interestRateRouter);
+app.use('/feeTradeRouter', feeTradeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -4,7 +4,6 @@ const { poolPromise } = require('../db')
 var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
 
-
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
     //header.setHeader(res);
@@ -22,9 +21,9 @@ router.post('/create', async (req, res) => {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU;
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${tbl}  
+        const sql = `INSERT INTO ${tbl}
                     (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
-                    (N'${KYTU_PREFIX}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', '1')`;
+                    (N'${KYTU_PREFIX}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1})`;
         const result = await pool.request().query(sql);
         res.send('Create data successful!');
     } catch (err) {
@@ -38,7 +37,11 @@ router.put('/update', async (req, res) => {
         const GHICHU = req.body.GHICHU;
         const PREFIX_ID = req.body.PREFIX_ID;
         const pool = await poolPromise;
-        const sql = "UPDATE "+tbl+" SET KYTU_PREFIX = '" +KYTU_PREFIX+ "', GHICHU = '" +GHICHU+ "', NGAYUPDATE ='" + new Date(Date.now()).toISOString()+"' WHERE PREFIX_ID = "+PREFIX_ID+"";
+        const sql = `UPDATE ${tbl} SET 
+                        KYTU_PREFIX = N'${KYTU_PREFIX}', 
+                        GHICHU = N'${GHICHU}', 
+                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
+                    WHERE PREFIX_ID = ${PREFIX_ID}`;
         const result = await pool.request().query(sql);
         res.send('Update data successfully');
     } catch (err) {
@@ -49,7 +52,7 @@ router.put('/update', async (req, res) => {
 router.delete('/delete', async (req, res) => {
     try {
         const PREFIX_ID = req.body.PREFIX_ID;
-        const sql = "UPDATE "+tbl+" SET FLAG = '0' WHERE PREFIX_ID = "+PREFIX_ID+"";
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE PREFIX_ID = ${PREFIX_ID}`;
         const pool = await poolPromise;
         const result = await pool.request().query(sql);
         res.send('Delete data successfully');

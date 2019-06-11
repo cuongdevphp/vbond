@@ -62,7 +62,6 @@ router.put('/', async (req, res) => {
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
                         MSDN = '${MSDN}'
                     WHERE MSDN = '${MSDN}' `;
-        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -78,7 +77,7 @@ router.put('/', async (req, res) => {
 router.delete('/', async (req, res) => {
     try {
         const MSDN = req.body.MSDN;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSDN = ${MSDN}`;
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSDN = '${MSDN}'`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

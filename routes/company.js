@@ -21,13 +21,13 @@ router.post('/', async (req, res) => {
         const DIENTHOAI = req.body.DIENTHOAI;
         const NGAYCAP_GP = req.body.NGAYCAP_GP;
         const EMAIL = req.body.EMAIL;
-        const NGUOI_DGPL = req.body.NGUOI_DGPL;
+        const NGUOI_DDPL = req.body.NGUOI_DDPL;
         const TRANGTHAI = req.body.TRANGTHAI;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
-            (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DGPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', '${NGUOI_DGPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+            (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DDPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', '${NGUOI_DDPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -46,7 +46,7 @@ router.put('/', async (req, res) => {
         const DIACHI = req.body.DIACHI;
         const DIENTHOAI = req.body.DIENTHOAI;
         const EMAIL = req.body.EMAIL;
-        const NGUOI_DGPL = req.body.NGUOI_DGPL;
+        const NGUOI_DDPL = req.body.NGUOI_DDPL;
         const TRANGTHAI = req.body.TRANGTHAI;
         const NGAYCAP_GP = req.body.NGAYCAP_GP;
 
@@ -57,7 +57,7 @@ router.put('/', async (req, res) => {
                         DIENTHOAI = '${DIENTHOAI}', 
                         EMAIL = '${EMAIL}', 
                         NGAYCAP_GP = '${NGAYCAP_GP}', 
-                        NGUOI_DGPL = '${NGUOI_DGPL}', 
+                        NGUOI_DDPL = '${NGUOI_DDPL}', 
                         TRANGTHAI = '${TRANGTHAI}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
                         MSDN = '${MSDN}'

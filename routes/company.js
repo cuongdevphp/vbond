@@ -56,12 +56,13 @@ router.put('/', async (req, res) => {
                         DIACHI = N'${DIACHI}', 
                         DIENTHOAI = '${DIENTHOAI}', 
                         EMAIL = '${EMAIL}', 
-                        NGAYCAP_GP = '${NGAYCAP_GP}', 
+                        NGAYCAP_GP = '${new Date(NGAYCAP_GP).toISOString()}', 
                         NGUOI_DDPL = N'${NGUOI_DDPL}', 
                         TRANGTHAI = '${TRANGTHAI}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
                         MSDN = '${MSDN}'
                     WHERE MSDN = '${MSDN}' `;
+        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

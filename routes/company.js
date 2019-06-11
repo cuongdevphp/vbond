@@ -59,8 +59,7 @@ router.put('/', async (req, res) => {
                         NGAYCAP_GP = '${new Date(NGAYCAP_GP).toISOString()}', 
                         NGUOI_DDPL = N'${NGUOI_DDPL}', 
                         TRANGTHAI = '${TRANGTHAI}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
-                        MSDN = '${MSDN}'
+                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSDN = '${MSDN}' `;
         console.log(sql, "sql");
         try {

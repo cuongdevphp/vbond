@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
             (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DGPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${NGAYCAP_GP}', '${NGUOI_DGPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+            ('${MSDN}', '${TEN_DN}', '${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', '${NGUOI_DGPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

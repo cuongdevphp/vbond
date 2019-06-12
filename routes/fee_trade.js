@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
             (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, NGAYTAO, FLAG) VALUES 
-            ('${TENPHI}', '${TYLETINH}', '${NGAYAPDUNG}', '${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+            (N'${TENPHI}', '${TYLETINH}', '${new Date(NGAYAPDUNG).toISOString()}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -45,11 +45,11 @@ router.put('/', async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TENPHI = '${TENPHI}', 
+                        TENPHI = N'${TENPHI}', 
                         TYLETINH = '${TYLETINH}', 
-                        NGAYAPDUNG = '${NGAYAPDUNG}', 
-                        GHICHU = '${GHICHU}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
+                        NGAYAPDUNG = '${new Date(NGAYAPDUNG).toISOString()}', 
+                        GHICHU = N'${GHICHU}', 
+                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSPHI = '${MSPHI}' `;
         try {
             await pool.request().query(sql);
@@ -63,7 +63,7 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.put('/', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
         const MSPHI = req.body.MSPHI;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;

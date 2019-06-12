@@ -5,8 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var debug = require('debug')('vbond:server');
 var http = require('http');
+//var jwtVerifer = require('express-jwt');
 
 var indexRouter = require('./routes/index');
+var loginRouter = require('./routes/login');
 var usersRouter = require('./routes/users');
 var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
@@ -31,11 +33,18 @@ app.use('/*', function(req, res, next) {
 });
 
 app.use('/', indexRouter);
+app.use('/login', loginRouter);
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
 app.use('/interest', interestRateRouter);
-app.use('/feeTradeRouter', feeTradeRouter);
+app.use('/feeTrade', feeTradeRouter);
+
+app.use((err, req, res, next) => {
+  if(err.email === 'UnauthorizedError') {
+    res.status(500).send(err.message);
+  }
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -70,7 +79,6 @@ server.listen(port, hostname, () => {
 });
 server.on('error', onError);
 server.on('listening', onListening);
-
 
 /**
  * set Header

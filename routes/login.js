@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
         const PASSWORD = req.body.PASSWORD;
 
         const pool = await poolPromise;
-        const sql = `SELECT * 
+        const sql = `SELECT USERNAME, FullName, Email, FLAG 
                         FROM ${tbl} 
                         WHERE PASSWORD = '${PASSWORD}' AND 
                             (USERNAME = '${USERNAME}' OR Email = '${USERNAME}')`;
@@ -22,7 +22,8 @@ router.post('/', async (req, res) => {
                 const user = result.recordset;
                 jwt.sign({ user }, 'secretkey', { expiresIn: '3600s' }, (err, token) => {
                     res.json({
-                        token
+                        token,
+                        user
                     });
                 });
             } catch (error) {

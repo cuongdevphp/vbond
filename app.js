@@ -16,6 +16,8 @@ var interestRateRouter = require('./routes/interest_rate');
 var feeTradeRouter = require('./routes/fee_trade');
 var bondTypeRouter = require('./routes/bond_type');
 var paymentTermRouter = require('./routes/payment_term');
+var commandTypeRouter = require('./routes/command_type');
+var tradeStatusRouter = require('./routes/trade_status');
 /**
  * Get port from environment and store in Express.
  */
@@ -43,6 +45,8 @@ app.use('/interest', interestRateRouter);
 app.use('/feeTrade', feeTradeRouter);
 app.use('/bondType', bondTypeRouter);
 app.use('/paymentTerm', paymentTermRouter);
+app.use('/commandType', commandTypeRouter);
+app.use('/tradeStatus', tradeStatusRouter);
 
 app.use((err, req, res, next) => {
   if(err.email === 'UnauthorizedError') {
@@ -95,7 +99,7 @@ function setHeader(res, next) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
   // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Accept,Authorization');
 
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)

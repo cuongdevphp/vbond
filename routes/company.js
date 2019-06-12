@@ -28,14 +28,20 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TRANGTHAI = req.body.TRANGTHAI;
 
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${tbl}
-            (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DDPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            ('${MSDN}', N'${TEN_DN}', N'${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', N'${NGUOI_DDPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
-        try {
-            await pool.request().query(sql);
-            res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        const queryDulicateMSDN = `SELECT MSDN FROM ${tbl} WHERE MSDN = '${MSDN}'`;
+        const rsDup = await pool.request().query(queryDulicateMSDN);
+        if(rsDup.recordset.length === 0) {
+            const sql = `INSERT INTO ${tbl}
+                (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DDPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                ('${MSDN}', N'${TEN_DN}', N'${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', N'${NGUOI_DDPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+            try {
+                await pool.request().query(sql);
+                res.send('Create data successful!');
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        } else {
+            res.status(500).json({ error: 'MSDN has been duplicate!'});
         }
     } catch (err) {
         res.status(500).send(err.message);

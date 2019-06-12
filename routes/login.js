@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
                             (USERNAME = '${USERNAME}' OR Email = '${USERNAME}')`;
         const result = await pool.request().query(sql);
         if(result.recordset.length === 0) {
-            res.status(404).json({ error: 'Username or password is fail' });
+            res.status(404).json({ error: 'Username or password is wrong' });
         } else {
             try {
                 const user = result.recordset;

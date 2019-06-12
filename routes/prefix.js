@@ -4,7 +4,7 @@ const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
 
-/* GET prefix listing. */
+/* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     //header.setHeader(res);
     header.jwtVerify(req, res);
@@ -13,7 +13,7 @@ router.get('/', header.verifyToken, async (req, res) => {
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [PREFIX_ID] DESC');
         return res.json(result.recordset);
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -33,7 +33,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -56,7 +56,7 @@ router.put('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -73,8 +73,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
-        res.status(500);
-        res.send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 

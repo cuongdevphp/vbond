@@ -14,6 +14,8 @@ var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
 var interestRateRouter = require('./routes/interest_rate');
 var feeTradeRouter = require('./routes/fee_trade');
+var bondTypeRouter = require('./routes/bond_type');
+var paymentTermRouter = require('./routes/payment_term');
 /**
  * Get port from environment and store in Express.
  */
@@ -39,12 +41,14 @@ app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
 app.use('/interest', interestRateRouter);
 app.use('/feeTrade', feeTradeRouter);
+app.use('/bondType', bondTypeRouter);
+app.use('/paymentTerm', paymentTermRouter);
 
 app.use((err, req, res, next) => {
   if(err.email === 'UnauthorizedError') {
     res.status(500).send(err.message);
   }
-})
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

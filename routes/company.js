@@ -3,7 +3,8 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_CONGTY]';
-/* GET prefix listing. */
+
+/* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
@@ -11,7 +12,7 @@ router.get('/', header.verifyToken, async (req, res) => {
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSDN] DESC');
         return res.json(result.recordset);
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -44,7 +45,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: 'MSDN has been duplicate!'});
         }
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -79,7 +80,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 
@@ -97,8 +98,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500);
-        res.send(err.message);
+        res.status(500).json({ error: err.message});
     }
 });
 

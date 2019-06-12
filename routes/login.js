@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
         const pool = await poolPromise;
         const sql = `SELECT * 
                         FROM ${tbl} 
-                        WHERE PASSWORD = ${PASSWORD} AND 
+                        WHERE PASSWORD = '${PASSWORD}' AND 
                             (USERNAME = '${USERNAME}' OR Email = '${USERNAME}')`;
         const result = await pool.request().query(sql);
         if(result.recordset.length === 0) {
@@ -29,8 +29,8 @@ router.post('/', async (req, res) => {
                 res.status(500).json({ error: error.message });
             }
         }
-    } catch (err) {
-        res.status(500).send(err.message);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
   

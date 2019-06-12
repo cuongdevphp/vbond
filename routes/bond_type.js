@@ -2,13 +2,13 @@ var express = require('express');
 var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_PHIGIAODICH]';
+const tbl = '[dbo].[TB_LOAITRAIPHIEU]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSPHI] DESC');
+        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSLTP] DESC');
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message});
@@ -18,20 +18,25 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const TENPHI = req.body.TENPHI;
-        const TYLETINH = req.body.TYLETINH;
-        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const MSLTP = req.body.MSLTP;
+        const TENLOAI_TP = req.body.TENLOAI_TP;
         const GHICHU = req.body.GHICHU;
 
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${tbl}
-            (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, NGAYTAO, FLAG) VALUES 
-            (N'${TENPHI}', '${TYLETINH}', '${new Date(NGAYAPDUNG).toISOString()}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
-        try {
-            await pool.request().query(sql);
-            res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        const queryDulicateMSLTP = `SELECT MSLTP FROM ${tbl} WHERE MSLTP = '${MSLTP}'`;
+        const rsDup = await pool.request().query(queryDulicateMSLTP);
+        if(rsDup.recordset.length === 0) {
+            const sql = `INSERT INTO ${tbl}
+                (MSLTP, TENLOAI_TP, GHICHU, NGAYTAO, FLAG) VALUES 
+                ('${MSLTP}', N'${TENLOAI_TP}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+            try {
+                await pool.request().query(sql);
+                res.send('Create data successful!');
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        } else {
+            res.status(500).json({ error: 'MSLTP has been duplicate!'});
         }
     } catch (err) {
         res.status(500).json({ error: err.message});
@@ -41,21 +46,16 @@ router.post('/', header.verifyToken, async (req, res) => {
 router.put('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const MSPHI = req.body.MSPHI;
-        const TENPHI = req.body.TENPHI;
-        const TYLETINH = req.body.TYLETINH;
-        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const MSLTP = req.body.MSLTP;
+        const TENLOAI_TP = req.body.TENLOAI_TP;
         const GHICHU = req.body.GHICHU;
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TENPHI = N'${TENPHI}', 
-                        TYLETINH = '${TYLETINH}', 
-                        NGAYAPDUNG = '${new Date(NGAYAPDUNG).toISOString()}', 
+                        TENLOAI_TP = N'${TENLOAI_TP}', 
                         GHICHU = N'${GHICHU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
-                    WHERE MSPHI = '${MSPHI}' `;
-                    console.log(sql, "sql");
+                    WHERE MSLTP = '${MSLTP}' `;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -71,8 +71,8 @@ router.put('/', header.verifyToken, async (req, res) => {
 router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const MSPHI = req.body.MSPHI;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;
+        const MSLTP = req.body.MSLTP;
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSLTP = '${MSLTP}'`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

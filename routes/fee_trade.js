@@ -4,7 +4,7 @@ const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_PHIGIAODICH]';
 /* GET prefix listing. */
-router.get('/', async (req, res) => {
+router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const TENPHI = req.body.TENPHI;
@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/', async (req, res) => {
+router.put('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;
@@ -68,7 +68,7 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;

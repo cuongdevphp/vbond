@@ -17,7 +17,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/', async (req, res) => {
+router.put('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
@@ -60,7 +60,7 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const PREFIX_ID = req.body.PREFIX_ID;

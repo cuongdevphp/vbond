@@ -21,8 +21,7 @@ router.post('/', async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
             (TEN_NH, LAISUAT_HH, NGAYTAO, FLAG) VALUES 
-            ('${TEN_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`;
-        console.log(sql, "sql");
+            (N'${TEN_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`;
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -42,9 +41,9 @@ router.put('/', async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TEN_NH = '${TEN_NH}', 
+                        TEN_NH = N'${TEN_NH}', 
                         LAISUAT_HH = '${LAISUAT_HH}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}',
+                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
                     WHERE LAISUAT_ID = '${LAISUAT_ID}' `;
         try {
             await pool.request().query(sql);
@@ -52,7 +51,6 @@ router.put('/', async (req, res) => {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-
     } catch (err) {
         res.status(500).send(err.message);
     }

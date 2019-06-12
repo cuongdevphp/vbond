@@ -1,9 +1,11 @@
 var express = require('express');
+var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_PHIGIAODICH]';
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSPHI] DESC');
@@ -14,6 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const TENPHI = req.body.TENPHI;
         const TYLETINH = req.body.TYLETINH;
@@ -36,6 +39,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;
         const TENPHI = req.body.TENPHI;
@@ -51,6 +55,7 @@ router.put('/', async (req, res) => {
                         GHICHU = N'${GHICHU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSPHI = '${MSPHI}' `;
+                    console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -64,6 +69,7 @@ router.put('/', async (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;

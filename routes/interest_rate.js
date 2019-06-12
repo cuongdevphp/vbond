@@ -1,9 +1,11 @@
 var express = require('express');
+var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_LAISUATNGANHANG]';
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [LAISUAT_ID] DESC');
@@ -14,6 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
@@ -34,6 +37,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
@@ -57,6 +61,7 @@ router.put('/', async (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const LAISUAT_ID = req.body.LAISUAT_ID;
 

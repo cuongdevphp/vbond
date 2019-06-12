@@ -1,9 +1,11 @@
 var express = require('express');
+var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_CONGTY]';
 /* GET prefix listing. */
 router.get('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSDN] DESC');
@@ -14,6 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const MSDN = req.body.MSDN;
         const TEN_DN = req.body.TEN_DN;
@@ -40,6 +43,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const MSDN = req.body.MSDN;
         const TEN_DN = req.body.TEN_DN;
@@ -61,7 +65,6 @@ router.put('/', async (req, res) => {
                         TRANGTHAI = '${TRANGTHAI}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSDN = '${MSDN}' `;
-        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -75,6 +78,7 @@ router.put('/', async (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
+    header.jwtVerify(req, res);
     try {
         const MSDN = req.body.MSDN;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSDN = '${MSDN}'`;

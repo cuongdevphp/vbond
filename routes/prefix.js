@@ -1,12 +1,13 @@
 var express = require('express');
-//var header = require('../header');
-const { poolPromise } = require('../db')
+var header = require('../header');
+const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
 
 /* GET prefix listing. */
-router.get('/', async (req, res) => {
+router.get('/', header.verifyToken, async (req, res) => {
     //header.setHeader(res);
+    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [PREFIX_ID] DESC');

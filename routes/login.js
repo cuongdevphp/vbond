@@ -2,30 +2,32 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_PREFIX]';
+const tbl = '[dbo].[TB_USER]';
 
 router.post('/', async (req, res) => {
     try {
-        // const KYTU_PREFIX = req.body.KYTU_PREFIX;
-        // const GHICHU = req.body.GHICHU;
-        // const pool = await poolPromise;
-        // const sql = `INSERT INTO ${tbl}
-        //             (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
-        //             (N'${KYTU_PREFIX}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1})`;
-        try {
-            const user = {
-                id: 1, 
-                username: 'brad',
-                email: 'brad@gmail.com'
-            }
-            
-            jwt.sign({user}, 'secretkey', { expiresIn: '20s' }, (err, token) => {
-                res.json({
-                    token
+        const USERNAME = req.body.USERNAME;
+        const PASSWORD = req.body.PASSWORD;
+
+        const pool = await poolPromise;
+        const sql = `SELECT * 
+                        FROM ${tbl} 
+                        WHERE PASSWORD = ${PASSWORD} AND 
+                            (USERNAME = '${USERNAME}' OR Email = '${USERNAME}')`;
+        const result = await pool.request().query(sql);
+        if(result.recordset.length === 0) {
+            res.status(404).json({ error: 'Username or password is fail' });
+        } else {
+            try {
+                const user = result.recordset;
+                jwt.sign({ user }, 'secretkey', { expiresIn: '3600s' }, (err, token) => {
+                    res.json({
+                        token
+                    });
                 });
-            });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
         }
     } catch (err) {
         res.status(500).send(err.message);

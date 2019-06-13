@@ -28,7 +28,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (MSKYHANTT, LOAI_TT, GHICHU, NGAYTAO, FLAG) VALUES 
-                ('${MSKYHANTT}', N'${LOAI_TT}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (N'${MSKYHANTT}', ${LOAI_TT}, N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -52,7 +52,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        LOAI_TT = N'${LOAI_TT}', 
+                        LOAI_TT = ${LOAI_TT}, 
                         GHICHU = N'${GHICHU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSKYHANTT = '${MSKYHANTT}' `;

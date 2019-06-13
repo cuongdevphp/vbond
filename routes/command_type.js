@@ -53,9 +53,10 @@ router.put('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TENLENH = N'${TENLENH}', 
-                        TRANGTHAI = '${TRANGTHAI}', 
+                        TRANGTHAI = ${TRANGTHAI}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
-                    WHERE MSLENH = '${MSLENH}' `;
+                    WHERE MSLENH = ${MSLENH} `;
+        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

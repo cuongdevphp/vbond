@@ -22,6 +22,8 @@ var branchVCSCRouter = require('./routes/branch_vcsc');
 var nhdtTypeRouter = require('./routes/nhdt_type');
 var roomTypeRouter = require('./routes/room_type');
 var investorsRouter = require('./routes/investors');
+var authPageRouter = require('./routes/auth_page');
+var loanTermRouter = require('./routes/loan_term');
 /**
  * Get port from environment and store in Express.
  */
@@ -55,6 +57,8 @@ app.use('/nhdtType', nhdtTypeRouter);
 app.use('/branchVCSC', branchVCSCRouter);
 app.use('/roomType', roomTypeRouter);
 app.use('/investors', investorsRouter);
+app.use('/authPage', authPageRouter);
+app.use('/loanTerm', loanTermRouter);
 
 app.use((err, req, res, next) => {
   if(err.email === 'UnauthorizedError') {

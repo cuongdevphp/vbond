@@ -18,6 +18,10 @@ var bondTypeRouter = require('./routes/bond_type');
 var paymentTermRouter = require('./routes/payment_term');
 var commandTypeRouter = require('./routes/command_type');
 var tradeStatusRouter = require('./routes/trade_status');
+var branchVCSCRouter = require('./routes/branch_vcsc');
+var nhdtTypeRouter = require('./routes/nhdt_type');
+var roomTypeRouter = require('./routes/room_type');
+var investorsRouter = require('./routes/investors');
 /**
  * Get port from environment and store in Express.
  */
@@ -47,6 +51,10 @@ app.use('/bondType', bondTypeRouter);
 app.use('/paymentTerm', paymentTermRouter);
 app.use('/commandType', commandTypeRouter);
 app.use('/tradeStatus', tradeStatusRouter);
+app.use('/nhdtType', nhdtTypeRouter);
+app.use('/branchVCSC', branchVCSCRouter);
+app.use('/roomType', roomTypeRouter);
+app.use('/investors', investorsRouter);
 
 app.use((err, req, res, next) => {
   if(err.email === 'UnauthorizedError') {

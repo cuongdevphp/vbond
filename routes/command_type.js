@@ -28,7 +28,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (MSLENH, TENLENH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                ('${MSLENH}', N'${TENLENH}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (N'${MSLENH}', N'${TENLENH}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');

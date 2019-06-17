@@ -3,13 +3,22 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_NHADAUTU]';
+const tbl_investorType = '[dbo].[TB_LOAINHDT]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSNDT] DESC');
+        const sql = `SELECT
+                        p.*, o.TENLOAI_NDT
+                    FROM
+                        ${tbl} p
+                    LEFT JOIN ${tbl_investorType} o ON o.MSLOAINDT = p.MS_LOAINDT
+                    ORDER BY
+                        MSNDT DESC;
+        `
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });

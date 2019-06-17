@@ -56,7 +56,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         TRANGTHAI = ${TRANGTHAI}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSLENH = ${MSLENH} `;
-        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

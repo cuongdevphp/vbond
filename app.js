@@ -12,7 +12,7 @@ var loginRouter = require('./routes/login');
 var usersRouter = require('./routes/users');
 var prefixRouter = require('./routes/prefix');
 var companyRouter = require('./routes/company');
-var interestRateRouter = require('./routes/interest_rate');
+var interestRateBankRouter = require('./routes/interest_rate_bank');
 var feeTradeRouter = require('./routes/fee_trade');
 var bondTypeRouter = require('./routes/bond_type');
 var paymentTermRouter = require('./routes/payment_term');
@@ -24,6 +24,8 @@ var roomTypeRouter = require('./routes/room_type');
 var investorsRouter = require('./routes/investors');
 var authPageRouter = require('./routes/auth_page');
 var loanTermRouter = require('./routes/loan_term');
+var contractVCSCRouter = require('./routes/contract_vcsc');
+var interestRateRouter = require('./routes/interest_rate');
 /**
  * Get port from environment and store in Express.
  */
@@ -47,7 +49,7 @@ app.use('/login', loginRouter);
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
-app.use('/interest', interestRateRouter);
+app.use('/interestRateBank', interestRateBankRouter);
 app.use('/feeTrade', feeTradeRouter);
 app.use('/bondType', bondTypeRouter);
 app.use('/paymentTerm', paymentTermRouter);
@@ -59,6 +61,8 @@ app.use('/roomType', roomTypeRouter);
 app.use('/investors', investorsRouter);
 app.use('/authPage', authPageRouter);
 app.use('/loanTerm', loanTermRouter);
+app.use('/contractVCSC', contractVCSCRouter);
+app.use('/interestRate', interestRateRouter);
 
 app.use((err, req, res, next) => {
   if(err.email === 'UnauthorizedError') {

@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var debug = require('debug')('vbond:server');
 var http = require('http');
-//var jwtVerifer = require('express-jwt');
 
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
@@ -23,10 +22,11 @@ var nhdtTypeRouter = require('./routes/nhdt_type');
 var roomTypeRouter = require('./routes/room_type');
 var investorsRouter = require('./routes/investors');
 var authPageRouter = require('./routes/auth_page');
-var loanTermRouter = require('./routes/loan_term');
 var contractVCSCRouter = require('./routes/contract_vcsc');
 var interestRateRouter = require('./routes/interest_rate');
 var bondPriceRouter = require('./routes/bond_price');
+var roomVCSCRouter = require('./routes/room_vcsc');
+var ensureAssetsRouter = require('./routes/ensure_assets');
 /**
  * Get port from environment and store in Express.
  */
@@ -61,16 +61,11 @@ app.use('/branchVCSC', branchVCSCRouter);
 app.use('/roomType', roomTypeRouter);
 app.use('/investors', investorsRouter);
 app.use('/authPage', authPageRouter);
-app.use('/loanTerm', loanTermRouter);
+app.use('/ensureAssets', ensureAssetsRouter);
 app.use('/contractVCSC', contractVCSCRouter);
 app.use('/interestRate', interestRateRouter);
 app.use('/bondPrice', bondPriceRouter);
-
-// app.use((err, req, res, next) => {
-//   if(err.email === 'UnauthorizedError') {
-//     res.status(500).send(err.message);
-//   }
-// });
+app.use('/roomVCSC', roomVCSCRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

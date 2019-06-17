@@ -68,8 +68,8 @@ router.put('/', header.verifyToken, async (req, res) => {
                         CMND_GPKD = ${CMND_GPKD}, 
                         NGAYCAP = '${new Date(NGAYCAP).toISOString()}', 
                         NOICAP = N'${NOICAP}', 
-                        SO_TKCK = ${SO_TKCK}, 
-                        MS_NGUOIGIOITHIEU = ${MS_NGUOIGIOITHIEU}, 
+                        SO_TKCK = N'${SO_TKCK}', 
+                        MS_NGUOIGIOITHIEU = N'${MS_NGUOIGIOITHIEU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE MSNDT = '${MSNDT}' `;
         try {

@@ -26,6 +26,7 @@ var authPageRouter = require('./routes/auth_page');
 var loanTermRouter = require('./routes/loan_term');
 var contractVCSCRouter = require('./routes/contract_vcsc');
 var interestRateRouter = require('./routes/interest_rate');
+var bondPriceRouter = require('./routes/bond_price');
 /**
  * Get port from environment and store in Express.
  */
@@ -63,12 +64,13 @@ app.use('/authPage', authPageRouter);
 app.use('/loanTerm', loanTermRouter);
 app.use('/contractVCSC', contractVCSCRouter);
 app.use('/interestRate', interestRateRouter);
+app.use('/bondPrice', bondPriceRouter);
 
-app.use((err, req, res, next) => {
-  if(err.email === 'UnauthorizedError') {
-    res.status(500).send(err.message);
-  }
-});
+// app.use((err, req, res, next) => {
+//   if(err.email === 'UnauthorizedError') {
+//     res.status(500).send(err.message);
+//   }
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -63,7 +63,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        MS_LOAINDT = ${MS_LOAINDT}, 
+                        MS_LOAINDT = N'${MS_LOAINDT}', 
                         TENNDT = N'${TENNDT}', 
                         CMND_GPKD = ${CMND_GPKD}, 
                         NGAYCAP = '${new Date(NGAYCAP).toISOString()}', 
@@ -90,7 +90,6 @@ router.delete('/', header.verifyToken, async (req, res) => {
         const MSNDT = req.body.MSNDT;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSNDT = N'${MSNDT}'`;
         const pool = await poolPromise;
-        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Delete data successfully');

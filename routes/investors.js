@@ -88,8 +88,9 @@ router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSNDT = '${MSNDT}'`;
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSNDT = N'${MSNDT}'`;
         const pool = await poolPromise;
+        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Delete data successfully');

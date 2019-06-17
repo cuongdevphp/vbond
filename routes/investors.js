@@ -71,7 +71,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SO_TKCK = N'${SO_TKCK}', 
                         MS_NGUOIGIOITHIEU = N'${MS_NGUOIGIOITHIEU}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
-                    WHERE MSNDT = '${MSNDT}' `;
+                    WHERE MSNDT = N'${MSNDT}' `;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

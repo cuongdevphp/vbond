@@ -44,7 +44,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         TRANGTHAICHO, GHICHU, NGAYTAO, FLAG) VALUES 
         (${BOND_ID}, N'${MS_TP}', N'${MS_NDT}', N'${MS_ROOM}', ${MS_TRANGTHAI}, ${MS_LENH}, 
         N'${TENLOAI_TP}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
-        '${new Date(Date.now(NGAY_GD)).toISOString()}', '${new Date(Date.now(NGAY_DH)).toISOString()}', 
+        '${new Date(NGAY_GD).toISOString()}', '${new Date(NGAY_DH).toISOString()}', 
         N'${TRANGTHAICHO}', N'${GHICHU}','${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
@@ -77,7 +77,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const NGAY_DH = req.body.NGAY_DH;
         const TRANGTHAICHO = req.body.TRANGTHAICHO;
         const GHICHU = req.body.GHICHU;
-
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         BOND_ID = ${BOND_ID}, 
@@ -92,8 +91,8 @@ router.put('/', header.verifyToken, async (req, res) => {
                         DONGIA = ${DONGIA}, 
                         TONGGIATRI = ${TONGGIATRI}, 
                         LAISUAT_DH = ${LAISUAT_DH}, 
-                        NGAY_GD = '${new Date(Date.now(NGAY_GD)).toISOString()}',
-                        NGAY_DH = '${new Date(Date.now(NGAY_DH)).toISOString()}',
+                        NGAY_GD = '${new Date(NGAY_GD).toISOString()}',
+                        NGAY_DH = '${new Date(NGAY_DH).toISOString()}',
                         GHICHU = N'${GHICHU}', 
                         TRANGTHAICHO = N'${TRANGTHAICHO}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 

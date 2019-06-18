@@ -9,7 +9,7 @@ const tbl_company = '[dbo].[TB_CONGTY]';
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const pool = await poolPromise;        
+        const pool = await poolPromise;
         const sql = `SELECT
                         p.*, i.TEN_DN, o.TENCHINHANH
                     FROM

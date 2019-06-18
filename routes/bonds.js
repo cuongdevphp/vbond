@@ -3,13 +3,39 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_TRAIPHIEU]';
+const tbl_company = '[dbo].[TB_CONGTY]';
+const tbl_KHTT = '[dbo].[TB_KYHANTHANHTOAN]';
+const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
+const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
+const tbl_TSDB = '[dbo].[TB_TAISANDAMBAO]';
+const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [BONDID] DESC');
+        const sql = `SELECT
+                        p.*, 
+                        a.SOHD, 
+                        b.TEN_DN, 
+                        c.TENTAISANDAMBAO, 
+                        d.MSKYHANTT, 
+                        e.TENLOAI_TP, 
+                        f.SONGAYTINHLAI 
+                    FROM
+                        ${tbl} p
+                    LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
+                    LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN
+                    LEFT JOIN ${tbl_TSDB} c ON c.MSTSDB = p.MS_TSDB
+                    LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT
+                    LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
+                    LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
+                    ORDER BY
+                        p.BONDID DESC;
+                `;
+
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -43,7 +69,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
-
+        
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);

@@ -1,5 +1,8 @@
 var express = require('express');
 var header = require('../header');
+var moment = require('moment');
+
+
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_TRAIPHIEU]';
@@ -45,7 +48,7 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const MSTP = req.body.MSTP;
+        const FREFIX = req.body.FREFIX;
         const SO_HD = req.body.SO_HD;
         const MS_DN = req.body.MS_DN;
         const MS_KHVAY = req.body.MS_KHVAY;
@@ -69,7 +72,10 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
-        
+
+        const check = moment(NGAYPH, "DD/MM/YYYY");
+
+        const MSTP = FREFIX + check.format('D') + check.format('M') + check.format('YYYY');
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);

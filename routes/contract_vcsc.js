@@ -3,12 +3,23 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_HOPDONGMUA_VCSC]';
+const tbl_branchVCSC = '[dbo].[TB_CACCHINHAVCSC]';
+const tbl_company = '[dbo].[TB_CONGTY]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [SOHD] DESC');
+        const pool = await poolPromise;        
+        const sql = `SELECT
+                        p.*, i.TEN_DN, o.TENCHINHANH
+                    FROM
+                        ${tbl} p
+                    LEFT JOIN ${tbl_branchVCSC} o ON o.MSCNVCSC = p.MS_CNVCSC
+                    LEFT JOIN ${tbl_company} i ON i.MSDN = p.MS_DN
+                    ORDER BY
+                        SOHD DESC;
+                `;
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -79,7 +90,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SOLUONG_PH = ${SOLUONG_PH}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE SOHD = '${SOHD}' `;
-                    console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

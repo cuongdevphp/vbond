@@ -103,7 +103,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
 
-// NGAYCAP = '${new Date(NGAYPH).toISOString()}', 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         SO_HD = N'${SO_HD}', 

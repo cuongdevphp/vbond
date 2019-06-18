@@ -20,25 +20,18 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const MSNTLTN = req.body.MSNTLTN;
         const SONGAYTINHLAI = req.body.SONGAYTINHLAI;
         const GHICHU = req.body.GHICHU;
 
         const pool = await poolPromise;
-        const queryDulicateMSNTLTN = `SELECT MSNTLTN FROM ${tbl} WHERE MSNTLTN = ${MSNTLTN}`;
-        const rsDup = await pool.request().query(queryDulicateMSNTLTN);
-        if(rsDup.recordset.length === 0) {
-            const sql = `INSERT INTO ${tbl}
-                (MSNTLTN, SONGAYTINHLAI, GHICHU, NGAYTAO, FLAG) VALUES 
-                (${MSNTLTN}, ${SONGAYTINHLAI}, N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
-            try {
-                await pool.request().query(sql);
-                res.send('Create data successful!');
-            } catch (error) {
-                res.status(500).json({ error: error.message });
-            }
-        } else {
-            res.status(500).json({ error: 'MSLTP has been duplicate!'});
+        const sql = `INSERT INTO ${tbl}
+        (SONGAYTINHLAI, GHICHU, NGAYTAO, FLAG) VALUES 
+        (${SONGAYTINHLAI}, N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+        try {
+            await pool.request().query(sql);
+            res.send('Create data successful!');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

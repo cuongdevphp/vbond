@@ -27,6 +27,7 @@ var interestRateRouter = require('./routes/interest_rate');
 var bondPriceRouter = require('./routes/bond_price');
 var roomVCSCRouter = require('./routes/room_vcsc');
 var ensureAssetsRouter = require('./routes/ensure_assets');
+var bondsRouter = require('./routes/bonds');
 /**
  * Get port from environment and store in Express.
  */
@@ -66,6 +67,7 @@ app.use('/contractVCSC', contractVCSCRouter);
 app.use('/interestRate', interestRateRouter);
 app.use('/bondPrice', bondPriceRouter);
 app.use('/roomVCSC', roomVCSCRouter);
+app.use('/bonds', bondsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

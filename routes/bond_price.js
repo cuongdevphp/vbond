@@ -38,22 +38,6 @@ router.post('/', header.verifyToken, async (req, res) => {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-
-        // const queryDulicateMSLS = `SELECT MSLS FROM ${tbl} WHERE MSLS = '${MSLS}'`;
-        // const rsDup = await pool.request().query(queryDulicateMSLS);
-        // if(rsDup.recordset.length === 0) {
-        //     const sql = `INSERT INTO ${tbl}
-        //         (MSLS, BOND_ID, MS_TP, MS_LTT, LS_TOIDA, LS_VTH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
-        //         (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', N'${MS_LTT}', ${LS_TOIDA}, ${LS_VTH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
-        //     try {
-        //         await pool.request().query(sql);
-        //         res.send('Create data successful!');
-        //     } catch (error) {
-        //         res.status(500).json({ error: error.message });
-        //     }
-        // } else {
-        //     res.status(500).json({ error: 'MSLS has been duplicate!'});
-        // }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

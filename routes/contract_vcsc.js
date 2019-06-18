@@ -35,9 +35,9 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (SOHD, MS_DN, MS_CNVCSC, NGAYKY, LAISUAT, KYHAN, NGAY_PH, NGAY_DH, MENHGIA_TP, SOLUONG_PH, NGAYTAO, FLAG) VALUES 
-                (N'${SOHD}', N'${MS_DN}', '${MS_CNVCSC}', '${new Date(Date.now(NGAYKY)).toISOString()}', ${LAISUAT}, 
-                ${KYHAN}, '${new Date(Date.now(NGAY_PH)).toISOString()}', 
-                '${new Date(Date.now(NGAY_DH)).toISOString()}', ${MENHGIA_TP}, 
+                (N'${SOHD}', N'${MS_DN}', '${MS_CNVCSC}', '${new Date(NGAYKY).toISOString()}', ${LAISUAT}, 
+                ${KYHAN}, '${new Date(NGAY_PH).toISOString()}', 
+                '${new Date(NGAY_DH).toISOString()}', ${MENHGIA_TP}, 
                 ${SOLUONG_PH}, '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
@@ -66,20 +66,20 @@ router.put('/', header.verifyToken, async (req, res) => {
         const NGAY_DH = req.body.NGAY_DH;
         const MENHGIA_TP = req.body.MENHGIA_TP;
         const SOLUONG_PH = req.body.SOLUONG_PH;
-
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         MS_DN = N'${MS_DN}', 
                         MS_CNVCSC = N'${MS_CNVCSC}', 
-                        NGAYKY = '${new Date(Date.now(NGAYKY)).toISOString()}', 
+                        NGAYKY = '${new Date(NGAYKY).toISOString()}', 
                         LAISUAT = ${LAISUAT}, 
                         KYHAN = ${KYHAN}, 
-                        NGAY_PH = '${new Date(Date.now(NGAY_PH)).toISOString()}',
-                        NGAY_DH = '${new Date(Date.now(NGAY_DH)).toISOString()}',
+                        NGAY_PH = '${new Date(NGAY_PH).toISOString()}',
+                        NGAY_DH = '${new Date(NGAY_DH).toISOString()}',
                         MENHGIA_TP = ${MENHGIA_TP}, 
                         SOLUONG_PH = ${SOLUONG_PH}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE SOHD = '${SOHD}' `;
+                    console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

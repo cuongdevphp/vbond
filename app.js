@@ -31,6 +31,7 @@ var bondsRouter = require('./routes/bonds');
 var setCommandBuyRouter = require('./routes/set_command_buy');
 var roomInvestorsRouter = require('./routes/room_investors');
 var setCommandRouter = require('./routes/set_command');
+var dateInterestYearRouter = require('./routes/date_interest_year');
 /**
  * Get port from environment and store in Express.
  */
@@ -74,6 +75,7 @@ app.use('/bonds', bondsRouter);
 app.use('/setCommandBuy', setCommandBuyRouter);
 app.use('/roomInvestors', roomInvestorsRouter);
 app.use('/setCommand', setCommandRouter);
+app.use('/dateInterestYear', dateInterestYearRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

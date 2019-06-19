@@ -160,14 +160,12 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE BONDID = ${BONDID} `;
-                    console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

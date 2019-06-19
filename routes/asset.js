@@ -9,7 +9,8 @@ router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSTS] DESC');
+        const sql = `SELECT * FROM ${tbl} ORDER BY [MSTS] DESC`;
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -19,7 +20,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const MSTS = req.body.MSTS;
         const MS_NDT = req.body.MS_NDT;
         const MS_DL = req.body.MS_DL;
         const BOND_ID = req.body.BOND_ID;
@@ -40,26 +40,20 @@ router.post('/', header.verifyToken, async (req, res) => {
         const CAPGIAY_CN = req.body.CAPGIAY_CN;
 
         const pool = await poolPromise;
-        const queryDulicateMSTS = `SELECT MSTS FROM ${tbl} WHERE MSTS = '${MSTS}'`;
-        const rsDup = await pool.request().query(queryDulicateMSTS);
-        if(rsDup.recordset.length === 0) {
-            const sql = `INSERT INTO ${tbl}
-                (MSTS, MS_NDT, MS_DL, BOND_ID, MS_TP, MS_LENHMUA, MS_TRANGTHAI, LAISUATKHIMUA, 
-                SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
-                LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-                (N'${MSTS}', N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
-                N'${MS_TP}', N'${MS_LENHMUA}', ${MS_TRANGTHAI}, ${LAISUATKHIMUA}, 
-                ${SONGAYNAMGIU}, '${new Date(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
-                ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
-                ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});`
-            try {
-                await pool.request().query(sql);
-                res.send('Create data successful!');
-            } catch (error) {
-                res.status(500).json({ error: error.message });
-            }
-        } else {
-            res.status(500).json({ error: 'MSTS has been duplicate!'});
+        const sql = `INSERT INTO ${tbl}
+        (MS_NDT, MS_DL, BOND_ID, MS_TP, MS_LENHMUA, MS_TRANGTHAI, LAISUATKHIMUA, 
+        SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
+        LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
+        (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
+        N'${MS_TP}', N'${MS_LENHMUA}', ${MS_TRANGTHAI}, ${LAISUATKHIMUA}, 
+        ${SONGAYNAMGIU}, '${new Date(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
+        ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
+        ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});`
+        try {
+            await pool.request().query(sql);
+            res.send('Create data successful!');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -91,22 +85,32 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        MS_LOAINDT = ${MS_LOAINDT}, 
-                        TENNDT = N'${TENNDT}', 
-                        CMND_GPKD = ${CMND_GPKD}, 
-                        NGAYCAP = '${new Date(NGAYCAP).toISOString()}', 
-                        NOICAP = N'${NOICAP}', 
-                        SO_TKCK = ${SO_TKCK}, 
-                        MS_NGUOIGIOITHIEU = ${MS_NGUOIGIOITHIEU}, 
+                        MS_NDT = N'${MS_NDT}', 
+                        MS_DL = N'${MS_DL}', 
+                        BOND_ID = ${BOND_ID}, 
+                        MS_TP = N'${MS_TP}', 
+                        MS_LENHMUA = ${MS_LENHMUA}, 
+                        MS_TRANGTHAI = ${MS_TRANGTHAI}, 
+                        LAISUATKHIMUA = ${LAISUATKHIMUA}, 
+                        SONGAYNAMGIU = ${SONGAYNAMGIU}, 
+                        NGAYMUA = '${new Date(NGAYMUA).toISOString()}', 
+                        SOLUONG = ${SOLUONG}, 
+                        DONGIA = ${DONGIA}, 
+                        TONGGIATRI = ${TONGGIATRI}, 
+                        SL_KHADUNG = ${SL_KHADUNG}, 
+                        SL_DABAN = ${SL_DABAN}, 
+                        GIATRIKHIBAN = ${GIATRIKHIBAN}, 
+                        LAISUATKHIBAN = ${LAISUATKHIBAN}, 
+                        TRANGTHAI = ${TRANGTHAI}, 
+                        CAPGIAY_CN = N'${CAPGIAY_CN}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
-                    WHERE MSTS = '${MSTS}' `;
+                    WHERE MSTS = ${MSTS} `;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -116,7 +120,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSTS = req.body.MSTS;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSTS = '${MSTS}'`;
+        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSTS = ${MSTS}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

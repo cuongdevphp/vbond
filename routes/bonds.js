@@ -21,11 +21,11 @@ router.get('/', header.verifyToken, async (req, res) => {
         const sql = `SELECT
                         p.*, 
                         a.SOHD, 
-                        b.TEN_DN, 
-                        c.TENTAISANDAMBAO, 
+                        b.TEN_DN, b.MSDN,
+                        c.TENTAISANDAMBAO, c.MSTSDB,
                         d.MSKYHANTT, 
-                        e.TENLOAI_TP, 
-                        f.SONGAYTINHLAI 
+                        e.TENLOAI_TP, e.MSLTP, 
+                        f.SONGAYTINHLAI, f.MSNTLTN 
                     FROM
                         ${tbl} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
@@ -48,7 +48,7 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
-        const FREFIX = req.body.FREFIX;
+        const MSTP = req.body.MSTP;
         const SO_HD = req.body.SO_HD;
         const MS_DN = req.body.MS_DN;
         const MS_TSDB = req.body.MS_TSDB;
@@ -73,9 +73,6 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
         console.log(req.body);
-        const check = moment(NGAYPH, "DD/MM/YYYY");
-
-        const MSTP = FREFIX + check.format('D') + check.format('M') + check.format('YYYY');
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);

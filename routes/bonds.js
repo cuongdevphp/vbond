@@ -134,6 +134,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
+                        MSTP = N'${MSTP}', 
                         SO_HD = N'${SO_HD}', 
                         MS_DN = N'${MS_DN}', 
                         MS_TSDB = ${MS_TSDB}, 

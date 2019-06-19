@@ -25,7 +25,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                         c.TENTAISANDAMBAO, 
                         d.MSKYHANTT, 
                         e.TENLOAI_TP, 
-                        f.SONGAYTINHLAI,
+                        f.SONGAYTINHLAI
                     FROM
                         ${tbl} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD

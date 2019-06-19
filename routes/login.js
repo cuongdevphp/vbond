@@ -79,7 +79,7 @@ function createToken (res, data) {
     jwt.sign({ data }, 'secretkey', { expiresIn: '3600s' }, (err, token) => {
         res.json({
             token,
-            user: data
+            user: data[0]
         });
     });
 }

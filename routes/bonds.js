@@ -84,7 +84,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
                 (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', ${MS_TSDB}, 
                 N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
-                '${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
+                N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
                 '${new Date(NGAYPH).toISOString()}', '${new Date(NGAYDH).toISOString()}', 
                 '${new Date(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
                 ${KYHAN_CONLAI}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 

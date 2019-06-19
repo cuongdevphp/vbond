@@ -72,7 +72,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
-
+        console.log(req.body);
         const check = moment(NGAYPH, "DD/MM/YYYY");
 
         const MSTP = FREFIX + check.format('D') + check.format('M') + check.format('YYYY');

@@ -21,11 +21,11 @@ router.get('/', header.verifyToken, async (req, res) => {
         const sql = `SELECT
                         p.*, 
                         a.SOHD, 
-                        b.TEN_DN, b.MSDN,
-                        c.TENTAISANDAMBAO, c.MSTSDB,
+                        b.TEN_DN, 
+                        c.TENTAISANDAMBAO, 
                         d.MSKYHANTT, 
-                        e.TENLOAI_TP, e.MSLTP, 
-                        f.SONGAYTINHLAI, f.MSNTLTN 
+                        e.TENLOAI_TP, 
+                        f.SONGAYTINHLAI,
                     FROM
                         ${tbl} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD

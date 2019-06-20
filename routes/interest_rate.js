@@ -81,7 +81,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TENKYHANVAY = N'${TENKYHANVAY}', 
                         BOND_ID = ${BOND_ID}, 
                         LS_TOIDA = ${LS_TOIDA}, 
                         LS_TH = ${LS_TH}, 

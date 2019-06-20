@@ -12,7 +12,7 @@ router.get('/', header.verifyToken, async (req, res) => {
         const sql = `SELECT
                         p.* 
                     FROM
-                        ${tbl} 
+                        ${tbl} p
                     ORDER BY
                         MSNDT DESC;
         `

@@ -1,5 +1,6 @@
 var express = require('express');
 var jwt = require('jsonwebtoken');
+var moment = require('moment');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_USER]';
@@ -47,7 +48,7 @@ router.post('/core', async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_NDT} 
                 (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
-                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${new Date(NGAYCAP).toISOString()}', 
+                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${moment(NGAYCAP).format('YYYY-MM-DD')}', 
                 N'${NOICAP}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', 
                 '${new Date(Date.now()).toISOString()}', ${1});`;
             try {

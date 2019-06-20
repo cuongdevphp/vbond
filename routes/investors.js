@@ -3,7 +3,6 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_NHADAUTU]';
-const tbl_investorType = '[dbo].[TB_LOAINHDT]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -11,10 +10,9 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                        p.*, o.TENLOAI_NDT
+                        p.* 
                     FROM
-                        ${tbl} p
-                    LEFT JOIN ${tbl_investorType} o ON o.MSLOAINDT = p.MS_LOAINDT
+                        ${tbl} 
                     ORDER BY
                         MSNDT DESC;
         `
@@ -29,7 +27,7 @@ router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
-        const MS_LOAINDT = req.body.MS_LOAINDT;
+        const LOAINDT = req.body.LOAINDT;
         const TENNDT = req.body.TENNDT;
         const CMND_GPKD = req.body.CMND_GPKD;
         const NGAYCAP = req.body.NGAYCAP;
@@ -42,8 +40,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const rsDup = await pool.request().query(queryDulicateMSNDT);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSNDT, MS_LOAINDT, TENNDT, CMND_GPKD, NOICAP, NGAYCAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
-                (N'${MSNDT}', N'${MS_LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', N'${NOICAP}', '${new Date(NGAYCAP).toISOString()}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NOICAP, NGAYCAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
+                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', N'${NOICAP}', '${new Date(NGAYCAP).toISOString()}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -62,7 +60,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
-        const MS_LOAINDT = req.body.MS_LOAINDT;
+        const LOAINDT = req.body.LOAINDT;
         const TENNDT = req.body.TENNDT;
         const CMND_GPKD = req.body.CMND_GPKD;
         const NGAYCAP = req.body.NGAYCAP;
@@ -72,7 +70,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        MS_LOAINDT = N'${MS_LOAINDT}', 
+                        LOAINDT = N'${LOAINDT}', 
                         TENNDT = N'${TENNDT}', 
                         CMND_GPKD = N'${CMND_GPKD}', 
                         NGAYCAP = '${new Date(NGAYCAP).toISOString()}', 

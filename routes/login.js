@@ -34,29 +34,27 @@ router.post('/', async (req, res) => {
 router.post('/core', async (req, res) => {
     try {
         const MSNDT = req.body.MSNDT || '';
-        const MS_LOAINDT = req.body.MS_LOAINDT || '';
+        const LOAINDT = req.body.LOAINDT || '';
         const TENNDT = req.body.TENNDT || '';
         const CMND_GPKD = req.body.CMND_GPKD || '';
         const NGAYCAP = req.body.NGAYCAP || '';
         const NOICAP = req.body.NOICAP || '';
         const SO_TKCK = req.body.SO_TKCK || '';
         const MS_NGUOIGIOITHIEU = req.body.MS_NGUOIGIOITHIEU || '';
-        console.log(req.body, "req.body");
         const pool = await poolPromise;
         const queryDulicateAccount = `SELECT * FROM ${tbl_NDT} WHERE MSNDT = N'${MSNDT}'`;
         const rsDup = await pool.request().query(queryDulicateAccount);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_NDT} 
-                (MSNDT, MS_LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
-                (N'${MSNDT}', N'${MS_LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${new Date(NGAYCAP).toISOString()}', 
+                (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
+                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${new Date(NGAYCAP).toISOString()}', 
                 N'${NOICAP}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', 
                 '${new Date(Date.now()).toISOString()}', ${1});`;
-            console.log(sql, "sql");
             try {
                 await pool.request().query(sql);
                 const user = {
                     MSNDT: MSNDT,
-                    MS_LOAINDT: MS_LOAINDT,
+                    LOAINDT: LOAINDT,
                     TENNDT: TENNDT,
                     CMND_GPKD: CMND_GPKD,
                     NGAYCAP: NGAYCAP,

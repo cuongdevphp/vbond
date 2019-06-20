@@ -32,7 +32,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
         const LS_TOIDA = req.body.LS_TOIDA;
-        const LS_VTH = req.body.LS_VTH;
+        const LS_TH = req.body.LS_TH;
         const LS_BIENDO = req.body.LS_BIENDO;
         const LS_BINHQUAN = req.body.LS_BINHQUAN;
         const MA_NH01 = req.body.MA_NH01;
@@ -47,8 +47,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSLS, BOND_ID, MS_TP, LS_TOIDA, LS_VTH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
-                (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', ${LS_TOIDA}, ${LS_VTH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (MSLS, BOND_ID, MS_TP, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
+                (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -70,7 +70,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
         const LS_TOIDA = req.body.LS_TOIDA;
-        const LS_VTH = req.body.LS_VTH;
+        const LS_TH = req.body.LS_TH;
         const LS_BIENDO = req.body.LS_BIENDO;
         const LS_BINHQUAN = req.body.LS_BINHQUAN;
         const MA_NH01 = req.body.MA_NH01;
@@ -86,7 +86,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         BOND_ID = ${BOND_ID}, 
                         MS_TP = N'${MS_TP}', 
                         LS_TOIDA = ${LS_TOIDA}, 
-                        LS_VTH = ${LS_VTH}, 
+                        LS_TH = ${LS_TH}, 
                         LS_BIENDO = ${LS_BIENDO}, 
                         LS_BINHQUAN = ${LS_BINHQUAN}, 
                         MA_NH01 = N'${MA_NH01}', 

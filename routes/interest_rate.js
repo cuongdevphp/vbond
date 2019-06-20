@@ -3,6 +3,7 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_LAISUAT]';
+const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -11,13 +12,13 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                p.* 
+                p.*, a.MSTP 
             FROM
-                ${tbl} p
+                ${tbl} p 
+            LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
             ORDER BY
                 p.MSLS DESC;
         `;
-
         const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
@@ -30,7 +31,6 @@ router.post('/', header.verifyToken, async (req, res) => {
     try {
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;
-        const MS_TP = req.body.MS_TP;
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_TH = req.body.LS_TH;
         const LS_BIENDO = req.body.LS_BIENDO;
@@ -47,8 +47,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSLS, BOND_ID, MS_TP, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
-                (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (MSLS, BOND_ID, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
+                (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -68,7 +68,6 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;
-        const MS_TP = req.body.MS_TP;
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_TH = req.body.LS_TH;
         const LS_BIENDO = req.body.LS_BIENDO;
@@ -84,7 +83,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         TENKYHANVAY = N'${TENKYHANVAY}', 
                         BOND_ID = ${BOND_ID}, 
-                        MS_TP = N'${MS_TP}', 
                         LS_TOIDA = ${LS_TOIDA}, 
                         LS_TH = ${LS_TH}, 
                         LS_BIENDO = ${LS_BIENDO}, 

@@ -51,6 +51,7 @@ router.post('/core', async (req, res) => {
                 (N'${MSNDT}', N'${MS_LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${new Date(NGAYCAP).toISOString()}', 
                 N'${NOICAP}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', 
                 '${new Date(Date.now()).toISOString()}', ${1});`;
+            console.log(sql, "sql");
             try {
                 await pool.request().query(sql);
                 const user = {

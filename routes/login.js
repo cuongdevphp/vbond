@@ -42,7 +42,6 @@ router.post('/core', async (req, res) => {
         const NOICAP = req.body.NOICAP || '';
         const SO_TKCK = req.body.SO_TKCK || '';
         const MS_NGUOIGIOITHIEU = req.body.MS_NGUOIGIOITHIEU || '';
-        console.log(req.body);
         const pool = await poolPromise;
         const queryDulicateAccount = `SELECT * FROM ${tbl_NDT} WHERE MSNDT = N'${MSNDT}'`;
         const rsDup = await pool.request().query(queryDulicateAccount);

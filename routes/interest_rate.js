@@ -2,7 +2,7 @@ var express = require('express');
 var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_LAISUAT]';
+const tbl = '[dbo].[TB]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -10,7 +10,15 @@ router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSLS] DESC');
+        const sql = `SELECT
+                p.* 
+            FROM
+                ${tbl} p
+            ORDER BY
+                p.MSLS DESC;
+        `;
+
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -23,7 +31,6 @@ router.post('/', header.verifyToken, async (req, res) => {
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
-        const MS_LTT = req.body.MS_LTT;
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_VTH = req.body.LS_VTH;
         const LS_BIENDO = req.body.LS_BIENDO;
@@ -40,8 +47,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSLS, BOND_ID, MS_TP, MS_LTT, LS_TOIDA, LS_VTH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
-                (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', N'${MS_LTT}', ${LS_TOIDA}, ${LS_VTH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (MSLS, BOND_ID, MS_TP, LS_TOIDA, LS_VTH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
+                (N'${MSLS}', ${BOND_ID}, N'${MS_TP}', ${LS_TOIDA}, ${LS_VTH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -62,7 +69,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
-        const MS_LTT = req.body.MS_LTT;
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_VTH = req.body.LS_VTH;
         const LS_BIENDO = req.body.LS_BIENDO;
@@ -79,7 +85,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         TENKYHANVAY = N'${TENKYHANVAY}', 
                         BOND_ID = ${BOND_ID}, 
                         MS_TP = N'${MS_TP}', 
-                        MS_LTT = N'${MS_LTT}', 
                         LS_TOIDA = ${LS_TOIDA}, 
                         LS_VTH = ${LS_VTH}, 
                         LS_BIENDO = ${LS_BIENDO}, 

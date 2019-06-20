@@ -2,7 +2,7 @@ var express = require('express');
 var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB]';
+const tbl = '[dbo].[TB_LAISUAT]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {

@@ -62,7 +62,7 @@ router.post('/core', async (req, res) => {
                     SO_TKCK: SO_TKCK,
                     MS_NGUOIGIOITHIEU: MS_NGUOIGIOITHIEU
                 }
-                createToken(res, user);
+                createToken(res, [user]);
             } catch (error) {
                 res.status(500).json({ error: error.message });
             }

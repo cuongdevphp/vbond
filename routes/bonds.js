@@ -171,6 +171,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
 
+        console.log(req.body);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl_bond} SET 
                         MSTP = N'${MSTP}', 
@@ -198,6 +199,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE BONDID = ${BONDID} `;
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

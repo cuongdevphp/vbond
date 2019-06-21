@@ -39,7 +39,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
         (BOND_ID, GIATRI_HIENTAI, NGAY_AP, NGAY_HH, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-        (${BOND_ID}, ${GIATRI_HIENTAI}, '${new Date(Date.now(NGAY_AP)).toISOString()}', '${new Date(Date.now(NGAY_HH)).toISOString()}', N'${GHICHU}', ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
+        (${BOND_ID}, ${GIATRI_HIENTAI}, '${new Date(NGAY_AP).toISOString()}', '${new Date(NGAY_HH).toISOString()}', N'${GHICHU}', ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -66,8 +66,8 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         BOND_ID = ${BOND_ID}, 
                         GIATRI_HIENTAI = ${GIATRI_HIENTAI}, 
-                        NGAY_AP = '${new Date(Date.now(NGAY_AP)).toISOString()}',
-                        NGAY_HH = '${new Date(Date.now(NGAY_HH)).toISOString()}',
+                        NGAY_AP = '${new Date(NGAY_AP).toISOString()}',
+                        NGAY_HH = '${new Date(NGAY_HH).toISOString()}',
                         GHICHU = N'${GHICHU}', 
                         TRANGTHAI = ${TRANGTHAI}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 

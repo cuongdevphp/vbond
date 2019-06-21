@@ -1,43 +1,44 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var debug = require('debug')('vbond:server');
-var http = require('http');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const debug = require('debug')('vbond:server');
+const http = require('http');
+const cron = require('cron');
 
-var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
-var usersRouter = require('./routes/users');
-var prefixRouter = require('./routes/prefix');
-var companyRouter = require('./routes/company');
-var interestRateBankRouter = require('./routes/interest_rate_bank');
-var feeTradeRouter = require('./routes/fee_trade');
-var bondTypeRouter = require('./routes/bond_type');
-var paymentTermRouter = require('./routes/payment_term');
-var commandTypeRouter = require('./routes/command_type');
-var tradeStatusRouter = require('./routes/trade_status');
-var branchVCSCRouter = require('./routes/branch_vcsc');
-var nhdtTypeRouter = require('./routes/nhdt_type');
-var roomTypeRouter = require('./routes/room_type');
-var investorsRouter = require('./routes/investors');
-var authPageRouter = require('./routes/auth_page');
-var contractVCSCRouter = require('./routes/contract_vcsc');
-var interestRateRouter = require('./routes/interest_rate');
-var bondPriceRouter = require('./routes/bond_price');
-var roomVCSCRouter = require('./routes/room_vcsc');
-var ensureAssetsRouter = require('./routes/ensure_assets');
-var bondsRouter = require('./routes/bonds');
-var setCommandBuyRouter = require('./routes/set_command_buy');
-var roomInvestorsRouter = require('./routes/room_investors');
-var setCommandRouter = require('./routes/set_command');
-var dateInterestYearRouter = require('./routes/date_interest_year');
+const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
+const usersRouter = require('./routes/users');
+const prefixRouter = require('./routes/prefix');
+const companyRouter = require('./routes/company');
+const interestRateBankRouter = require('./routes/interest_rate_bank');
+const feeTradeRouter = require('./routes/fee_trade');
+const bondTypeRouter = require('./routes/bond_type');
+const paymentTermRouter = require('./routes/payment_term');
+const commandTypeRouter = require('./routes/command_type');
+const tradeStatusRouter = require('./routes/trade_status');
+const branchVCSCRouter = require('./routes/branch_vcsc');
+const nhdtTypeRouter = require('./routes/nhdt_type');
+const roomTypeRouter = require('./routes/room_type');
+const investorsRouter = require('./routes/investors');
+const authPageRouter = require('./routes/auth_page');
+const contractVCSCRouter = require('./routes/contract_vcsc');
+const interestRateRouter = require('./routes/interest_rate');
+const bondPriceRouter = require('./routes/bond_price');
+const roomVCSCRouter = require('./routes/room_vcsc');
+const ensureAssetsRouter = require('./routes/ensure_assets');
+const bondsRouter = require('./routes/bonds');
+const setCommandBuyRouter = require('./routes/set_command_buy');
+const roomInvestorsRouter = require('./routes/room_investors');
+const setCommandRouter = require('./routes/set_command');
+const dateInterestYearRouter = require('./routes/date_interest_year');
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || '3001');
+const port = normalizePort(process.env.PORT || '3001');
 
-var app = express();
+const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -100,11 +101,11 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-var hostname = '0.0.0.0';
+const hostname = '0.0.0.0';
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
@@ -136,7 +137,7 @@ function setHeader(res, next) {
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -160,7 +161,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
+  const bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
 
@@ -184,8 +185,8 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
+  const addr = server.address();
+  const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);

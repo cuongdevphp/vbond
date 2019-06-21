@@ -1,16 +1,17 @@
-var express = require('express');
-var header = require('../header');
-var moment = require('moment');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 
 
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_TRAIPHIEU]';
+const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_company = '[dbo].[TB_CONGTY]';
 const tbl_KHTT = '[dbo].[TB_KYHANTHANHTOAN]';
 const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
 const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
+const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -25,7 +26,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                         e.TENLOAI_TP, 
                         f.SONGAYTINHLAI
                     FROM
-                        ${tbl} p
+                        ${tbl_bond} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
                     LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN
                     LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT
@@ -45,6 +46,7 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
+        // Body Bond
         const MSTP = req.body.MSTP;
         const SO_HD = req.body.SO_HD;
         const MS_DN = req.body.MS_DN;
@@ -64,28 +66,36 @@ router.post('/', header.verifyToken, async (req, res) => {
         const NGAY_KTPH = req.body.NGAY_KTPH;
         const TONGHANMUC_HUYDONG = req.body.TONGHANMUC_HUYDONG;
         const HANMUC_CHO = req.body.HANMUC_CHO;
-        const KYHAN_CONLAI = req.body.KYHAN_CONLAI;
+        const KYHAN = req.body.KYHAN;
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
+        
         const pool = await poolPromise;
-        const queryDulicateMSTP = `SELECT MSTP FROM ${tbl} WHERE MSTP = '${MSTP}'`;
+        const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);
         if(rsDup.recordset.length === 0) {
-            const sql = `INSERT INTO ${tbl}
+            const sql = `INSERT INTO ${tbl_bond} 
                 (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, LAISUAT_HH, 
                 MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
-                NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN_CONLAI, 
+                NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
                 TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
                 (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
                 N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
                 N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
                 '${new Date(NGAYPH).toISOString()}', '${new Date(NGAYDH).toISOString()}', 
                 '${new Date(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
-                ${KYHAN_CONLAI}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
-                '${new Date(Date.now()).toISOString()}', ${1});`
+                ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
+                '${new Date(Date.now()).toISOString()}', ${1});
+                SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
             try {
-                await pool.request().query(sql);
+                // Body Room VCSC
+                const rs = await pool.request().query(sql);
+                await pool.request().query(`
+                    INSERT INTO ${tbl_roomVCSC} 
+                    (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, ${KYHAN}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
+                `);
                 res.send('Create data successful!');
             } catch (error) {
                 res.status(500).json({ error: error.message });
@@ -121,13 +131,13 @@ router.put('/', header.verifyToken, async (req, res) => {
         const NGAY_KTPH = req.body.NGAY_KTPH;
         const TONGHANMUC_HUYDONG = req.body.TONGHANMUC_HUYDONG;
         const HANMUC_CHO = req.body.HANMUC_CHO;
-        const KYHAN_CONLAI = req.body.KYHAN_CONLAI;
+        const KYHAN = req.body.KYHAN;
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
 
         const pool = await poolPromise;
-        const sql = `UPDATE ${tbl} SET 
+        const sql = `UPDATE ${tbl_bond} SET 
                         MSTP = N'${MSTP}', 
                         SO_HD = N'${SO_HD}', 
                         MS_DN = N'${MS_DN}', 
@@ -147,7 +157,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         NGAY_KTPH = '${new Date(NGAY_KTPH).toISOString()}', 
                         TONGHANMUC_HUYDONG = ${TONGHANMUC_HUYDONG}, 
                         HANMUC_CHO = ${HANMUC_CHO}, 
-                        KYHAN_CONLAI = ${KYHAN_CONLAI}, 
+                        KYHAN = ${KYHAN}, 
                         TT_NIEMYET = ${TT_NIEMYET}, 
                         TS_DAMBAO = N'${TS_DAMBAO}', 
                         SL_LUUKY = ${SL_LUUKY}, 
@@ -168,7 +178,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const BONDID = req.body.BONDID;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
+        const sql = `UPDATE ${tbl_bond} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

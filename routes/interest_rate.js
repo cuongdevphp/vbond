@@ -40,15 +40,15 @@ router.post('/', header.verifyToken, async (req, res) => {
         const MA_NH03 = req.body.MA_NH03;
         const MA_NH04 = req.body.MA_NH04;
         const MA_NH05 = req.body.MA_NH05;
-        const GHICHU_TT = req.body.GHICHU_TT;
+        const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS;
 
         const pool = await poolPromise;
         const queryDulicateMSLS = `SELECT MSLS FROM ${tbl} WHERE MSLS = '${MSLS}'`;
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSLS, BOND_ID, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, GHICHU_TT, NGAYTAO, FLAG) VALUES 
-                (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${GHICHU_TT}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (MSLS, BOND_ID, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, DIEUKHOAN_LS, NGAYTAO, FLAG) VALUES 
+                (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${DIEUKHOAN_LS}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -77,7 +77,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MA_NH03 = req.body.MA_NH03;
         const MA_NH04 = req.body.MA_NH04;
         const MA_NH05 = req.body.MA_NH05;
-        const GHICHU_TT = req.body.GHICHU_TT;
+        const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS;
         
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
@@ -91,7 +91,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MA_NH03 = N'${MA_NH03}', 
                         MA_NH04 = N'${MA_NH04}', 
                         MA_NH05 = N'${MA_NH05}', 
-                        GHICHU_TT = N'${GHICHU_TT}', 
+                        DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
                     WHERE MSLS = '${MSLS}'`;
         try {

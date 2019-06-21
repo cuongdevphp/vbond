@@ -12,6 +12,7 @@ const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
 const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
+const tbl_interest_rate = '[dbo].[TB_LAISUAT]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -40,6 +41,40 @@ router.get('/', header.verifyToken, async (req, res) => {
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:id', header.verifyToken, async (req, res) => {
+    header.jwtVerify(req, res);
+    const bondId = req.params.id;
+    if(bondId) {
+        try {
+            const pool = await poolPromise;
+            const sql = `SELECT
+                            b.TEN_DN, 
+                            b.MSDN, 
+                            e.TENLOAI_TP, 
+                            e.GHICHU AS GHICHU_LTP, 
+                            p.MENHGIA, p.NGAYPH, p.NGAYDH, 
+                            a.DIEUKHOAN_LS, 
+                            d.LOAI_TT, 
+                            c.TRANGTHAI 
+                        FROM 
+                            ${tbl_bond} p 
+                        LEFT JOIN ${tbl_interest_rate} a ON a.BOND_ID = p.BONDID 
+                        LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN 
+                        LEFT JOIN ${tbl_roomVCSC} c ON c.BOND_ID = p.BONDID 
+                        LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
+                        LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
+                        WHERE BONDID = ${req.params.id} 
+                        ORDER BY 
+                            p.BONDID DESC;
+            `;
+            const result = await pool.request().query(sql);
+            return res.json(result.recordset[0]);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
     }
 });
 
@@ -94,7 +129,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, ${KYHAN}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${0}, ${KYHAN}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
                 `);
                 res.send('Create data successful!');
             } catch (error) {

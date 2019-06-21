@@ -19,7 +19,7 @@ router.get('/', header.verifyToken, async (req, res) => {
             ORDER BY
                 p.MSGIATRI DESC;
         `;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSGIATRI] DESC');
+        const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -2,7 +2,6 @@ const express = require('express');
 const header = require('../header');
 const moment = require('moment');
 
-
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
@@ -51,6 +50,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
         try {
             const pool = await poolPromise;
             const sql = `SELECT
+                            p.HANMUC_CHO,
                             b.TEN_DN, 
                             b.MSDN, 
                             e.TENLOAI_TP, 
@@ -66,7 +66,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         LEFT JOIN ${tbl_roomVCSC} c ON c.BOND_ID = p.BONDID 
                         LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
                         LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
-                        WHERE BONDID = ${req.params.id} 
+                        WHERE BONDID = ${bondId} 
                         ORDER BY 
                             p.BONDID DESC;
             `;
@@ -171,7 +171,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
 
-        console.log(req.body);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl_bond} SET 
                         MSTP = N'${MSTP}', 
@@ -199,7 +198,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
                     WHERE BONDID = ${BONDID} `;
-        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

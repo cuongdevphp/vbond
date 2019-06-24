@@ -51,11 +51,14 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             const pool = await poolPromise;
             const sql = `SELECT
                             p.HANMUC_CHO,
+                            p.LAISUAT_HH,
+                            p.MENHGIA, 
+                            p.NGAYPH, 
+                            p.NGAYDH, 
                             b.TEN_DN, 
                             b.MSDN, 
                             e.TENLOAI_TP, 
                             e.GHICHU AS GHICHU_LTP, 
-                            p.MENHGIA, p.NGAYPH, p.NGAYDH, 
                             a.DIEUKHOAN_LS, 
                             d.LOAI_TT, 
                             c.TRANGTHAI 

@@ -76,7 +76,7 @@ router.post('/core', async (req, res) => {
 });
 
 function createToken (res, data) {
-    jwt.sign({ data }, 'secretkey', { expiresIn: '28800s' }, (err, token) => {
+    jwt.sign({ data }, 'secretkey', { expiresIn: '8h' }, (err, token) => {
         res.json({
             token,
             user: data[0]

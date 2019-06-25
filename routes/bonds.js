@@ -12,6 +12,7 @@ const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
 const tbl_interest_rate = '[dbo].[TB_LAISUAT]';
+const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -63,6 +64,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             a.DIEUKHOAN_LS, 
                             d.LOAI_TT, 
                             f.SONGAYTINHLAI,
+                            g.GIATRI_HIENTAI, 
                             c.TRANGTHAI 
                         FROM 
                             ${tbl_bond} p 
@@ -72,6 +74,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
                         LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
                         LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
+                        LEFT JOIN ${tbl_bond_price} g ON g.BOND_ID = p.BONDID
                         WHERE BONDID = ${bondId} 
                         ORDER BY 
                             p.BONDID DESC;

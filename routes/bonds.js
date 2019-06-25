@@ -62,6 +62,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             e.GHICHU AS GHICHU_LTP, 
                             a.DIEUKHOAN_LS, 
                             d.LOAI_TT, 
+                            f.SONGAYTINHLAI,
                             c.TRANGTHAI 
                         FROM 
                             ${tbl_bond} p 
@@ -70,6 +71,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         LEFT JOIN ${tbl_roomVCSC} c ON c.BOND_ID = p.BONDID 
                         LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
                         LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
+                        LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                         WHERE BONDID = ${bondId} 
                         ORDER BY 
                             p.BONDID DESC;
@@ -130,6 +132,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             try {
                 // Body Room VCSC
                 const rs = await pool.request().query(sql);
+                const statusRoomVCSC = "";
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 

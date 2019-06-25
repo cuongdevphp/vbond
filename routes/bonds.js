@@ -66,7 +66,8 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             d.LOAI_TT, 
                             f.SONGAYTINHLAI,
                             g.GIATRI_HIENTAI, 
-                            c.TRANGTHAI 
+                            c.TRANGTHAI, 
+                            c.MSROOM 
                         FROM 
                             ${tbl_bond} p 
                         LEFT JOIN ${tbl_interest_rate} a ON a.BOND_ID = p.BONDID 

@@ -52,7 +52,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             const pool = await poolPromise;
             const sql = `SELECT
                             p.KYHAN,
-                            p.BONGID,
+                            p.BONDID,
                             p.HANMUC_CHO,
                             p.LAISUAT_HH,
                             p.MENHGIA, 
@@ -81,6 +81,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         ORDER BY 
                             p.BONDID DESC;
             `;
+            console.log(sql, "sql");
             const result = await pool.request().query(sql);
             return res.json(result.recordset[0]);
         } catch (err) {

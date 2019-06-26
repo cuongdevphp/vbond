@@ -21,12 +21,12 @@ router.post('/', header.verifyToken, async (req, res) => {
     try {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
-        const MA_NN = req.body.MA_NN;
+        const MA_NH = req.body.MA_NH;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
-            (TEN_NH, MA_NN, LAISUAT_HH, NGAYTAO, FLAG) VALUES 
-            (N'${TEN_NH}', N'${MA_NN}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`;
+            (TEN_NH, MA_NH, LAISUAT_HH, NGAYTAO, FLAG) VALUES 
+            (N'${TEN_NH}', N'${MA_NH}', '${LAISUAT_HH}', '${new Date(Date.now()).toISOString()}', ${1});`;
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -44,12 +44,12 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
         const LAISUAT_ID = req.body.LAISUAT_ID;
-        const MA_NN = req.body.MA_NN;
+        const MA_NH = req.body.MA_NH;
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TEN_NH = N'${TEN_NH}', 
-                        MA_NN = N'${MA_NN}', 
+                        MA_NH = N'${MA_NH}', 
                         LAISUAT_HH = '${LAISUAT_HH}', 
                         NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
                     WHERE LAISUAT_ID = '${LAISUAT_ID}' `;

@@ -3,6 +3,8 @@ var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_DATLENH]';
+const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
+const tbl_investors = '[dbo].[TB_NHADAUTU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -11,11 +13,16 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT 
-                    p.*
+                    p.*,
+                    a.MSTP,
+                    b.TENNDT
                 FROM
                     ${tbl} p
-                ;
-            `;
+                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT
+                ORDER BY
+                    p.MSDL DESC;
+            ;`;
         const result = await pool.request().query(sql);
         result.recordset.forEach(function(v) {
             v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)

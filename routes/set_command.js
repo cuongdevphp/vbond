@@ -10,15 +10,35 @@ router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const sql = `SELECT
-                    JSON_VALUE(NGAY_TRAITUC, '$.firstName') as firstName, 
-                    JSON_VALUE(NGAY_TRAITUC, '$.lastName') as lastName 
+        const sql = `SELECT 
+                    p.*
                 FROM
-                    ${tbl}
-                WHERE MSDL = 8;
+                    ${tbl} p
+                ;
             `;
-        console.log(sql);
         const result = await pool.request().query(sql);
+        const rs = [];
+        // for(const key in result.recordset) {
+        //     const data = JSON.parse("[" + result.recordset[0].NGAY_TRAITUC + "]");
+        //     rs.push({
+                
+        //         NGAY_TRAITUC: data
+        //     });
+        // }
+        console.log(result.recordset);
+        for (const i = 0; i <= result.recordset.length; i++) {
+            const data = JSON.parse("[" + result.recordset[i].NGAY_TRAITUC + "]");
+            //console.log(data);
+            result.recordset.push({
+                test: 'test'
+            });
+        }
+        console.log(rs);
+        //console.log(result.recordset);
+        //console.log(result.recordset);
+        
+        //console.log(JSON.parse("[" + result.recordset[0].NGAY_TRAITUC + "]"));
+       // return res.json();
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -37,19 +57,17 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TONGGIATRI = req.body.TONGGIATRI;
         const LAISUAT_DH = req.body.LAISUAT_DH;
         const NGAY_GD = req.body.NGAY_GD;
-        const NGAY_DH = req.body.NGAY_DH;
         const GHICHU = req.body.GHICHU || '';
         const NGAY_TRAITUC = req.body.NGAY_TRAITUC;
 
-        console.log(NGAY_TRAITUC);
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
         (BOND_ID, MS_NDT, MS_ROOM,
-        MS_NGUOI_GT, SOLUONG, DONGIA, TONGGIATRI, LAISUAT_DH, NGAY_GD, NGAY_DH, 
+        MS_NGUOI_GT, SOLUONG, DONGIA, TONGGIATRI, LAISUAT_DH, NGAY_GD, 
         TRANGTHAI_LENH, NGAY_TRAITUC, GHICHU, NGAYTAO, FLAG) VALUES 
         (${BOND_ID}, N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
-        '${new Date(NGAY_GD).toISOString()}', '${new Date(NGAY_DH).toISOString()}', 
-        '${0}', '${NGAY_TRAITUC}', N'${GHICHU}','${new Date(Date.now()).toISOString()}', ${1});`
+        '${new Date(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
+        '${new Date(Date.now()).toISOString()}', ${1});`
         console.log(sql, "sql");
         try {
             await pool.request().query(sql);

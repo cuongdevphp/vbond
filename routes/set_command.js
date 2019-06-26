@@ -17,28 +17,9 @@ router.get('/', header.verifyToken, async (req, res) => {
                 ;
             `;
         const result = await pool.request().query(sql);
-        const rs = [];
-        // for(const key in result.recordset) {
-        //     const data = JSON.parse("[" + result.recordset[0].NGAY_TRAITUC + "]");
-        //     rs.push({
-                
-        //         NGAY_TRAITUC: data
-        //     });
-        // }
-        console.log(result.recordset);
-        for (const i = 0; i <= result.recordset.length; i++) {
-            const data = JSON.parse("[" + result.recordset[i].NGAY_TRAITUC + "]");
-            //console.log(data);
-            result.recordset.push({
-                test: 'test'
-            });
-        }
-        console.log(rs);
-        //console.log(result.recordset);
-        //console.log(result.recordset);
-        
-        //console.log(JSON.parse("[" + result.recordset[0].NGAY_TRAITUC + "]"));
-       // return res.json();
+        result.recordset.forEach(function(v) {
+            v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)
+        });
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });

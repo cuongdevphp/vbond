@@ -35,10 +35,12 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
             const pool = await poolPromise;
             const sql = `SELECT 
                             p.*,
-                            a.MSTP 
+                            a.MSTP, 
+                            b.TENNDT 
                         FROM 
                             ${tbl_datlenh} p 
                         LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                        LEFT JOIN ${tbl_NDT} b ON b.MSNDT = p.MS_NDT
                         WHERE MS_NDT = ${investorId} AND TRANGTHAI_LENH = ${status}
                         ORDER BY 
                             p.MSDL DESC;

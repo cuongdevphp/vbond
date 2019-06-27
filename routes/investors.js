@@ -2,7 +2,8 @@ var express = require('express');
 var header = require('../header');
 const { poolPromise } = require('../db');
 var router = express.Router();
-const tbl = '[dbo].[TB_NHADAUTU]';
+const tbl_NDT = '[dbo].[TB_NHADAUTU]';
+const tbl_datlenh = '[dbo].[TB_DATLENH]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -12,7 +13,7 @@ router.get('/', header.verifyToken, async (req, res) => {
         const sql = `SELECT
                         p.* 
                     FROM
-                        ${tbl} p
+                        ${tbl_NDT} p
                     ORDER BY
                         MSNDT DESC;
         `
@@ -20,6 +21,28 @@ router.get('/', header.verifyToken, async (req, res) => {
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:id', header.verifyToken, async (req, res) => {
+    header.jwtVerify(req, res);
+    const investorId = req.params.id;
+    if(investorId) {
+        try {
+            const pool = await poolPromise;
+            const sql = `SELECT 
+                            p.*, 
+                        FROM 
+                            ${tbl_datlenh} p 
+                        WHERE MS_NDT = ${investorId} 
+                        ORDER BY 
+                            p.MSDL DESC;
+            `;
+            const result = await pool.request().query(sql);
+            return res.json(result.recordset[0]);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
     }
 });
 
@@ -36,10 +59,10 @@ router.post('/', header.verifyToken, async (req, res) => {
         const MS_NGUOIGIOITHIEU = req.body.MS_NGUOIGIOITHIEU;
 
         const pool = await poolPromise;
-        const queryDulicateMSNDT = `SELECT MSNDT FROM ${tbl} WHERE MSNDT = '${MSNDT}'`;
+        const queryDulicateMSNDT = `SELECT MSNDT FROM ${tbl_NDT} WHERE MSNDT = '${MSNDT}'`;
         const rsDup = await pool.request().query(queryDulicateMSNDT);
         if(rsDup.recordset.length === 0) {
-            const sql = `INSERT INTO ${tbl}
+            const sql = `INSERT INTO ${tbl_NDT}
                 (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NOICAP, NGAYCAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
                 (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', N'${NOICAP}', '${new Date(NGAYCAP).toISOString()}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', '${new Date(Date.now()).toISOString()}', ${1});`
             try {
@@ -69,7 +92,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MS_NGUOIGIOITHIEU = req.body.MS_NGUOIGIOITHIEU;
 
         const pool = await poolPromise;
-        const sql = `UPDATE ${tbl} SET 
+        const sql = `UPDATE ${tbl_NDT} SET 
                         LOAINDT = N'${LOAINDT}', 
                         TENNDT = N'${TENNDT}', 
                         CMND_GPKD = N'${CMND_GPKD}', 
@@ -95,7 +118,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSNDT = N'${MSNDT}'`;
+        const sql = `UPDATE ${tbl_NDT} SET FLAG = ${0} WHERE MSNDT = N'${MSNDT}'`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

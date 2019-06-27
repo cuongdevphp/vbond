@@ -33,7 +33,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.post('/:MSDL/:status', header.verifyToken, async (req, res) => {
+router.put('/updateStatus', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MSDL = req.body.MSDL;
@@ -41,7 +41,7 @@ router.post('/:MSDL/:status', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        status = ${status}, 
+                        TRANGTHAI_LENH = ${status}, 
                     WHERE MSDL = ${MSDL}`;
         try {
             await pool.request().query(sql);

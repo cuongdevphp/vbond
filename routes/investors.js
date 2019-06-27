@@ -39,6 +39,9 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             p.MSDL DESC;
             `;
             const result = await pool.request().query(sql);
+            result.recordset.forEach(function(v) {
+                v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)
+            });    
             return res.json(result.recordset[0]);
         } catch (err) {
             res.status(500).json({ error: err.message });

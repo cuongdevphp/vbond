@@ -31,7 +31,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
         try {
             const pool = await poolPromise;
             const sql = `SELECT 
-                            p.*, 
+                            p.*
                         FROM 
                             ${tbl_datlenh} p 
                         WHERE MS_NDT = ${investorId} 

@@ -4,6 +4,7 @@ const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl_NDT = '[dbo].[TB_NHADAUTU]';
 const tbl_datlenh = '[dbo].[TB_DATLENH]';
+const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {

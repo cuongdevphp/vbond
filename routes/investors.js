@@ -24,17 +24,21 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.get('/:id', header.verifyToken, async (req, res) => {
+router.get('/:id/:status', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     const investorId = req.params.id;
+    const status = req.params.status;
+    console.log(status);
     if(investorId) {
         try {
             const pool = await poolPromise;
             const sql = `SELECT 
-                            p.*
+                            p.*,
+                            a.MSTP 
                         FROM 
                             ${tbl_datlenh} p 
-                        WHERE MS_NDT = ${investorId} 
+                        LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                        WHERE MS_NDT = ${investorId} AND TRANGTHAI_LENH = ${status}
                         ORDER BY 
                             p.MSDL DESC;
             `;

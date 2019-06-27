@@ -41,7 +41,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        TRANGTHAI_LENH = ${status}, 
+                        TRANGTHAI_LENH = ${status}
                     WHERE MSDL = ${MSDL}`;
         try {
             await pool.request().query(sql);

@@ -34,10 +34,11 @@ router.get('/', header.verifyToken, async (req, res) => {
                     LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
                     LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                     ORDER BY
-                        p.MSDL DESC;
+                        p.BONDID DESC;
                 `;
 
         const result = await pool.request().query(sql);
+
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });

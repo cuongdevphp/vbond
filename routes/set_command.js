@@ -33,6 +33,28 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
+router.post('/:MSDL/:status', header.verifyToken, async (req, res) => {
+    header.jwtVerify(req, res);
+    try {
+        const MSDL = req.body.MSDL;
+        const status = req.body.status;
+
+        const pool = await poolPromise;
+        const sql = `UPDATE ${tbl} SET 
+                        status = ${status}, 
+                    WHERE MSDL = ${MSDL}`;
+        try {
+            await pool.request().query(sql);
+            res.status(200).json({ message: 'Duyệt lệnh thành công' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
@@ -56,7 +78,6 @@ router.post('/', header.verifyToken, async (req, res) => {
         (${BOND_ID}, N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
         '${new Date(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
         '${new Date(Date.now()).toISOString()}', ${1});`
-        console.log(sql, "sql");
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

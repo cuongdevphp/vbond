@@ -34,7 +34,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                     LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
                     LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                     ORDER BY
-                        p.BONDID DESC;
+                        p.MSDL DESC;
                 `;
 
         const result = await pool.request().query(sql);
@@ -59,6 +59,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             p.NGAYPH, 
                             p.NGAYDH, 
                             b.TEN_DN, 
+                            b.MSTP, 
                             b.MSDN, 
                             e.TENLOAI_TP, 
                             e.GHICHU AS GHICHU_LTP, 
@@ -81,7 +82,6 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         ORDER BY 
                             p.BONDID DESC;
             `;
-            console.log(sql, "sql");
             const result = await pool.request().query(sql);
             return res.json(result.recordset[0]);
         } catch (err) {

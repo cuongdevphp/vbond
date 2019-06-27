@@ -59,6 +59,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             p.MENHGIA, 
                             p.NGAYPH, 
                             p.NGAYDH, 
+                            p.HANMUC_CHO, 
                             b.TEN_DN, 
                             p.MSTP, 
                             b.MSDN, 

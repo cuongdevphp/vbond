@@ -7,9 +7,9 @@ const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
 
 /* GET listing. */
-router.get('/', header.verifyToken, async (req, res) => {
-    //header.setHeader(res);
+router.get('/:status', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
+    const status = req.params.status || '';
     try {
         const pool = await poolPromise;
         const sql = `SELECT 
@@ -19,7 +19,8 @@ router.get('/', header.verifyToken, async (req, res) => {
                 FROM
                     ${tbl} p
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-                LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT
+                LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
+                ${(status) ? `WHERE TRANGTHAI_LENH = ${status}` : ''} 
                 ORDER BY
                     p.MSDL DESC;
             ;`;

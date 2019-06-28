@@ -21,7 +21,8 @@ router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
-        const GHICHU = req.body.GHICHU || null;
+        const GHICHU = req.body.GHICHU || '';
+        
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
                     (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
@@ -41,8 +42,9 @@ router.put('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
-        const GHICHU = req.body.GHICHU || null;
+        const GHICHU = req.body.GHICHU || '';
         const PREFIX_ID = req.body.PREFIX_ID;
+
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         KYTU_PREFIX = N'${KYTU_PREFIX}', 

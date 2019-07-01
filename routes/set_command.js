@@ -5,6 +5,7 @@ var router = express.Router();
 const tbl = '[dbo].[TB_DATLENH]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
+const tbl_assets = '[dbo].[TB_TAISAN]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
@@ -25,7 +26,7 @@ router.get('/:status', header.verifyToken, async (req, res) => {
                     p.MSDL DESC;
             ;`;
         const result = await pool.request().query(sql);
-        result.recordset.forEach(function(v) {
+        result.recordset.forEach((v) => {
             v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)
         });
         return res.json(result.recordset);
@@ -45,7 +46,26 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         TRANGTHAI_LENH = ${status}
                     WHERE MSDL = ${MSDL}`;
         try {
-            await pool.request().query(sql);
+            //await pool.request().query(sql);
+            const fetchCommand = await pool.request().query(`
+                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
+                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH
+                FROM ${tbl} p 
+                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                WHERE MSDL = ${MSDL}`
+            );
+            console.log(fetchCommand);
+            // await pool.request().query(`
+            //     INSERT INTO ${tbl_assets}
+            //     (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
+            //     SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
+            //     LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
+            //     (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
+            //     N'${MS_TP}', N'${MS_LENHMUA}', ${LAISUATKHIMUA}, 
+            //     ${SONGAYNAMGIU}, '${new Date(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
+            //     ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
+            //     ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});
+            // `);
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -54,7 +74,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
 
 router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);

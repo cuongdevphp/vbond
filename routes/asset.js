@@ -48,6 +48,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
         ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

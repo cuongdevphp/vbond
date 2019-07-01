@@ -3,7 +3,7 @@ const header = require('../header');
 const moment = require('moment');
 
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_company = '[dbo].[TB_CONGTY]';
 const tbl_KHTT = '[dbo].[TB_KYHANTHANHTOAN]';
@@ -131,10 +131,10 @@ router.post('/', header.verifyToken, async (req, res) => {
                 (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
                 N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
                 N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
-                '${new Date(NGAYPH).toISOString()}', '${new Date(NGAYDH).toISOString()}', 
-                '${new Date(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
+                '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
+                '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
                 ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
-                '${new Date(Date.now()).toISOString()}', ${1});
+                '${moment().toISOString()}', ${1});
                 SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
             try {
                 // Body Room VCSC
@@ -201,16 +201,16 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_DPH = ${SL_DPH}, 
                         SL_LH = ${SL_LH}, 
                         SL_TH = ${SL_TH}, 
-                        NGAYPH = '${new Date(NGAYPH).toISOString()}', 
-                        NGAYDH = '${new Date(NGAYDH).toISOString()}', 
-                        NGAY_KTPH = '${new Date(NGAY_KTPH).toISOString()}', 
+                        NGAYPH = '${moment(NGAYPH).toISOString()}', 
+                        NGAYDH = '${moment(NGAYDH).toISOString()}', 
+                        NGAY_KTPH = '${moment(NGAY_KTPH).toISOString()}', 
                         TONGHANMUC_HUYDONG = ${TONGHANMUC_HUYDONG}, 
                         HANMUC_CHO = ${HANMUC_CHO}, 
                         KYHAN = ${KYHAN}, 
                         TT_NIEMYET = ${TT_NIEMYET}, 
                         TS_DAMBAO = N'${TS_DAMBAO}', 
                         SL_LUUKY = ${SL_LUUKY}, 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
         try {
             await pool.request().query(sql);

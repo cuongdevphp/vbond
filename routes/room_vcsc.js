@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 /* GET listing. */
@@ -40,7 +41,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_roomVCSC}
                 (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                (${BOND_ID}, ${LAISUATNAM}, ${HANMUC}, ${DANGCHO}, ${THANGCONLAI}, ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
+                (${BOND_ID}, ${LAISUATNAM}, ${HANMUC}, ${DANGCHO}, ${THANGCONLAI}, ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -74,7 +75,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         DANGCHO = ${DANGCHO}, 
                         THANGCONLAI = ${THANGCONLAI}, 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSROOM = ${MSROOM} `;
         try {
             await pool.request().query(sql);

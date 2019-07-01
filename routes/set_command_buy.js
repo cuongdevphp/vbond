@@ -39,8 +39,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         TONGGIATRIPHAITRA, NGAY_GD, NGAY_DH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
         (N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOIBAN}', ${BOND_ID}, N'${MS_TP}', N'${MS_TAISAN}',
         ${SOLUONGMUA}, ${LAISUATMUA}, ${LAISUAT_DH}, ${TONGGIATRIPHAITRA}, 
-        '${new Date(NGAY_GD).toISOString()}', '${new Date(NGAY_DH).toISOString()}', N'${TRANGTHAI}',
-        '${new Date(Date.now()).toISOString()}', ${1});`
+        '${moment(NGAY_GD).toISOString()}', '${moment(NGAY_DH).toISOString()}', N'${TRANGTHAI}',
+        '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -82,10 +82,10 @@ router.put('/', header.verifyToken, async (req, res) => {
                         LAISUATMUA = ${LAISUATMUA}, 
                         LAISUAT_DH = ${LAISUAT_DH}, 
                         TONGGIATRIPHAITRA = ${TONGGIATRIPHAITRA}, 
-                        NGAY_GD = '${new Date(NGAY_GD).toISOString()}', 
-                        NGAY_DH = '${new Date(NGAY_DH).toISOString()}', 
+                        NGAY_GD = '${moment(NGAY_GD).toISOString()}', 
+                        NGAY_DH = '${moment(NGAY_DH).toISOString()}', 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSLENHMUA = ${MSLENHMUA} `;
         try {
             await pool.request().query(sql);

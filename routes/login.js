@@ -50,7 +50,7 @@ router.post('/core', async (req, res) => {
                 (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
                 (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${moment(NGAYCAP).format('YYYY-MM-DD')}', 
                 N'${NOICAP}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', 
-                '${new Date(Date.now()).toISOString()}', ${1});`;
+                '${moment().toISOString()}', ${1});`;
             try {
                 await pool.request().query(sql);
                 const user = {

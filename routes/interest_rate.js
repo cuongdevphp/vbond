@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_LAISUAT]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 
@@ -48,7 +49,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (MSLS, BOND_ID, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, DIEUKHOAN_LS, NGAYTAO, FLAG) VALUES 
-                (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${DIEUKHOAN_LS}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${DIEUKHOAN_LS}', '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -92,7 +93,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MA_NH04 = N'${MA_NH04}', 
                         MA_NH05 = N'${MA_NH05}', 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
+                        NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSLS = '${MSLS}'`;
         try {
             await pool.request().query(sql);

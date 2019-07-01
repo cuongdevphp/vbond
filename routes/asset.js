@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_TAISAN]';
 
 /* GET listing. */
@@ -24,8 +25,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const MS_DL = req.body.MS_DL;
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
-        const MS_LENHMUA = req.body.MS_LENHMUA;
-        const MS_TRANGTHAI = req.body.MS_TRANGTHAI;
+        const MS_LENHMUA = req.body.MS_LENHMUA || '';
         const LAISUATKHIMUA = req.body.LAISUATKHIMUA;
         const SONGAYNAMGIU = req.body.SONGAYNAMGIU;
         const NGAYMUA = req.body.NGAYMUA;
@@ -46,9 +46,9 @@ router.post('/', header.verifyToken, async (req, res) => {
         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
         (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
         N'${MS_TP}', N'${MS_LENHMUA}', ${MS_TRANGTHAI}, ${LAISUATKHIMUA}, 
-        ${SONGAYNAMGIU}, '${new Date(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
+        ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
-        ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});`
+        ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -68,8 +68,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MS_DL = req.body.MS_DL;
         const BOND_ID = req.body.BOND_ID;
         const MS_TP = req.body.MS_TP;
-        const MS_LENHMUA = req.body.MS_LENHMUA;
-        const MS_TRANGTHAI = req.body.MS_TRANGTHAI;
+        const MS_LENHMUA = req.body.MS_LENHMUA || '';
         const LAISUATKHIMUA = req.body.LAISUATKHIMUA;
         const SONGAYNAMGIU = req.body.SONGAYNAMGIU;
         const NGAYMUA = req.body.NGAYMUA;
@@ -93,7 +92,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MS_TRANGTHAI = ${MS_TRANGTHAI}, 
                         LAISUATKHIMUA = ${LAISUATKHIMUA}, 
                         SONGAYNAMGIU = ${SONGAYNAMGIU}, 
-                        NGAYMUA = '${new Date(NGAYMUA).toISOString()}', 
+                        NGAYMUA = '${moment(NGAYMUA).toISOString()}', 
                         SOLUONG = ${SOLUONG}, 
                         DONGIA = ${DONGIA}, 
                         TONGGIATRI = ${TONGGIATRI}, 
@@ -103,7 +102,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         LAISUATKHIBAN = ${LAISUATKHIBAN}, 
                         TRANGTHAI = ${TRANGTHAI}, 
                         CAPGIAY_CN = N'${CAPGIAY_CN}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSTS = ${MSTS} `;
         try {
             await pool.request().query(sql);

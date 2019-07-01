@@ -29,7 +29,6 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     const investorId = req.params.id;
     const status = req.params.status;
-    console.log(status);
     if(investorId) {
         try {
             const pool = await poolPromise;

@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_CACCHINHAVCSC]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -33,7 +34,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (MSCNVCSC, TENCHINHANH, NGUOIDAIDIEN, DTNGUOIDAIDIEN, EMAIL, SOGPTL, TKNH, TENNH, NGAYTAO, FLAG) VALUES 
-                (N'${MSCNVCSC}', N'${TENCHINHANH}', N'${NGUOIDAIDIEN}', N'${DTNGUOIDAIDIEN}', N'${EMAIL}', N'${SOGPTL}', N'${TKNH}', N'${TENNH}', '${new Date(Date.now()).toISOString()}', ${1});`
+                (N'${MSCNVCSC}', N'${TENCHINHANH}', N'${NGUOIDAIDIEN}', N'${DTNGUOIDAIDIEN}', N'${EMAIL}', N'${SOGPTL}', N'${TKNH}', N'${TENNH}', '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -69,7 +70,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SOGPTL = N'${SOGPTL}', 
                         TKNH = N'${TKNH}', 
                         TENNH = N'${TENNH}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSCNVCSC = '${MSCNVCSC}' `;
         try {
             await pool.request().query(sql);

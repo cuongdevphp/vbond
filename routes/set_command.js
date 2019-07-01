@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_DATLENH]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
@@ -46,15 +47,15 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         TRANGTHAI_LENH = ${status}
                     WHERE MSDL = ${MSDL}`;
         try {
-            //await pool.request().query(sql);
-            const fetchCommand = await pool.request().query(`
-                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
-                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH
-                FROM ${tbl} p 
-                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-                WHERE MSDL = ${MSDL}`
-            );
-            console.log(fetchCommand);
+            await pool.request().query(sql);
+            // const fetchCommand = await pool.request().query(`
+            //     SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.
+            //         a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
+            //     FROM ${tbl} p 
+            //     LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+            //     WHERE MSDL = ${MSDL}`
+            // );
+            // console.log(fetchCommand);
             // await pool.request().query(`
             //     INSERT INTO ${tbl_assets}
             //     (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
@@ -96,8 +97,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         MS_NGUOI_GT, SOLUONG, DONGIA, TONGGIATRI, LAISUAT_DH, NGAY_GD, 
         TRANGTHAI_LENH, NGAY_TRAITUC, GHICHU, NGAYTAO, FLAG) VALUES 
         (${BOND_ID}, N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
-        '${new Date(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
-        '${new Date(Date.now()).toISOString()}', ${1});`
+        '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
+        '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -143,11 +144,11 @@ router.put('/', header.verifyToken, async (req, res) => {
                         DONGIA = ${DONGIA}, 
                         TONGGIATRI = ${TONGGIATRI}, 
                         LAISUAT_DH = ${LAISUAT_DH}, 
-                        NGAY_GD = '${new Date(NGAY_GD).toISOString()}',
-                        NGAY_DH = '${new Date(NGAY_DH).toISOString()}',
+                        NGAY_GD = '${moment(NGAY_GD).toISOString()}',
+                        NGAY_DH = '${moment(NGAY_DH).toISOString()}',
                         GHICHU = N'${GHICHU}', 
                         TRANGTHAICHO = N'${TRANGTHAICHO}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
+                        NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSDL = ${MSDL}`;
         try {
             await pool.request().query(sql);

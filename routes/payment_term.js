@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_KYHANTHANHTOAN]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -24,7 +25,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
         (LOAI_TT, GHICHU, NGAYTAO, FLAG) VALUES 
-        (${LOAI_TT}, N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+        (${LOAI_TT}, N'${GHICHU}', '${moment().toISOString()}', ${1});`
     try {
         await pool.request().query(sql);
         res.send('Create data successful!');
@@ -47,7 +48,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         LOAI_TT = ${LOAI_TT}, 
                         GHICHU = N'${GHICHU}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSKYHANTT = ${MSKYHANTT} `;
         try {
             await pool.request().query(sql);

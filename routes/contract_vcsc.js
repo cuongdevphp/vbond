@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_branchVCSC = '[dbo].[TB_CACCHINHAVCSC]';
 const tbl_company = '[dbo].[TB_CONGTY]';
@@ -46,10 +47,10 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (SOHD, MS_DN, MS_CNVCSC, NGAYKY, LAISUAT, KYHAN, NGAY_PH, NGAY_DH, MENHGIA_TP, SOLUONG_PH, NGAYTAO, FLAG) VALUES 
-                (N'${SOHD}', N'${MS_DN}', '${MS_CNVCSC}', '${new Date(NGAYKY).toISOString()}', ${LAISUAT}, 
-                ${KYHAN}, '${new Date(NGAY_PH).toISOString()}', 
-                '${new Date(NGAY_DH).toISOString()}', ${MENHGIA_TP}, 
-                ${SOLUONG_PH}, '${new Date(Date.now()).toISOString()}', ${1});`
+                (N'${SOHD}', N'${MS_DN}', '${MS_CNVCSC}', '${moment(NGAYKY).toISOString()}', ${LAISUAT}, 
+                ${KYHAN}, '${moment(NGAY_PH).toISOString()}', 
+                '${moment(NGAY_DH).toISOString()}', ${MENHGIA_TP}, 
+                ${SOLUONG_PH}, '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -81,14 +82,14 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         MS_DN = N'${MS_DN}', 
                         MS_CNVCSC = N'${MS_CNVCSC}', 
-                        NGAYKY = '${new Date(NGAYKY).toISOString()}', 
+                        NGAYKY = '${moment(NGAYKY).toISOString()}', 
                         LAISUAT = ${LAISUAT}, 
                         KYHAN = ${KYHAN}, 
-                        NGAY_PH = '${new Date(NGAY_PH).toISOString()}',
-                        NGAY_DH = '${new Date(NGAY_DH).toISOString()}',
+                        NGAY_PH = '${moment(NGAY_PH).toISOString()}',
+                        NGAY_DH = '${moment(NGAY_DH).toISOString()}',
                         MENHGIA_TP = ${MENHGIA_TP}, 
                         SOLUONG_PH = ${SOLUONG_PH}, 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE SOHD = '${SOHD}' `;
         try {
             await pool.request().query(sql);

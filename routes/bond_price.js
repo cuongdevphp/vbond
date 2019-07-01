@@ -1,7 +1,8 @@
-var express = require('express');
-var header = require('../header');
+const express = require('express');
+const header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_GIATRITRAIPHIEU]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 
@@ -39,7 +40,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
         (BOND_ID, GIATRI_HIENTAI, NGAY_AP, NGAY_HH, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-        (${BOND_ID}, ${GIATRI_HIENTAI}, '${new Date(NGAY_AP).toISOString()}', '${new Date(NGAY_HH).toISOString()}', N'${GHICHU}', ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
+        (${BOND_ID}, ${GIATRI_HIENTAI}, '${moment(NGAY_AP).toISOString()}', '${moment(NGAY_HH).toISOString()}', N'${GHICHU}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -66,11 +67,11 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         BOND_ID = ${BOND_ID}, 
                         GIATRI_HIENTAI = ${GIATRI_HIENTAI}, 
-                        NGAY_AP = '${new Date(NGAY_AP).toISOString()}',
-                        NGAY_HH = '${new Date(NGAY_HH).toISOString()}',
+                        NGAY_AP = '${moment(NGAY_AP).toISOString()}',
+                        NGAY_HH = '${moment(NGAY_HH).toISOString()}',
                         GHICHU = N'${GHICHU}', 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}' 
+                        NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSGIATRI = ${MSGIATRI}`;
         try {
             await pool.request().query(sql);

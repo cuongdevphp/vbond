@@ -4,13 +4,29 @@ const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
 const tbl = '[dbo].[TB_TAISAN]';
+const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
+const tbl_investors = '[dbo].[TB_NHADAUTU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
-        const sql = `SELECT * FROM ${tbl} ORDER BY [MSTS] DESC`;
+        const sql = `SELECT 
+                        p.*,
+                        a.MSTP,
+                        a.SO_HD,
+                        a.NGAYPH,
+                        a.NGAYDH,
+                        a.LAISUAT_HH,
+                        b.TENNDT
+                    FROM 
+                        ${tbl} p 
+                    LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
+                    LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
+                    ORDER BY
+                        p.MSTS DESC;`;
+
         const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {
@@ -48,7 +64,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
         ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`
-        console.log(sql);
+
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -56,7 +72,6 @@ router.post('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
-        console.log(err.message);
         res.status(500).json({ error: err.message });
     }
 });

@@ -44,7 +44,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
         (N'${MS_NDT}', ${MS_DL}, ${BOND_ID}, 
-        N'${MS_LENHMUA}', ${LAISUATKHIMUA}, 
+        ${MS_LENHMUA}, ${LAISUATKHIMUA}, 
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
         ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`

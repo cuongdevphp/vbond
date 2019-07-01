@@ -1,5 +1,6 @@
 var express = require('express');
 var header = require('../header');
+const moment = require('moment');
 const { poolPromise } = require('../db');
 var router = express.Router();
 const tbl = '[dbo].[TB_CONGTY]';
@@ -34,7 +35,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
                 (MSDN, TEN_DN, DIACHI, DIENTHOAI, EMAIL, NGAYCAP_GP, NGUOI_DDPL, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                ('${MSDN}', N'${TEN_DN}', N'${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${new Date(NGAYCAP_GP).toISOString()}', N'${NGUOI_DDPL}', '${TRANGTHAI}', '${new Date(Date.now()).toISOString()}', ${1});`
+                ('${MSDN}', N'${TEN_DN}', N'${DIACHI}', '${DIENTHOAI}', '${EMAIL}', '${moment().toISOString(NGAYCAP_GP)}', N'${NGUOI_DDPL}', '${TRANGTHAI}', '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -67,10 +68,10 @@ router.put('/', header.verifyToken, async (req, res) => {
                         DIACHI = N'${DIACHI}', 
                         DIENTHOAI = '${DIENTHOAI}', 
                         EMAIL = '${EMAIL}', 
-                        NGAYCAP_GP = '${new Date(NGAYCAP_GP).toISOString()}', 
+                        NGAYCAP_GP = '${moment().toISOString(NGAYCAP_GP)}', 
                         NGUOI_DDPL = N'${NGUOI_DDPL}', 
                         TRANGTHAI = '${TRANGTHAI}', 
-                        NGAYUPDATE = '${new Date(Date.now()).toISOString()}'
+                        NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSDN = '${MSDN}' `;
         try {
             await pool.request().query(sql);

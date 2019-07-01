@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require('debug')('vbond:server');
 const http = require('http');
-const cron = require('cron');
+const cron = require('./cronjob');
 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
@@ -33,6 +33,7 @@ const setCommandBuyRouter = require('./routes/set_command_buy');
 const roomInvestorsRouter = require('./routes/room_investors');
 const setCommandRouter = require('./routes/set_command');
 const dateInterestYearRouter = require('./routes/date_interest_year');
+const assetRouter = require('./routes/asset');
 /**
  * Get port from environment and store in Express.
  */
@@ -50,6 +51,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/*', function(req, res, next) {
   setHeader(res, next);
 });
+
+cron.updateBondMonth();
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
@@ -77,6 +80,7 @@ app.use('/setCommandBuy', setCommandBuyRouter);
 app.use('/roomInvestors', roomInvestorsRouter);
 app.use('/setCommand', setCommandRouter);
 app.use('/dateInterestYear', dateInterestYearRouter);
+app.use('/assets', assetRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

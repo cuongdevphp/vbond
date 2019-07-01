@@ -22,9 +22,8 @@ router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MS_NDT = req.body.MS_NDT;
-        const MS_DL = req.body.MS_DL;
+        const MS_DL = req.body.MS_DL || '';
         const BOND_ID = req.body.BOND_ID;
-        const MS_TP = req.body.MS_TP;
         const MS_LENHMUA = req.body.MS_LENHMUA || '';
         const LAISUATKHIMUA = req.body.LAISUATKHIMUA;
         const SONGAYNAMGIU = req.body.SONGAYNAMGIU;
@@ -40,12 +39,12 @@ router.post('/', header.verifyToken, async (req, res) => {
         const CAPGIAY_CN = req.body.CAPGIAY_CN;
 
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${tbl}
-        (MS_NDT, MS_DL, BOND_ID, MS_TP, MS_LENHMUA, MS_TRANGTHAI, LAISUATKHIMUA, 
+        const sql = `INSERT INTO ${tbl} 
+        (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
         SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
         (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
-        N'${MS_TP}', N'${MS_LENHMUA}', ${MS_TRANGTHAI}, ${LAISUATKHIMUA}, 
+        N'${MS_LENHMUA}', ${LAISUATKHIMUA}, 
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
         ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`

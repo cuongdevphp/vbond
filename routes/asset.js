@@ -22,9 +22,9 @@ router.post('/', header.verifyToken, async (req, res) => {
     header.jwtVerify(req, res);
     try {
         const MS_NDT = req.body.MS_NDT;
-        const MS_DL = req.body.MS_DL || '';
+        const MS_DL = req.body.MS_DL || null;
         const BOND_ID = req.body.BOND_ID;
-        const MS_LENHMUA = req.body.MS_LENHMUA || '';
+        const MS_LENHMUA = req.body.MS_LENHMUA || null;
         const LAISUATKHIMUA = req.body.LAISUATKHIMUA;
         const SONGAYNAMGIU = req.body.SONGAYNAMGIU;
         const NGAYMUA = req.body.NGAYMUA;
@@ -43,7 +43,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
         SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-        (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
+        (N'${MS_NDT}', ${MS_DL}, ${BOND_ID}, 
         N'${MS_LENHMUA}', ${LAISUATKHIMUA}, 
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 

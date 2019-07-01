@@ -56,6 +56,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
+        console.log(err.message);
         res.status(500).json({ error: err.message });
     }
 });

@@ -1,5 +1,6 @@
 const express = require('express');
 const header = require('../header');
+const common = require('../common');
 const moment = require('moment');
 
 const { poolPromise } = require('../db');
@@ -118,9 +119,12 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
-        
+
+        const month = await common.monthDiff(new Date(), new Date(NGAYDH));
+
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
+        
         const rsDup = await pool.request().query(queryDulicateMSTP);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_bond} 
@@ -143,7 +147,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${0}, ${KYHAN}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
                 `);
                 res.send('Create data successful!');
             } catch (error) {

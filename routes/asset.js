@@ -63,7 +63,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         ${MS_LENHMUA}, ${LAISUATKHIMUA}, 
         ${SONGAYNAMGIU}, '${moment(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
         ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
-        ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${moment().toISOString()}', ${1});`
+        ${LAISUATKHIBAN}, ${TRANGTHAI}, ${CAPGIAY_CN}, '${moment().toISOString()}', ${1});`
 
         try {
             await pool.request().query(sql);
@@ -117,7 +117,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         GIATRIKHIBAN = ${GIATRIKHIBAN}, 
                         LAISUATKHIBAN = ${LAISUATKHIBAN}, 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        CAPGIAY_CN = N'${CAPGIAY_CN}', 
+                        CAPGIAY_CN = ${CAPGIAY_CN}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSTS = ${MSTS} `;
         try {

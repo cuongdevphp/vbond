@@ -8,6 +8,7 @@ const tbl = '[dbo].[TB_DATLENH]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
 const tbl_assets = '[dbo].[TB_TAISAN]';
+const tbl_NTL = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
@@ -49,25 +50,34 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     WHERE MSDL = ${MSDL}`;
         try {
             await pool.request().query(sql);
-            // const fetchCommand = await pool.request().query(`
-            //     SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
-            //         a.LAISUAT_HH, a.NGAYPH, a.NGAYDH
-            //     FROM ${tbl} p 
-            //     LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-            //     WHERE MSDL = ${MSDL}`
-            // );
-            // console.log(fetchCommand);
-            // await pool.request().query(`
-            //     INSERT INTO ${tbl_assets}
-            //     (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
-            //     SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
-            //     LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-            //     (N'${fetchCommand[0].MS_NDT}', N'${fetchCommand[0].MS_DL}', ${fetchCommand[0].BOND_ID}, 
-            //     N'${fetchCommand[0].MS_LENHMUA}', ${fetchCommand[0].LAISUAT_HH}, 
-            //     ${SONGAYNAMGIU}, '${moment().toISOString()}', ${SOLUONG}, ${DONGIA}, 
-            //     ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
-            //     ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});
-            // `);
+            const fetchCommand = await pool.request().query(`
+                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
+                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
+                    b.SONGAYTINHLAI
+                FROM ${tbl} p 
+                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                LEFT JOIN ${tbl_NTL} B ON a.MS_NTLTN = b.MSNTLTN
+                WHERE MSDL = ${MSDL}`
+            );
+            console.log(fetchCommand);
+            const day = common.genTotalDateHolding(
+                fetchCommand[0].NGAY_GD, 
+                fetchCommand[0].NGAYPH,
+                fetchCommand[0].NGAYDH,
+                fetchCommand[0].SONGAYTINHLAI
+            );
+            console.log(day);
+            await pool.request().query(`
+                INSERT INTO ${tbl_assets} 
+                (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
+                SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
+                LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
+                (N'${fetchCommand[0].MS_NDT}', N'${fetchCommand[0].MS_DL}', ${fetchCommand[0].BOND_ID}, 
+                N'${fetchCommand[0].MS_LENHMUA}', ${fetchCommand[0].LAISUAT_HH}, 
+                ${day}, '${moment().toISOString()}', ${fetchCommand[0].SOLUONG}, ${fetchCommand[0].DONGIA}, 
+                ${TONGGIATRI}, ${fetchCommand[0].SOLUONG}, ${0}, ${0}, 
+                ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
+            `);
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });

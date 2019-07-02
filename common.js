@@ -13,9 +13,8 @@ module.exports = {
         return lstTmp.toFixed();
     },
 
-    monthDiff: (d1, d2) => {
-        const months = (d2.getFullYear() - d1.getFullYear()) * 12;
-        return months <= 0 ? 0 : months;
+    monthDiff: (dateFrom, dateTo) => {
+        return dateTo.getMonth() - dateFrom.getMonth() +  (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
     }
 };
 

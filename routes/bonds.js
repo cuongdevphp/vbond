@@ -121,7 +121,6 @@ router.post('/', header.verifyToken, async (req, res) => {
         const SL_LUUKY = req.body.SL_LUUKY;
 
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
-
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
         
@@ -216,8 +215,21 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
+        const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         try {
             await pool.request().query(sql);
+            await pool.request().query(`
+            UPDATE ${tbl_roomVCSC} SET 
+                BOND_ID = ${BONDID}, 
+                LAISUATNAM ${LAISUAT_HH}, 
+                HANMUC = ${TONGHANMUC_HUYDONG}, 
+                DANGCHO = ${0}, 
+                THANGCONLAI = ${month}, 
+                TRANGTHAI = ${1}, 
+                NGAYUPDATE = '${moment().toISOString()}'
+            WHERE BONDID = ${BONDID} 
+            `);
+
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -23,6 +23,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TENCHINHANH = req.body.TENCHINHANH;
         const NGUOIDAIDIEN = req.body.NGUOIDAIDIEN;
         const DTNGUOIDAIDIEN = req.body.DTNGUOIDAIDIEN;
+        const DIACHI = req.body.DIACHI;
         const EMAIL = req.body.EMAIL;
         const SOGPTL = req.body.SOGPTL;
         const TKNH = req.body.TKNH;
@@ -33,8 +34,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const rsDup = await pool.request().query(queryDulicateMSCNVCSC);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl}
-                (MSCNVCSC, TENCHINHANH, NGUOIDAIDIEN, DTNGUOIDAIDIEN, EMAIL, SOGPTL, TKNH, TENNH, NGAYTAO, FLAG) VALUES 
-                (N'${MSCNVCSC}', N'${TENCHINHANH}', N'${NGUOIDAIDIEN}', N'${DTNGUOIDAIDIEN}', N'${EMAIL}', N'${SOGPTL}', N'${TKNH}', N'${TENNH}', '${moment().toISOString()}', ${1});`
+                (MSCNVCSC, TENCHINHANH, NGUOIDAIDIEN, DTNGUOIDAIDIEN, DIACHI, EMAIL, SOGPTL, TKNH, TENNH, NGAYTAO, FLAG) VALUES 
+                (N'${MSCNVCSC}', N'${TENCHINHANH}', N'${NGUOIDAIDIEN}', N'${DTNGUOIDAIDIEN}', N'${DIACHI}' , N'${EMAIL}', N'${SOGPTL}', N'${TKNH}', N'${TENNH}', '${moment().toISOString()}', ${1});`
             try {
                 await pool.request().query(sql);
                 res.send('Create data successful!');
@@ -56,6 +57,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TENCHINHANH = req.body.TENCHINHANH;
         const NGUOIDAIDIEN = req.body.NGUOIDAIDIEN;
         const DTNGUOIDAIDIEN = req.body.DTNGUOIDAIDIEN;
+        const DIACHI = req.body.DIACHI;
         const EMAIL = req.body.EMAIL;
         const SOGPTL = req.body.SOGPTL;
         const TKNH = req.body.TKNH;
@@ -66,6 +68,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         TENCHINHANH = N'${TENCHINHANH}', 
                         NGUOIDAIDIEN = N'${NGUOIDAIDIEN}', 
                         DTNGUOIDAIDIEN = N'${DTNGUOIDAIDIEN}', 
+                        DIACHI = N'${DIACHI}', 
                         EMAIL = N'${EMAIL}', 
                         SOGPTL = N'${SOGPTL}', 
                         TKNH = N'${TKNH}', 

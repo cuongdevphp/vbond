@@ -40,7 +40,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 res.status(500).json({ error: error.message });
             }
         } else {
-            res.status(500).json({ error: 'MSGIAYCHUNGNHAN has been duplicate!'});
+            res.status(500).json({ error: 'MSGIAYCHUNGNHAN bị trùng!'});
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

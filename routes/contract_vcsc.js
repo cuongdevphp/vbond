@@ -58,7 +58,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 res.status(500).json({ error: error.message });
             }
         } else {
-            res.status(500).json({ error: 'SOHD has been duplicate!'});
+            res.status(500).json({ error: 'SOHD bị trùng!'});
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

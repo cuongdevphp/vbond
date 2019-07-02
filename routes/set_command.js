@@ -1,5 +1,6 @@
 const express = require('express');
 const header = require('../header');
+const common = require('../common');
 const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
@@ -49,8 +50,8 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         try {
             await pool.request().query(sql);
             // const fetchCommand = await pool.request().query(`
-            //     SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.
-            //         a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
+            //     SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
+            //         a.LAISUAT_HH, a.NGAYPH, a.NGAYDH
             //     FROM ${tbl} p 
             //     LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
             //     WHERE MSDL = ${MSDL}`
@@ -61,9 +62,9 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
             //     (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
             //     SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
             //     LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-            //     (N'${MS_NDT}', N'${MS_DL}', ${BOND_ID}, 
-            //     N'${MS_TP}', N'${MS_LENHMUA}', ${LAISUATKHIMUA}, 
-            //     ${SONGAYNAMGIU}, '${new Date(NGAYMUA).toISOString()}', ${SOLUONG}, ${DONGIA}, 
+            //     (N'${fetchCommand[0].MS_NDT}', N'${fetchCommand[0].MS_DL}', ${fetchCommand[0].BOND_ID}, 
+            //     N'${fetchCommand[0].MS_LENHMUA}', ${fetchCommand[0].LAISUAT_HH}, 
+            //     ${SONGAYNAMGIU}, '${moment().toISOString()}', ${SOLUONG}, ${DONGIA}, 
             //     ${TONGGIATRI}, ${SL_KHADUNG}, ${SL_DABAN}, ${GIATRIKHIBAN}, 
             //     ${LAISUATKHIBAN}, ${TRANGTHAI}, N'${CAPGIAY_CN}', '${new Date(Date.now()).toISOString()}', ${1});
             // `);

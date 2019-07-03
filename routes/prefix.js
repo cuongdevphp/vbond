@@ -26,7 +26,10 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         
         const pool = await poolPromise;
-        await common.checkDupData(res, tbl, 'KYTU_PREFIX', KYTU_PREFIX);
+        const rsDup = await common.checkDupData(tbl, 'KYTU_PREFIX', KYTU_PREFIX);
+        if(rsDup.recordset.length > 0) {
+            return res.status(500).json({ error: `KYTU_PREFIX bị trùng!` });
+        }
         const sql = `INSERT INTO ${tbl}
                     (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
                     (N'${KYTU_PREFIX}', N'${GHICHU}', '${moment().toISOString()}', ${1})`;

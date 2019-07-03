@@ -18,12 +18,9 @@ module.exports = {
         return dateTo.getMonth() - dateFrom.getMonth() +  (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
     },
 
-    checkDupData: async (res, tbl, field, data) => {
+    checkDupData: async (tbl, field, data) => {
         const pool = await poolPromise;
-        const reDup = await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
-        if(reDup.recordset.length > 0) {
-            return res.status(500).json({ error: `${field} bị trùng!` });
-        }
+        return await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
     }
 };
 

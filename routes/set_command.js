@@ -43,7 +43,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
     try {
         const MSDL = req.body.MSDL;
         const status = req.body.status;
-
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TRANGTHAI_LENH = ${status}
@@ -51,7 +50,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         try {
             await pool.request().query(sql);
             const fetchCommand = await pool.request().query(`
-                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, 
+                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
                     a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
                     b.SONGAYTINHLAI
                 FROM ${tbl} p 
@@ -59,25 +58,23 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_NTL} B ON a.MS_NTLTN = b.MSNTLTN
                 WHERE MSDL = ${MSDL}`
             );
-            console.log(fetchCommand);
-            const day = common.genTotalDateHolding(
-                fetchCommand[0].NGAY_GD, 
-                fetchCommand[0].NGAYPH,
-                fetchCommand[0].NGAYDH,
-                fetchCommand[0].SONGAYTINHLAI
+            const day = await common.genTotalDateHolding(
+                fetchCommand.recordset[0].NGAY_GD, 
+                fetchCommand.recordset[0].NGAYPH,
+                fetchCommand.recordset[0].NGAYDH,
+                fetchCommand.recordset[0].SONGAYTINHLAI
             );
-            console.log(day);
-            await pool.request().query(`
+            const insAssets = `
                 INSERT INTO ${tbl_assets} 
-                (MS_NDT, MS_DL, BOND_ID, MS_LENHMUA, LAISUATKHIMUA, 
+                (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
                 SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
                 LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-                (N'${fetchCommand[0].MS_NDT}', N'${fetchCommand[0].MS_DL}', ${fetchCommand[0].BOND_ID}, 
-                N'${fetchCommand[0].MS_LENHMUA}', ${fetchCommand[0].LAISUAT_HH}, 
-                ${day}, '${moment().toISOString()}', ${fetchCommand[0].SOLUONG}, ${fetchCommand[0].DONGIA}, 
-                ${TONGGIATRI}, ${fetchCommand[0].SOLUONG}, ${0}, ${0}, 
+                (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
+                ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
+                ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
                 ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
-            `);
+            `;
+            await pool.request().query(insAssets);
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });

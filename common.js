@@ -1,14 +1,15 @@
 const { poolPromise } = require('./db');
+const moment = require('moment');
 module.exports = {
     //công thức tính gen số ngày nắm giữ
     genTotalDateHolding: async (dateBuy, dateF, dateT, totalDayInterestYear) => {
-        let totalYearHoldBond = diffMonth(dateF, dateT)/12;
-        let dateFToTime = dateToTime(dateF);
-        let dateBuyToTime = dateToTime(dateBuy);
-        let lstTmp = totalYearHoldBond*totalDayInterestYear;
+        const totalYearHoldBond = diffMonth(dateF, dateT)/12;
+        const dateFToTime = dateToTime(dateF);
+        const dateBuyToTime = dateToTime(dateBuy);
+        const lstTmp = totalYearHoldBond*totalDayInterestYear;
     
-        if(dateFToTime < dateBuyToTime){
-            let deductHoldBond = diffDate(dateF, dateBuy);
+        if(dateFToTime < dateBuyToTime) {
+            const deductHoldBond = diffDate(dateF, dateBuy);
             return lstTmp - deductHoldBond;
         }
         return lstTmp.toFixed();

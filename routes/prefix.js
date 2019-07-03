@@ -1,5 +1,6 @@
 const express = require('express');
 const header = require('../header');
+const common = require('../common');
 const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
@@ -25,7 +26,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         
         const pool = await poolPromise;
-        checkDupData(KYTU_PREFIX);
+        await common.checkDupData(res, tbl, 'KYTU_PREFIX', KYTU_PREFIX);
         const sql = `INSERT INTO ${tbl}
                     (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
                     (N'${KYTU_PREFIX}', N'${GHICHU}', '${moment().toISOString()}', ${1})`;
@@ -47,7 +48,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         const PREFIX_ID = req.body.PREFIX_ID;
 
-        checkDupData(KYTU_PREFIX);
+        await common.checkDupData(res, tbl, 'KYTU_PREFIX', KYTU_PREFIX);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         KYTU_PREFIX = N'${KYTU_PREFIX}', 
@@ -82,11 +83,4 @@ router.delete('/', header.verifyToken, async (req, res) => {
     }
 });
 
-async function checkDupData (KYTU_PREFIX) {
-    const pool = await poolPromise;
-    const rsDup = await pool.request().query(`SELECT PREFIX_ID FROM ${tbl} WHERE KYTU_PREFIX = '${KYTU_PREFIX}'`);
-    if(rsDup.recordset.length > 0) {
-        return res.status(500).json({ error: 'Ký tự Prefix bị trùng!'});
-    }
-}
 module.exports = router;

@@ -1,3 +1,4 @@
+const { poolPromise } = require('./db');
 module.exports = {
     //công thức tính gen số ngày nắm giữ
     genTotalDateHolding: async (dateBuy, dateF, dateT, totalDayInterestYear) => {
@@ -15,6 +16,14 @@ module.exports = {
 
     monthDiff: (dateFrom, dateTo) => {
         return dateTo.getMonth() - dateFrom.getMonth() +  (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
+    },
+
+    checkDupData: async (res, tbl, field, data) => {
+        const pool = await poolPromise;
+        const reDup = await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
+        if(reDup.recordset.length > 0) {
+            return res.status(500).json({ error: `${field} bị trùng!` });
+        }
     }
 };
 

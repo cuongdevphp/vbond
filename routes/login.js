@@ -48,7 +48,7 @@ router.post('/core', async (req, res) => {
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_NDT} 
                 (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 
-                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${moment(NGAYCAP).format('YYYY-MM-DD')}', 
+                (N'${MSNDT}', N'${LOAINDT}', N'${TENNDT}', N'${CMND_GPKD}', '${moment(NGAYCAP).toISOString()}', 
                 N'${NOICAP}', N'${SO_TKCK}', N'${MS_NGUOIGIOITHIEU}', 
                 '${moment().toISOString()}', ${1});`;
             try {

@@ -25,7 +25,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         
         const pool = await poolPromise;
-        checkDupData(KYTU_PREFIX);
+        await checkDupData(KYTU_PREFIX);
         const sql = `INSERT INTO ${tbl}
                     (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
                     (N'${KYTU_PREFIX}', N'${GHICHU}', '${moment().toISOString()}', ${1})`;
@@ -47,7 +47,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         const PREFIX_ID = req.body.PREFIX_ID;
 
-        checkDupData(KYTU_PREFIX);
+        await checkDupData(KYTU_PREFIX);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         KYTU_PREFIX = N'${KYTU_PREFIX}', 

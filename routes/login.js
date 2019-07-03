@@ -45,6 +45,7 @@ router.post('/core', async (req, res) => {
         const pool = await poolPromise;
         const queryDulicateAccount = `SELECT * FROM ${tbl_NDT} WHERE MSNDT = N'${MSNDT}'`;
         const rsDup = await pool.request().query(queryDulicateAccount);
+        console.log(NGAYCAP, "NGAYCAP");
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_NDT} 
                 (MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, MS_NGUOIGIOITHIEU, NGAYTAO, FLAG) VALUES 

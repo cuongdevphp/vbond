@@ -25,14 +25,19 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${tbl}
-                    (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
-                    (N'${KYTU_PREFIX}', N'${GHICHU}', '${moment().toISOString()}', ${1})`;
-        try {
-            await pool.request().query(sql);
-            res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        const rsDup = await pool.request().query(`SELECT MSROOM FROM ${tbl} WHERE KYTU_PREFIX = '${KYTU_PREFIX}'`);
+        if(rsDup.recordset.length === 0) {
+            const sql = `INSERT INTO ${tbl}
+                        (KYTU_PREFIX, GHICHU, NGAYTAO, FLAG) VALUES 
+                        (N'${KYTU_PREFIX}', N'${GHICHU}', '${moment().toISOString()}', ${1})`;
+            try {
+                await pool.request().query(sql);
+                res.send('Create data successful!');
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        } else {
+            res.status(500).json({ error: 'Ký tự Prefix bị trùng!'});
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

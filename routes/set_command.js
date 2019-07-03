@@ -48,33 +48,35 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         TRANGTHAI_LENH = ${status}
                     WHERE MSDL = ${MSDL}`;
         try {
-            await pool.request().query(sql);
-            const fetchCommand = await pool.request().query(`
-                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
-                    b.SONGAYTINHLAI
-                FROM ${tbl} p 
-                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-                LEFT JOIN ${tbl_NTL} B ON a.MS_NTLTN = b.MSNTLTN
-                WHERE MSDL = ${MSDL}`
-            );
-            const day = await common.genTotalDateHolding(
-                fetchCommand.recordset[0].NGAY_GD, 
-                fetchCommand.recordset[0].NGAYPH,
-                fetchCommand.recordset[0].NGAYDH,
-                fetchCommand.recordset[0].SONGAYTINHLAI
-            );
-            const insAssets = `
-                INSERT INTO ${tbl_assets} 
-                (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
-                SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
-                LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-                (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
-                ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
-                ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
-                ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
-            `;
-            await pool.request().query(insAssets);
+            if(status === 1) {
+                await pool.request().query(sql);
+                const fetchCommand = await pool.request().query(`
+                    SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
+                        a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
+                        b.SONGAYTINHLAI
+                    FROM ${tbl} p 
+                    LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                    LEFT JOIN ${tbl_NTL} B ON a.MS_NTLTN = b.MSNTLTN
+                    WHERE MSDL = ${MSDL}`
+                );
+                const day = await common.genTotalDateHolding(
+                    fetchCommand.recordset[0].NGAY_GD, 
+                    fetchCommand.recordset[0].NGAYPH,
+                    fetchCommand.recordset[0].NGAYDH,
+                    fetchCommand.recordset[0].SONGAYTINHLAI
+                );
+                const insAssets = `
+                    INSERT INTO ${tbl_assets} 
+                    (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
+                    SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
+                    LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
+                    (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
+                    ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
+                    ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
+                    ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
+                `;
+                await pool.request().query(insAssets);
+            }
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -83,7 +83,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MS_NDT = req.body.MS_NDT;
         const MS_DL = req.body.MS_DL;
         const BOND_ID = req.body.BOND_ID;
-        const MS_TP = req.body.MS_TP;
         const MS_LENHMUA = req.body.MS_LENHMUA || '';
         const LAISUATKHIMUA = req.body.LAISUATKHIMUA;
         const SONGAYNAMGIU = req.body.SONGAYNAMGIU;
@@ -103,7 +102,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MS_NDT = N'${MS_NDT}', 
                         MS_DL = N'${MS_DL}', 
                         BOND_ID = ${BOND_ID}, 
-                        MS_TP = N'${MS_TP}', 
                         MS_LENHMUA = ${MS_LENHMUA}, 
                         LAISUATKHIMUA = ${LAISUATKHIMUA}, 
                         SONGAYNAMGIU = ${SONGAYNAMGIU}, 
@@ -119,6 +117,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         CAPGIAY_CN = ${CAPGIAY_CN}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSTS = ${MSTS} `;
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

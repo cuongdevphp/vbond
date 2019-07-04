@@ -215,6 +215,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
+        console.log(sql, "sql");
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         try {
             await pool.request().query(sql);
@@ -229,7 +230,17 @@ router.put('/', header.verifyToken, async (req, res) => {
                 NGAYUPDATE = '${moment().toISOString()}'
             WHERE BONDID = ${BONDID} 
             `);
-
+            console.log(`
+            UPDATE ${tbl_roomVCSC} SET 
+                BOND_ID = ${BONDID}, 
+                LAISUATNAM ${LAISUAT_HH}, 
+                HANMUC = ${TONGHANMUC_HUYDONG}, 
+                DANGCHO = ${0}, 
+                THANGCONLAI = ${month}, 
+                TRANGTHAI = ${1}, 
+                NGAYUPDATE = '${moment().toISOString()}'
+            WHERE BONDID = ${BONDID} 
+            `);
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });

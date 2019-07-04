@@ -222,7 +222,7 @@ router.put('/', header.verifyToken, async (req, res) => {
             await pool.request().query(`
             UPDATE ${tbl_roomVCSC} SET 
                 BOND_ID = ${BONDID}, 
-                LAISUATNAM ${LAISUAT_HH}, 
+                LAISUATNAM = ${LAISUAT_HH}, 
                 HANMUC = ${TONGHANMUC_HUYDONG}, 
                 DANGCHO = ${0}, 
                 THANGCONLAI = ${month}, 

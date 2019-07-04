@@ -228,18 +228,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                 THANGCONLAI = ${month}, 
                 TRANGTHAI = ${1}, 
                 NGAYUPDATE = '${moment().toISOString()}'
-            WHERE BONDID = ${BONDID} 
-            `);
-            console.log(`
-            UPDATE ${tbl_roomVCSC} SET 
-                BOND_ID = ${BONDID}, 
-                LAISUATNAM ${LAISUAT_HH}, 
-                HANMUC = ${TONGHANMUC_HUYDONG}, 
-                DANGCHO = ${0}, 
-                THANGCONLAI = ${month}, 
-                TRANGTHAI = ${1}, 
-                NGAYUPDATE = '${moment().toISOString()}'
-            WHERE BONDID = ${BONDID} 
+            WHERE BOND_ID = ${BONDID} 
             `);
             res.send('Update data successfully');
         } catch (error) {

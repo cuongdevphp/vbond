@@ -105,7 +105,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         BOND_ID = ${BOND_ID}, 
                         MS_TP = N'${MS_TP}', 
                         MS_LENHMUA = ${MS_LENHMUA}, 
-                        MS_TRANGTHAI = ${MS_TRANGTHAI}, 
                         LAISUATKHIMUA = ${LAISUATKHIMUA}, 
                         SONGAYNAMGIU = ${SONGAYNAMGIU}, 
                         NGAYMUA = '${moment(NGAYMUA).toISOString()}', 

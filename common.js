@@ -22,6 +22,19 @@ module.exports = {
     checkDupData: async (tbl, field, data) => {
         const pool = await poolPromise;
         return await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
+    },
+
+    recipeBondPrice: (C, r, F, n, recipe) => {
+        switch(recipe) {
+            case 12:
+                return Math.round((C*( (1 - Math.pow((1 + r), ((-1) * n) ) ) / r ) + F * (Math.pow((1 + r), ((-1) * n)))) * 100) / 100;
+            case 6:
+                return Math.round((C*( (1 - Math.pow((1 + (r/2)), ((-1) * n) ) ) / (r/2) ) + F * (Math.pow((1 + (r/2)), ((-2) * n)))) * 100) / 100;
+            case 3:
+                return Math.round((C*( (1 - Math.pow((1 + (r/4)), ((-1) * n) ) ) / (r/4) ) + F * (Math.pow((1 + (r/4)), ((-4) * n)))) * 100) / 100;
+            default:
+                break;
+        }
     }
 };
 

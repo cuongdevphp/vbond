@@ -91,6 +91,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SOLUONG_PH = ${SOLUONG_PH}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE SOHD = '${SOHD}' `;
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

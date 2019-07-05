@@ -59,6 +59,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             CONGTHUC
         );
         console.log(bondPrice, "bondPrice");
+        return res.status(200).json({ bondPrice: bondPrice });
         const queryDulicateMSLS = `SELECT MSLS FROM ${tbl} WHERE MSLS = '${MSLS}'`;
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {

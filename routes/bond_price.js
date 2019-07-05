@@ -5,6 +5,7 @@ const { poolPromise } = require('../db');
 const router = express.Router();
 const tbl = '[dbo].[TB_GIATRITRAIPHIEU]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
+const tbl_interest_rate = '[dbo].[TB_LAISUAT]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -13,10 +14,11 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                p.*, a.MSTP 
+                p.*, a.MSTP, b.MSLS
             FROM
                 ${tbl} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
+            LEFT JOIN ${tbl_interest_rate} b ON b.MSLS = p.MS_LS 
             ORDER BY
                 p.MSGIATRI DESC;
         `;
@@ -58,6 +60,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MSGIATRI = req.body.MSGIATRI;
         const BOND_ID = req.body.BOND_ID;
         const GIATRI_HIENTAI = req.body.GIATRI_HIENTAI;
+        const MS_LS = req.body.MS_LS;
         const NGAY_AP = req.body.NGAY_AP;
         const NGAY_HH = req.body.NGAY_HH;
         const GHICHU = req.body.GHICHU;
@@ -67,6 +70,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         BOND_ID = ${BOND_ID}, 
                         GIATRI_HIENTAI = ${GIATRI_HIENTAI}, 
+                        MS_LS = '${MS_LS}', 
                         NGAY_AP = '${moment(NGAY_AP).toISOString()}',
                         NGAY_HH = '${moment(NGAY_HH).toISOString()}',
                         GHICHU = N'${GHICHU}', 

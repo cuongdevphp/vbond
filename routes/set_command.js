@@ -98,7 +98,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     );
                     break;
                 case 3: 
-                    //const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
+                    const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
                     console.log(SLDPH, "SLDPH");
                     try {
                         await pool.request().query(`

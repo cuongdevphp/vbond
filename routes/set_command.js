@@ -19,11 +19,13 @@ router.get('/:status', header.verifyToken, async (req, res) => {
         const sql = `SELECT 
                     p.*,
                     a.MSTP,
-                    b.TENNDT
+                    b.TENNDT,
+                    c.MSTS
                 FROM
                     ${tbl} p
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                 LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
+                LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 ${(status) ? `WHERE TRANGTHAI_LENH = ${status}` : ''} 
                 ORDER BY
                     p.MSDL DESC;
@@ -43,40 +45,69 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
     try {
         const MSDL = req.body.MSDL;
         const status = req.body.status;
+        const MSTS = req.body.MSTS;
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TRANGTHAI_LENH = ${status}
                     WHERE MSDL = ${MSDL}`;
         try {
-            if(status === 1) {
-                await pool.request().query(sql);
-                const fetchCommand = await pool.request().query(`
-                    SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-                        a.LAISUAT_HH, a.NGAYPH, a.NGAYDH,
-                        b.SONGAYTINHLAI
-                    FROM ${tbl} p 
-                    LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-                    LEFT JOIN ${tbl_NTL} B ON a.MS_NTLTN = b.MSNTLTN
-                    WHERE MSDL = ${MSDL}`
-                );
-                const day = await common.genTotalDateHolding(
-                    fetchCommand.recordset[0].NGAY_GD, 
-                    fetchCommand.recordset[0].NGAYPH,
-                    fetchCommand.recordset[0].NGAYDH,
-                    fetchCommand.recordset[0].SONGAYTINHLAI
-                );
-                const insAssets = `
-                    INSERT INTO ${tbl_assets} 
-                    (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
-                    SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
-                    LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-                    (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
-                    ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
-                    ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
-                    ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
-                `;
-                await pool.request().query(insAssets);
+            const fetchCommand = await pool.request().query(`
+                SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
+                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH
+                    b.SONGAYTINHLAI,
+                    c.SOLUONG AS SOLUONGTS
+                FROM ${tbl} p 
+                LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
+                LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
+                LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
+                WHERE MSDL = ${MSDL}`
+            );
+            switch(status) {
+                case 1: 
+                    const day = await common.genTotalDateHolding(
+                        fetchCommand.recordset[0].NGAY_GD, 
+                        fetchCommand.recordset[0].NGAYPH,
+                        fetchCommand.recordset[0].NGAYDH,
+                        fetchCommand.recordset[0].SONGAYTINHLAI
+                    );
+                    await pool.request().query(`
+                        INSERT INTO ${tbl_assets} 
+                        (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
+                        SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
+                        LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
+                        (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
+                        ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
+                        ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
+                        ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
+                    `);
+                    const exceptBondQuatity = fetchCommand.recordset[0].SL_DPH - fetchCommand.recordset[0].SOLUONG;
+                    // console.log(exceptBondQuatity);
+                    await pool.request().query(`
+                        UPDATE ${tbl_bond} SET 
+                            SL_DPH = ${exceptBondQuatity}, 
+                            NGAYUPDATE = '${moment().toISOString()}' 
+                        WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
+                    );
+                    break;
+                case 3: 
+                    const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
+                    await pool.request().query(`
+                        UPDATE ${tbl_assets} SET 
+                            SOLUONG = ${0}, 
+                            NGAYUPDATE = '${moment().toISOString()}' 
+                        WHERE MSTS = ${MSTS}`
+                    );
+                    await pool.request().query(`
+                        UPDATE ${tbl_bond} SET 
+                            SL_DPH = ${SLDPH}, 
+                            NGAYUPDATE = '${moment().toISOString()}' 
+                        WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
+                    );
+                    break;
+                default:
+                    break;
             }
+            await pool.request().query(sql);
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });

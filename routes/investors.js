@@ -5,6 +5,7 @@ var router = express.Router();
 const tbl_NDT = '[dbo].[TB_NHADAUTU]';
 const tbl_datlenh = '[dbo].[TB_DATLENH]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
+const tbl_assets = '[dbo].[TB_TAISAN]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -35,11 +36,13 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
             const sql = `SELECT 
                             p.*,
                             a.MSTP, 
-                            b.TENNDT 
+                            b.TENNDT,
+                            c.MSTS
                         FROM 
                             ${tbl_datlenh} p 
                         LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                         LEFT JOIN ${tbl_NDT} b ON b.MSNDT = p.MS_NDT
+                        LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                         WHERE MS_NDT = '${investorId}' AND TRANGTHAI_LENH = ${status}
                         ORDER BY 
                             p.MSDL DESC;

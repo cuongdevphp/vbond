@@ -19,13 +19,11 @@ router.get('/:status', header.verifyToken, async (req, res) => {
         const sql = `SELECT 
                     p.*,
                     a.MSTP,
-                    b.TENNDT,
-                    c.MSTS
+                    b.TENNDT
                 FROM
                     ${tbl} p
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                 LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
-                LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 ${(status) ? `WHERE TRANGTHAI_LENH = ${status}` : ''} 
                 ORDER BY
                     p.MSDL DESC;

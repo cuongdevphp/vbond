@@ -47,9 +47,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         console.log(req.body);
         console.log(status, MSTS);
         const pool = await poolPromise;
-        const sql = `UPDATE ${tbl} SET 
-                        TRANGTHAI_LENH = ${status}
-                    WHERE MSDL = ${MSDL}`;
         try {
             const fetchCommand = await pool.request().query(`
                 SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
@@ -62,6 +59,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 WHERE MSDL = ${MSDL}`
             );
+            console.log(fetchCommand);
             switch(status) {
                 case 1: 
                     const day = await common.genTotalDateHolding(
@@ -90,7 +88,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     );
                     break;
                 case 3: 
-                    const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
+                    //const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
                     console.log(SLDPH, "SLDPH");
                     try {
                         await pool.request().query(`
@@ -119,7 +117,11 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 default:
                     break;
             }
-            await pool.request().query(sql);
+            await pool.request().query(`
+                UPDATE ${tbl} SET 
+                    TRANGTHAI_LENH = ${status}
+                WHERE MSDL = ${MSDL}`
+            );
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
             res.status(500).json({ error: error.message });

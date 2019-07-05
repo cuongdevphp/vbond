@@ -58,8 +58,6 @@ router.post('/', header.verifyToken, async (req, res) => {
             bondData.recordset[0].KYHAN, 
             CONGTHUC
         );
-        console.log(bondPrice, "bondPrice");
-        return res.status(200).json({ bondPrice: bondPrice });
         const queryDulicateMSLS = `SELECT MSLS FROM ${tbl} WHERE MSLS = '${MSLS}'`;
         const rsDup = await pool.request().query(queryDulicateMSLS);
         if(rsDup.recordset.length === 0) {
@@ -67,13 +65,13 @@ router.post('/', header.verifyToken, async (req, res) => {
                 (MSLS, BOND_ID, LS_TOIDA, LS_TH, LS_BIENDO, LS_BINHQUAN, MA_NH01, MA_NH02, MA_NH03, MA_NH04, MA_NH05, DIEUKHOAN_LS, NGAYTAO, FLAG) VALUES 
                 (N'${MSLS}', ${BOND_ID}, ${LS_TOIDA}, ${LS_TH}, ${LS_BIENDO}, ${LS_BINHQUAN}, N'${MA_NH01}', N'${MA_NH02}', N'${MA_NH03}', N'${MA_NH04}', N'${MA_NH05}', N'${DIEUKHOAN_LS}', '${moment().toISOString()}', ${1});`
             try {
-                //await pool.request().query(sql);
+                await pool.request().query(sql);
                 try {
-                    // await pool.request().query(`
-                    // INSERT INTO ${tbl_bond_price}
-                    // (BOND_ID, MS_LS, GIATRI_HIENTAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    // (${BOND_ID}, '${MSLS}', ${bondPrice}, ${1}, '${moment().toISOString()}', ${1});
-                    // `);
+                    await pool.request().query(`
+                    INSERT INTO ${tbl_bond_price}
+                    (BOND_ID, MS_LS, GIATRI_HIENTAI, NGAY_AP, NGAY_HH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${BOND_ID}, '${MSLS}', ${bondPrice}, '${moment().toISOString()}', '${moment().toISOString()}', ${1}, '${moment().toISOString()}', ${1});
+                    `);
                     res.send('Create data successful!');
                 } catch (err) {
                     res.status(500).json({ error: err.message });

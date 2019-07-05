@@ -42,11 +42,12 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
                             ${tbl_datlenh} p 
                         LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                         LEFT JOIN ${tbl_NDT} b ON b.MSNDT = p.MS_NDT
-                        LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
+                        LEFT JOIN ${tbl_assets} c ON c.MSDL = p.MS_DL 
                         WHERE MS_NDT = '${investorId}' AND TRANGTHAI_LENH = ${status}
                         ORDER BY 
                             p.MSDL DESC;
             `;
+            console.log(sql);
             const result = await pool.request().query(sql);
             result.recordset.forEach(function(v) {
                 v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)

@@ -44,6 +44,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         const MSDL = req.body.MSDL;
         const status = req.body.status;
         const MSTS = req.body.MSTS;
+        console.log(status, MSTS);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TRANGTHAI_LENH = ${status}
@@ -89,18 +90,29 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     break;
                 case 3: 
                     const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
-                    await pool.request().query(`
-                        UPDATE ${tbl_assets} SET 
-                            SOLUONG = ${0}, 
-                            NGAYUPDATE = '${moment().toISOString()}' 
-                        WHERE MSTS = ${MSTS}`
-                    );
-                    await pool.request().query(`
-                        UPDATE ${tbl_bond} SET 
-                            SL_DPH = ${SLDPH}, 
-                            NGAYUPDATE = '${moment().toISOString()}' 
-                        WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
-                    );
+                    try {
+                        await pool.request().query(`
+                            UPDATE ${tbl_assets} SET 
+                                SOLUONG = ${0}, 
+                                NGAYUPDATE = '${moment().toISOString()}' 
+                            WHERE MSTS = ${MSTS}`
+                        );
+
+                    } catch (err) {
+                        console.log(err, 1);
+                    }
+
+                    try{
+                        await pool.request().query(`
+                            UPDATE ${tbl_bond} SET 
+                                SL_DPH = ${SLDPH}, 
+                                NGAYUPDATE = '${moment().toISOString()}' 
+                            WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
+                        );
+
+                    } catch (err) {
+                        console.log(err, 2);
+                    }
                     break;
                 default:
                     break;

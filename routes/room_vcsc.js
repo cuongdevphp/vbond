@@ -11,7 +11,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT 
-                p.*, a.MSTP 
+                p.*, a.MSTP, a.SL_DPH 
             FROM
                 ${tbl_roomVCSC} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 

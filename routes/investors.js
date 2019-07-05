@@ -47,7 +47,6 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
                         ORDER BY 
                             p.MSDL DESC;
             `;
-            console.log(sql);
             const result = await pool.request().query(sql);
             result.recordset.forEach(function(v) {
                 v.NGAY_TRAITUC = JSON.parse(v.NGAY_TRAITUC)

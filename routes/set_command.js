@@ -44,6 +44,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         const MSDL = req.body.MSDL;
         const status = req.body.status;
         const MSTS = req.body.MSTS;
+        console.log(req.body);
         console.log(status, MSTS);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 

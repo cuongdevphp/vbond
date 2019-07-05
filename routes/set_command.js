@@ -47,20 +47,10 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         console.log(req.body);
         console.log(status, MSTS);
         const pool = await poolPromise;
-        console.log(`
-        SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-            a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH
-            b.SONGAYTINHLAI,
-            c.SOLUONG AS SOLUONGTS
-        FROM ${tbl} p 
-        LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-        LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
-        LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
-        WHERE MSDL = ${MSDL}`);
         try {
             const fetchCommand = await pool.request().query(`
                 SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH
+                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH, 
                     b.SONGAYTINHLAI,
                     c.SOLUONG AS SOLUONGTS
                 FROM ${tbl} p 
@@ -69,7 +59,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 WHERE MSDL = ${MSDL}`
             );
-            console.log(fetchCommand);
             switch(status) {
                 case 1: 
                     const day = await common.genTotalDateHolding(

@@ -43,7 +43,7 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
                         LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                         LEFT JOIN ${tbl_NDT} b ON b.MSNDT = p.MS_NDT
                         LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
-                        WHERE MS_NDT = '${investorId}' AND TRANGTHAI_LENH = ${status}
+                        WHERE p.MS_NDT = '${investorId}' AND TRANGTHAI_LENH = ${status}
                         ORDER BY 
                             p.MSDL DESC;
             `;

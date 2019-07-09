@@ -51,9 +51,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/*', function(req, res, next) {
-  setHeader(res, next);
-});
+// app.use('/*', function(req, res, next) {
+//   setHeader(res, next);
+// });
 
 app.use(header.verifyToken, (req, res, next) => {
   //setHeader(res, next);

@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -6,6 +7,7 @@ const logger = require('morgan');
 const debug = require('debug')('vbond:server');
 const http = require('http');
 const cron = require('./cronjob');
+const header = require('./header');
 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
@@ -50,6 +52,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/*', function(req, res, next) {
   setHeader(res, next);
+});
+
+app.use(header.verifyToken, (req, res, next) => {
+  jwt.verify(req.token, 'secretkey', (err) => {
+    if(err) {
+      return res.status(403).json({ error: err.message });
+    } else {
+      next();
+    }
+  });
 });
 
 cron.updateBondMonth();

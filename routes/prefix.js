@@ -1,5 +1,4 @@
 const express = require('express');
-const header = require('../header');
 const common = require('../common');
 const moment = require('moment');
 const { poolPromise } = require('../db');
@@ -7,9 +6,7 @@ const router = express.Router();
 const tbl = '[dbo].[TB_PREFIX]';
 
 /* GET listing. */
-router.get('/', header.verifyToken, async (req, res) => {
-    //header.setHeader(res);
-    header.jwtVerify(req, res);
+router.get('/', async (req, res) => {
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [PREFIX_ID] DESC');
@@ -19,8 +16,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
+router.post('/', async (req, res) => {
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU || '';
@@ -44,8 +40,7 @@ router.post('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
+router.put('/', async (req, res) => {
     try {
         const KYTU_PREFIX = req.body.KYTU_PREFIX;
         const GHICHU = req.body.GHICHU || '';
@@ -69,8 +64,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
+router.delete('/', async (req, res) => {
     try {
         const PREFIX_ID = req.body.PREFIX_ID;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE PREFIX_ID = ${PREFIX_ID}`;

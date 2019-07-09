@@ -55,12 +55,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // });
 
 app.use('/*', header.verifyToken, (req, res, next) => {
-
+  setHeader(res, next);
   jwt.verify(req.token, 'secretkey', (err) => {
     if(err) {
       return res.status(403).json({ error: err.message });
     } else {
-      setHeader(res, next);
       next();
     }
   });

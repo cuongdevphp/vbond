@@ -50,15 +50,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/*', function(req, res, next) {
-  setHeader(res, next);
-});
+// app.use('/*', function(req, res, next) {
+//   setHeader(res, next);
+// });
 
-app.use(header.verifyToken, (req, res, next) => {
+app.use('/*', header.verifyToken, (req, res, next) => {
+
   jwt.verify(req.token, 'secretkey', (err) => {
     if(err) {
       return res.status(403).json({ error: err.message });
     } else {
+      setHeader(res, next);
       next();
     }
   });

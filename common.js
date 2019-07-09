@@ -1,5 +1,6 @@
 const { poolPromise } = require('./db');
 const moment = require('moment');
+
 module.exports = {
     //công thức tính gen số ngày nắm giữ
     genTotalDateHolding: async (dateBuy, dateF, dateT, totalDayInterestYear) => {

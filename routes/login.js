@@ -75,6 +75,31 @@ router.post('/core', async (req, res) => {
     }
 });
 
+router.put('/core', async (req, res) => {
+    try {
+        const MSNDT = req.body.MSNDT;
+        const SOTIEN = req.body.SOTIEN || '';
+        const pool = await poolPromise;
+        const queryDulicateAccount = `SELECT MSNDT FROM ${tbl_NDT} WHERE MSNDT = N'${MSNDT}'`;
+        const rsDup = await pool.request().query(queryDulicateAccount);
+        if(rsDup.recordset.length === 0) {
+            const sql = `UPDATE ${tbl_NDT} SET 
+                SOTIEN = ${SOTIEN}, 
+            WHERE MSNDT = N'${MSNDT}'`;
+            try {
+                await pool.request().query(sql);
+                res.send("Update money successful!");
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        } else {
+            createToken(res, rsDup.recordset);
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 function createToken (res, data) {
     jwt.sign({ data }, 'secretkey', { expiresIn: '8h' }, (err, token) => {
         res.json({

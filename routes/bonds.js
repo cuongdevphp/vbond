@@ -119,6 +119,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_NIEMYET = req.body.TT_NIEMYET;
         const TS_DAMBAO = req.body.TS_DAMBAO;
         const SL_LUUKY = req.body.SL_LUUKY;
+        const CONGTHUC = req.body.CONGTHUC;
 
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         const pool = await poolPromise;
@@ -126,27 +127,31 @@ router.post('/', header.verifyToken, async (req, res) => {
         
         const rsDup = await pool.request().query(queryDulicateMSTP);
         if(rsDup.recordset.length === 0) {
-            const sql = `INSERT INTO ${tbl_bond} 
-                (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, LAISUAT_HH, 
-                MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
-                NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
-                TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
-                (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
-                N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
-                N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
-                '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
-                '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
-                ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
-                '${moment().toISOString()}', ${1});
-                SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
             try {
                 // Body Room VCSC
-                const rs = await pool.request().query(sql);
-                const statusRoomVCSC = "";
+                const rs = await pool.request().query(`INSERT INTO ${tbl_bond} 
+                    (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, LAISUAT_HH, 
+                    MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
+                    NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
+                    TT_NIEMYET, TS_DAMBAO, SL_LUUKY, CONGTHUC, NGAYTAO, FLAG) VALUES 
+                    (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
+                    N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
+                    N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
+                    '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
+                    '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
+                    ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, ${CONGTHUC}, 
+                    '${moment().toISOString()}', ${1});
+                    SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`);
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});
+                `);
+
+                await pool.request().query(`
+                    INSERT INTO ${tbl_interest_rate} 
+                    (MSLS, BOND_ID, CONGTHUC, NGAYTAO, FLAG) VALUES 
+                    (N'${MSTP + '_01'}', ${rs.recordset[0].BONDID}, ${CONGTHUC}, '${new Date(Date.now()).toISOString()}', ${1});
                 `);
                 res.send('Create data successful!');
             } catch (error) {
@@ -215,7 +220,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
-        console.log(sql, "sql");
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         try {
             await pool.request().query(sql);

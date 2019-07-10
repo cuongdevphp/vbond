@@ -52,6 +52,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 cron.updateBondMonth();
 
 app.use('/', indexRouter);
+app.use('/*', function(req, res, next) {
+  setHeader(req, res, next);
+});
+
 app.use('/login', loginRouter);
 
 app.use(function(req, res, next) {
@@ -69,9 +73,6 @@ app.use(function(req, res, next) {
   }
 });
 
-app.use('/*', function(req, res, next) {
-  setHeader(req, res, next);
-});
 
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);

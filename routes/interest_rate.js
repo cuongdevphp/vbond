@@ -4,7 +4,7 @@ const common = require('../common');
 const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
-const tbl = '[dbo].[TB_LAISUATMUAMUA]';
+const tbl = '[dbo].[TB_LAISUATMUA]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
 

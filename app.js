@@ -57,20 +57,20 @@ app.use('/*', (req, res, next) => {
 cron.updateBondMonth();
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
-app.use(verifyToken, (req,res,next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    jwt.verify(token, 'secretkey', (err) => {
-      if(err) {
-        return res.status(403).json({ error: err.message });
-      } else {
-        next();
-      }
-    })
-  } catch(e) {
-    next()
-  }
-});
+// app.use(verifyToken, (req,res,next) => {
+//   try {
+//     const token = req.headers.authorization.split(" ")[1];
+//     jwt.verify(token, 'secretkey', (err) => {
+//       if(err) {
+//         return res.status(403).json({ error: err.message });
+//       } else {
+//         next();
+//       }
+//     })
+//   } catch(e) {
+//     next()
+//   }
+// });
 
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);

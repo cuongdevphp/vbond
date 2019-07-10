@@ -7,7 +7,6 @@ const logger = require('morgan');
 const debug = require('debug')('vbond:server');
 const http = require('http');
 const cron = require('./cronjob');
-const header = require('./header');
 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
@@ -51,29 +50,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/*', function(req, res, next) {
-  setHeader(res, next);
+app.use('/*', (req, res, next) => {
+  setHeader(req, res, next);
 });
 
-// app.use(header.verifyToken, (req, res, next) => {
-//   //setHeader(res, next);
-//   jwt.verify(req.token, 'secretkey', (err) => {
-//     if(err) {
-//       return res.status(403).json({ error: err.message });
-//     } else {
-//       next();
-//     }
-//   });
-// });
-
-// app.use('/*', function(req, res, next) {
-//   setHeader(res, next);
-// });
-
 cron.updateBondMonth();
-
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
+app.use(verifyToken, (req,res,next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    jwt.verify(token, 'secretkey', (err) => {
+      if(err) {
+        return res.status(403).json({ error: err.message });
+      } else {
+        next();
+      }
+    })
+  } catch(e) {
+    next()
+  }
+});
+
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
 app.use('/company', companyRouter);
@@ -137,7 +135,7 @@ server.on('listening', onListening);
 /**
  * set Header
  */
-function setHeader(res, next) {
+function setHeader(req, res, next) {
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -153,6 +151,28 @@ function setHeader(res, next) {
   
   next();
 }
+
+function verifyToken (req, res, next) {
+  // FORMAT OF TOKEN
+  // Authorization: Bearer <access_token>
+  // Get auth header value
+  const bearerHeader = req.headers['authorization'];
+  // Check if bearer is undefined
+  if(typeof bearerHeader !== 'undefined') {
+      // Split at the space
+      const bearer = bearerHeader.split(' ');
+      // Get token from array
+      const bearerToken = bearer[1];
+      // Set the token
+      req.token = bearerToken;
+      // Next middleware
+      next();
+  } else {
+      // Forbidden
+      res.sendStatus(403);
+  }
+}
+
 
 /**
  * Normalize a port into a number, string, or false.

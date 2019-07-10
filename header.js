@@ -17,6 +17,7 @@ module.exports = {
             // Next middleware
             next();
         } else {
+            console.log("Fdf");
             // Forbidden
             res.sendStatus(403);
         }

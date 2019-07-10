@@ -12,7 +12,7 @@ const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
 const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
-const tbl_interest_rate = '[dbo].[TB_LAISUAT]';
+const tbl_interest_rate = '[dbo].[TB_LAISUATMUA]';
 const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
 
 /* GET listing. */

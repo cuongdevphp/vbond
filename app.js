@@ -49,28 +49,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/*', (req, res, next) => {
-  setHeader(req, res, next);
-});
-
 cron.updateBondMonth();
+
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
-// app.use(verifyToken, (req,res,next) => {
-//   try {
-//     const token = req.headers.authorization.split(" ")[1];
-//     jwt.verify(token, 'secretkey', (err) => {
-//       if(err) {
-//         return res.status(403).json({ error: err.message });
-//       } else {
-//         next();
-//       }
-//     })
-//   } catch(e) {
-//     next()
-//   }
-// });
+
+app.use(function(req, res, next) {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    jwt.verify(token, 'secretkey', function (err) {
+      if(err) {
+        return res.status(403).json({ error: err.message });
+      } else {
+        next();
+      }
+    })
+  } catch(e) {
+    next();
+  }
+});
+
+app.use('/*', function(req, res, next) {
+  setHeader(req, res, next);
+});
 
 app.use('/users', usersRouter);
 app.use('/prefix', prefixRouter);
@@ -143,7 +144,7 @@ function setHeader(req, res, next) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
   // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Accept,Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Accept, Authorization');
 
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
@@ -151,28 +152,6 @@ function setHeader(req, res, next) {
   
   next();
 }
-
-function verifyToken (req, res, next) {
-  // FORMAT OF TOKEN
-  // Authorization: Bearer <access_token>
-  // Get auth header value
-  const bearerHeader = req.headers['authorization'];
-  // Check if bearer is undefined
-  if(typeof bearerHeader !== 'undefined') {
-      // Split at the space
-      const bearer = bearerHeader.split(' ');
-      // Get token from array
-      const bearerToken = bearer[1];
-      // Set the token
-      req.token = bearerToken;
-      // Next middleware
-      next();
-  } else {
-      // Forbidden
-      res.sendStatus(403);
-  }
-}
-
 
 /**
  * Normalize a port into a number, string, or false.

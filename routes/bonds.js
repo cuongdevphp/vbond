@@ -52,7 +52,8 @@ router.get('/:id', header.verifyToken, async (req, res) => {
     if(bondId) {
         try {
             const pool = await poolPromise;
-            const sql = `SELECT
+            const sql = `SELECT 
+                            p.SL_DPH,
                             p.KYHAN,
                             p.BONDID,
                             p.HANMUC_CHO,

@@ -55,20 +55,20 @@ app.use('/*', function(req, res, next) {
   setHeader(res, next);
 });
 
-app.use(header.verifyToken, (req, res, next) => {
-  //setHeader(res, next);
-  jwt.verify(req.token, 'secretkey', (err) => {
-    if(err) {
-      return res.status(403).json({ error: err.message });
-    } else {
-      next();
-    }
-  });
-});
+// app.use(header.verifyToken, (req, res, next) => {
+//   //setHeader(res, next);
+//   jwt.verify(req.token, 'secretkey', (err) => {
+//     if(err) {
+//       return res.status(403).json({ error: err.message });
+//     } else {
+//       next();
+//     }
+//   });
+// });
 
-app.use('/*', function(req, res, next) {
-  setHeader(res, next);
-});
+// app.use('/*', function(req, res, next) {
+//   setHeader(res, next);
+// });
 
 cron.updateBondMonth();
 

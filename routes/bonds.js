@@ -17,7 +17,6 @@ const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const sql = `SELECT
@@ -47,7 +46,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.get('/:id', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     const bondId = req.params.id;
     if(bondId) {
         try {
@@ -94,7 +92,6 @@ router.get('/:id', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         // Body Bond
         const MSTP = req.body.MSTP;
@@ -167,7 +164,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const BONDID = req.body.BONDID;
         const MSTP = req.body.MSTP;
@@ -245,7 +241,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const BONDID = req.body.BONDID;
         const sql = `UPDATE ${tbl_bond} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;

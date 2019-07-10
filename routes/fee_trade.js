@@ -6,7 +6,6 @@ const router = express.Router();
 const tbl = '[dbo].[TB_PHIGIAODICH]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSPHI] DESC');
@@ -17,7 +16,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const TENPHI = req.body.TENPHI;
         const TYLETINH = req.body.TYLETINH;
@@ -40,7 +38,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;
         const TENPHI = req.body.TENPHI;
@@ -69,7 +66,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSPHI = req.body.MSPHI;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;

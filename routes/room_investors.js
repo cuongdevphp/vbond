@@ -7,7 +7,6 @@ const tbl = '[dbo].[TB_ROOMINVESTOR]';
 /* GET listing. */
 
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSROOM] DESC');
@@ -18,7 +17,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MS_LOAIROOM = req.body.MS_LOAIROOM;
         const BOND_ID = req.body.BOND_ID;
@@ -50,7 +48,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSROOM = req.body.MSROOM;
         const MS_LOAIROOM = req.body.MS_LOAIROOM;
@@ -91,7 +88,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSROOM = req.body.MSROOM;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSROOM = ${MSROOM}`;

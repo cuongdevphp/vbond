@@ -9,7 +9,6 @@ const tbl_assets = '[dbo].[TB_TAISAN]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const sql = `SELECT
@@ -27,7 +26,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.get('/:id/:status', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     const investorId = req.params.id;
     const status = req.params.status;
     if(investorId) {
@@ -59,7 +57,6 @@ router.get('/:id/:status', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
         const LOAINDT = req.body.LOAINDT;
@@ -92,7 +89,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
         const LOAINDT = req.body.LOAINDT;

@@ -9,7 +9,6 @@ const tbl_investors = '[dbo].[TB_NHADAUTU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const sql = `SELECT 
@@ -35,7 +34,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MS_NDT = req.body.MS_NDT;
         const MS_DL = req.body.MS_DL || null;
@@ -77,7 +75,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSTS = req.body.MSTS;
         const MS_NDT = req.body.MS_NDT;
@@ -115,7 +112,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         CAPGIAY_CN = ${CAPGIAY_CN}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE MSTS = ${MSTS} `;
-        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -128,7 +124,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSTS = req.body.MSTS;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSTS = ${MSTS}`;

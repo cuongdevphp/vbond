@@ -47,7 +47,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         const PREFIX_ID = req.body.PREFIX_ID;
 
-        await common.checkDupData(res, tbl, 'KYTU_PREFIX', KYTU_PREFIX);
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         KYTU_PREFIX = N'${KYTU_PREFIX}', 

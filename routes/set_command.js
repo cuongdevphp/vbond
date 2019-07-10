@@ -12,7 +12,6 @@ const tbl_NTL = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     const status = req.params.status || '';
     try {
         const pool = await poolPromise;
@@ -39,24 +38,12 @@ router.get('/:status', header.verifyToken, async (req, res) => {
 });
 
 router.put('/updateStatus', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSDL = req.body.MSDL;
         const status = req.body.status;
         const MSTS = req.body.MSTS;
-        console.log(req.body);
-        console.log(status, MSTS);
         const pool = await poolPromise;
-        console.log(`
-        SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-            a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH,
-            b.SONGAYTINHLAI,
-            c.SOLUONG AS SOLUONGTS
-        FROM ${tbl} p 
-        LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
-        LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
-        LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
-        WHERE MSDL = ${MSDL}`);
+
         try {
             const fetchCommand = await pool.request().query(`
                 SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
@@ -69,7 +56,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 WHERE MSDL = ${MSDL}`
             );
-            console.log(fetchCommand);
+
             switch(status) {
                 case 1: 
                     const day = await common.genTotalDateHolding(
@@ -99,7 +86,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     break;
                 case 3: 
                     const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
-                    console.log(SLDPH, "SLDPH");
                     try {
                         await pool.request().query(`
                             UPDATE ${tbl_assets} SET 
@@ -143,7 +129,6 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const BOND_ID = req.body.BOND_ID;
         const MS_NDT = req.body.MS_NDT;
@@ -177,7 +162,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSDL = req.body.MSDL;
         const BOND_ID = req.body.BOND_ID;
@@ -228,7 +212,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSDL = req.body.MSDL;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSDL = ${MSDL}`;

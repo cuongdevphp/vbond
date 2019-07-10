@@ -8,7 +8,6 @@ const tbl_branchVCSC = '[dbo].[TB_CACCHINHAVCSC]';
 const tbl_company = '[dbo].[TB_CONGTY]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const sql = `SELECT
@@ -28,7 +27,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const SOHD = req.body.SOHD;
         const MS_DN = req.body.MS_DN;
@@ -66,7 +64,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const SOHD = req.body.SOHD;
         const MS_DN = req.body.MS_DN;
@@ -91,7 +88,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SOLUONG_PH = ${SOLUONG_PH}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE SOHD = '${SOHD}' `;
-        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -105,7 +101,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const SOHD = req.body.SOHD;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE SOHD = '${SOHD}'`;

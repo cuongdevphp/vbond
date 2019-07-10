@@ -7,7 +7,6 @@ const tbl = '[dbo].[TB_LAISUATNGANHANG]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [LAISUAT_ID] DESC');
@@ -18,7 +17,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
@@ -40,7 +38,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const TEN_NH = req.body.TEN_NH;
         const LAISUAT_HH = req.body.LAISUAT_HH;
@@ -66,7 +63,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const LAISUAT_ID = req.body.LAISUAT_ID;
 

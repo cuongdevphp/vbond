@@ -8,8 +8,6 @@ const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    //header.setHeader(res);
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const sql = `SELECT
@@ -28,7 +26,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const BOND_ID = req.body.BOND_ID;
         const GIATRI_HIENTAI = req.body.GIATRI_HIENTAI;
@@ -53,7 +50,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSGIATRI = req.body.MSGIATRI;
         const BOND_ID = req.body.BOND_ID;
@@ -87,7 +83,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSGIATRI = req.body.MSGIATRI;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSGIATRI = ${MSGIATRI}`;

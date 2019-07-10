@@ -6,7 +6,6 @@ const router = express.Router();
 const tbl = '[dbo].[TB_CACCHINHAVCSC]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSCNVCSC] DESC');
@@ -17,7 +16,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSCNVCSC = req.body.MSCNVCSC;
         const TENCHINHANH = req.body.TENCHINHANH;
@@ -51,7 +49,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSCNVCSC = req.body.MSCNVCSC;
         const TENCHINHANH = req.body.TENCHINHANH;
@@ -88,7 +85,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSCNVCSC = req.body.MSCNVCSC;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSCNVCSC = '${MSCNVCSC}'`;

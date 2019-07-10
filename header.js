@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
     verifyToken: (req, res, next) => {
-        console.log(req.headers, "verifyToken");
         // FORMAT OF TOKEN
         // Authorization: Bearer <access_token>
         // Get auth header value

@@ -216,6 +216,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
+                    console.log(sql);
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         try {
             await pool.request().query(sql);

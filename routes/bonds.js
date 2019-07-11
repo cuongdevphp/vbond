@@ -123,6 +123,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);
+        console.log(KYHAN);
         console.log(moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString());
         if(rsDup.recordset.length === 0) {
             try {

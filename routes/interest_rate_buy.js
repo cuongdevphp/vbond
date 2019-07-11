@@ -52,6 +52,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const sql = `INSERT INTO ${tbl}
             (BOND_ID, LS_TOIDA, LS_BIENDO, DIEUKHOAN_LS, NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
             (${BOND_ID}, ${LS_TOIDA}, ${LS_BIENDO}, N'${DIEUKHOAN_LS}', '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

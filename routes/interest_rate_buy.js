@@ -35,6 +35,8 @@ router.post('/', header.verifyToken, async (req, res) => {
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_BIENDO = req.body.LS_BIENDO;
         const TRANGTHAI = req.body.TRANGTHAI;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
+        const NGAYKETTHUC = req.body.NGAYKETTHUC;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
         if(TRANGTHAI === 1) {
             const rsDup = await pool.request().query(`
@@ -47,8 +49,8 @@ router.post('/', header.verifyToken, async (req, res) => {
             WHERE MSLS = ${rsDup.recordset[0].MSLS}`);
         }
         const sql = `INSERT INTO ${tbl}
-            (BOND_ID, LS_TOIDA, LS_BIENDO, DIEUKHOAN_LS, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            (${BOND_ID}, ${LS_TOIDA}, ${LS_BIENDO}, N'${DIEUKHOAN_LS}', ${TRANGTHAI} '${moment().toISOString()}', ${1});`
+            (BOND_ID, LS_TOIDA, LS_BIENDO, DIEUKHOAN_LS, NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            (${BOND_ID}, ${LS_TOIDA}, ${LS_BIENDO}, N'${DIEUKHOAN_LS}', '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -67,11 +69,15 @@ router.put('/', header.verifyToken, async (req, res) => {
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_BIENDO = req.body.LS_BIENDO;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS;
-        
+        const NGAYBATDAU = req.body.NGAYBATDAU;
+        const NGAYKETTHUC = req.body.NGAYKETTHUC;
+
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         BOND_ID = ${BOND_ID}, 
                         LS_TOIDA = ${LS_TOIDA}, 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         LS_BIENDO = ${LS_BIENDO}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
                         NGAYUPDATE = '${moment().toISOString()}' 

@@ -195,7 +195,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MSTP = N'${MSTP}', 
                         SO_HD = N'${SO_HD}', 
                         MS_DN = N'${MS_DN}', 
-                        MS_KYHANTT = N'${MS_KYHANTT}', 
+                        MS_KYHANTT = ${MS_KYHANTT}, 
                         MS_LTP = N'${MS_LTP}', 
                         MS_NTLTN = ${MS_NTLTN}, 
                         MAVIETTAT = N'${MAVIETTAT}', 
@@ -216,7 +216,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         SL_LUUKY = ${SL_LUUKY}, 
                         NGAYUPDATE = '${moment().toISOString()}'
                     WHERE BONDID = ${BONDID} `;
-                    console.log(sql);
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         try {
             await pool.request().query(sql);

@@ -40,7 +40,7 @@ router.get('/:bondId', header.verifyToken, async (req, res) => {
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
             WHERE BOND_ID = ${bondId} AND (TRANGTHAI = 0 OR TRANGTHAI = 2)
             ORDER BY
-                p.MSLS DESC;
+                p.TRANGTHAI DESC;
         `;
         const result = await pool.request().query(sql);
         return res.json(result.recordset);

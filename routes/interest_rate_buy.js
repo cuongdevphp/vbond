@@ -17,6 +17,28 @@ router.get('/', header.verifyToken, async (req, res) => {
             FROM
                 ${tbl} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
+            WHERE TRANGTHAI = 1
+            ORDER BY
+                p.MSLS DESC;
+        `;
+        const result = await pool.request().query(sql);
+        return res.json(result.recordset);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:id', header.verifyToken, async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const pool = await poolPromise;
+        const sql = `SELECT
+                p.*, a.MSTP, a.BONDID 
+            FROM
+                ${tbl} p 
+            LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
+            WHERE MSLS = ${id} AND (TRANGTHAI = 0 OR TRANGTHAI = 2)
             ORDER BY
                 p.MSLS DESC;
         `;

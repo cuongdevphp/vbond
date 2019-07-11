@@ -28,9 +28,9 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.get('/:id', header.verifyToken, async (req, res) => {
+router.get('/:bondId', header.verifyToken, async (req, res) => {
     try {
-        const id = req.params.id;
+        const bondId = req.params.bondId;
 
         const pool = await poolPromise;
         const sql = `SELECT
@@ -38,7 +38,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             FROM
                 ${tbl} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
-            WHERE MSLS = ${id} AND (TRANGTHAI = 0 OR TRANGTHAI = 2)
+            WHERE BOND_ID = ${bondId} AND (TRANGTHAI = 0 OR TRANGTHAI = 2)
             ORDER BY
                 p.MSLS DESC;
         `;

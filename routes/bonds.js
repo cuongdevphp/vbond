@@ -23,7 +23,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                         p.*, 
                         a.SOHD, 
                         b.TEN_DN, 
-                        d.MSKYHANTT, 
+                        d.LOAI_TT, 
                         e.TENLOAI_TP, 
                         f.SONGAYTINHLAI, 
                         g.LS_TOIDA AS LAISUAT_MUA, 

@@ -24,7 +24,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                         ${tbl} p 
                     LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
                     LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
-                    LEFT JOIN ${tbl_interest_buy} c ON c.BOND_ID = a.BOND_ID 
+                    LEFT JOIN ${tbl_interest_buy} c ON c.BOND_ID = a.BONDID 
                     ORDER BY
                         p.MSTS DESC;`;
 

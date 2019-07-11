@@ -146,7 +146,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 //     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                 //     (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
                 // `);
-                console.log(moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days'));
+                console.log(moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days').toISOString());
                 // await pool.request().query(`
                 //     INSERT INTO ${tbl_interest_rate_buy} 
                 //     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 

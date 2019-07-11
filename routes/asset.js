@@ -6,6 +6,7 @@ const router = express.Router();
 const tbl = '[dbo].[TB_TAISAN]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
+const tbl_interest_buy = '[dbo].[TB_LAISUATMUA]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -17,12 +18,13 @@ router.get('/', header.verifyToken, async (req, res) => {
                         a.SO_HD,
                         a.NGAYPH,
                         a.NGAYDH,
-                        a.LAISUAT_HH,
+                        c.LS_TOIDA AS LAISUAT_MUA,
                         b.TENNDT
                     FROM 
                         ${tbl} p 
                     LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
                     LEFT JOIN ${tbl_investors} b ON b.MSNDT = p.MS_NDT 
+                    LEFT JOIN ${tbl_interest_buy} c ON c.BOND_ID = a.BOND_ID 
                     ORDER BY
                         p.MSTS DESC;`;
 

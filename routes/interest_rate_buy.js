@@ -32,7 +32,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
 
         const BOND_ID = req.body.BOND_ID;
-        const LS_TOIDA = req.body.LS_TOIDA;
+        const LS_TOIDA = req.body.LS_MUA;
         const LS_BIENDO = req.body.LS_BIENDO || 0;
         const TRANGTHAI = req.body.TRANGTHAI;
         const NGAYBATDAU = req.body.NGAYBATDAU;
@@ -44,7 +44,6 @@ router.post('/', header.verifyToken, async (req, res) => {
                 FROM ${tbl} 
                 WHERE TRANGTHAI = ${1} AND BOND_ID = ${BOND_ID}`
             );
-            console.log(rsDup);
             await pool.request().query(`UPDATE ${tbl} SET 
                 TRANGTHAI = ${0}
             WHERE MSLS = ${rsDup.recordset[0].MSLS}`);
@@ -52,7 +51,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const sql = `INSERT INTO ${tbl}
             (BOND_ID, LS_TOIDA, LS_BIENDO, DIEUKHOAN_LS, NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
             (${BOND_ID}, ${LS_TOIDA}, ${LS_BIENDO}, N'${DIEUKHOAN_LS}', '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
-        console.log(sql);
+
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

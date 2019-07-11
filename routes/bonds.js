@@ -12,7 +12,7 @@ const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
 const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
-const tbl_interest_rate = '[dbo].[TB_LAISUATMUA]';
+const tbl_interest_rate_buy = '[dbo].[TB_LAISUATMUA]';
 const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
 
 /* GET listing. */
@@ -25,7 +25,9 @@ router.get('/', header.verifyToken, async (req, res) => {
                         b.TEN_DN, 
                         d.MSKYHANTT, 
                         e.TENLOAI_TP, 
-                        f.SONGAYTINHLAI
+                        f.SONGAYTINHLAI, 
+                        g.LS_TOIDA AS LAISUAT_MUA, 
+                        g.MSLS AS MSLSM
                     FROM
                         ${tbl_bond} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
@@ -33,12 +35,11 @@ router.get('/', header.verifyToken, async (req, res) => {
                     LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT
                     LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
                     LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
+                    LEFT JOIN ${tbl_interest_rate_buy} g ON g.BOND_ID = p.BONDID
                     ORDER BY
                         p.BONDID DESC;
                 `;
-
         const result = await pool.request().query(sql);
-
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -72,7 +73,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             c.MSROOM 
                         FROM 
                             ${tbl_bond} p 
-                        LEFT JOIN ${tbl_interest_rate} a ON a.BOND_ID = p.BONDID 
+                        LEFT JOIN ${tbl_interest_rate_buy} a ON a.BOND_ID = p.BONDID 
                         LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN 
                         LEFT JOIN ${tbl_roomVCSC} c ON c.BOND_ID = p.BONDID 
                         LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
@@ -146,7 +147,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 `);
 
                 await pool.request().query(`
-                    INSERT INTO ${tbl_interest_rate} 
+                    INSERT INTO ${tbl_interest_rate_buy} 
                     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment().toISOString()}', ${1});
                 `);

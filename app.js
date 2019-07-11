@@ -26,6 +26,7 @@ const investorsRouter = require('./routes/investors');
 const authPageRouter = require('./routes/auth_page');
 const contractVCSCRouter = require('./routes/contract_vcsc');
 const interestRateBuyRouter = require('./routes/interest_rate_buy');
+const interestRateSalesRouter = require('./routes/interest_rate_sales');
 const bondPriceRouter = require('./routes/bond_price');
 const roomVCSCRouter = require('./routes/room_vcsc');
 const ensureAssetsRouter = require('./routes/ensure_assets');
@@ -99,6 +100,7 @@ app.use('/roomInvestors', roomInvestorsRouter);
 app.use('/setCommand', setCommandRouter);
 app.use('/dateInterestYear', dateInterestYearRouter);
 app.use('/assets', assetRouter);
+app.use('/interestRateSales', interestRateSalesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

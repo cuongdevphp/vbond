@@ -127,31 +127,31 @@ router.post('/', header.verifyToken, async (req, res) => {
         if(rsDup.recordset.length === 0) {
             try {
                 // Body Room VCSC
-                const rs = await pool.request().query(`INSERT INTO ${tbl_bond} 
-                    (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, 
-                    MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
-                    NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
-                    TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
-                    (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
-                    N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, N'${MAVIETTAT}', 
-                    N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
-                    '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
-                    '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
-                    ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
-                    '${moment().toISOString()}', ${1});
-                    SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`);
+                // const rs = await pool.request().query(`INSERT INTO ${tbl_bond} 
+                //     (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, 
+                //     MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
+                //     NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
+                //     TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
+                //     (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
+                //     N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, N'${MAVIETTAT}', 
+                //     N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
+                //     '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
+                //     '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
+                //     ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
+                //     '${moment().toISOString()}', ${1});
+                //     SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`);
 
-                await pool.request().query(`
-                    INSERT INTO ${tbl_roomVCSC} 
-                    (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
-                `);
-
-                await pool.request().query(`
-                    INSERT INTO ${tbl_interest_rate_buy} 
-                    (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, ${moment(NGAYPH).toISOString()}, ${moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days')}, '${moment().toISOString()}', ${1});
-                `);
+                // await pool.request().query(`
+                //     INSERT INTO ${tbl_roomVCSC} 
+                //     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                //     (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
+                // `);
+                console.log(moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days'));
+                // await pool.request().query(`
+                //     INSERT INTO ${tbl_interest_rate_buy} 
+                //     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
+                //     (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, ${moment(NGAYPH).toISOString()}, ${moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days')}, '${moment().toISOString()}', ${1});
+                // `);
                 res.send('Create data successful!');
             } catch (error) {
                 res.status(500).json({ error: error.message });

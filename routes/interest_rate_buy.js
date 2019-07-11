@@ -119,8 +119,20 @@ router.put('/', header.verifyToken, async (req, res) => {
 router.put('/status', header.verifyToken, async (req, res) => {
     try {
         const MSLS = req.body.MSLS;
+        const BOND_ID = req.body.BOND_ID;
         const TRANGTHAI = req.body.TRANGTHAI;
         
+        if(TRANGTHAI === 1) {
+            const rsDup = await pool.request().query(`
+                SELECT MSLS 
+                FROM ${tbl} 
+                WHERE TRANGTHAI = ${1} AND BOND_ID = ${BOND_ID}`
+            );
+            await pool.request().query(`UPDATE ${tbl} SET 
+                TRANGTHAI = ${0}
+            WHERE MSLS = ${rsDup.recordset[0].MSLS}`);
+        }
+
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TRANGTHAI = ${TRANGTHAI}, 

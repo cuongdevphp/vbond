@@ -140,6 +140,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                     ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
                     '${moment().toISOString()}', ${1});
                     SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`);
+
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
@@ -148,8 +149,8 @@ router.post('/', header.verifyToken, async (req, res) => {
 
                 await pool.request().query(`
                     INSERT INTO ${tbl_interest_rate_buy} 
-                    (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment().toISOString()}', ${1});
+                    (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, ${moment(NGAYPH).toISOString()}, ${moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days')}, '${moment().toISOString()}', ${1});
                 `);
                 res.send('Create data successful!');
             } catch (error) {

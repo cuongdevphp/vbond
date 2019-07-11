@@ -32,7 +32,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
 
         const BOND_ID = req.body.BOND_ID;
-        const LS_TOIDA = req.body.LS_MUA;
+        const LS_TOIDA = req.body.LAISUAT_MUA;
         const LS_BIENDO = req.body.LS_BIENDO || 0;
         const TRANGTHAI = req.body.TRANGTHAI;
         const NGAYBATDAU = req.body.NGAYBATDAU;

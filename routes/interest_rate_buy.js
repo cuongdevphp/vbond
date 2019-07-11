@@ -133,8 +133,6 @@ router.put('/status', header.verifyToken, async (req, res) => {
                 TRANGTHAI = ${0}
             WHERE MSLS = ${rsDup.recordset[0].MSLS}`);
         }
-
-        const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TRANGTHAI = ${TRANGTHAI}, 
                         NGAYUPDATE = '${moment().toISOString()}' 

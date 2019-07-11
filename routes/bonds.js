@@ -138,23 +138,22 @@ router.post('/', header.verifyToken, async (req, res) => {
                 ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
                 '${moment().toISOString()}', ${1});
                 SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
-                console.log(insBond, 1);
+
                 const rs = await pool.request().query(insBond);
                 const insRoomVCSC = `
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
                 `;
-                console.log(insRoomVCSC, 2);
                 await pool.request().query(insRoomVCSC);
+                
                 const insInterestRateBuy = `
                     INSERT INTO ${tbl_interest_rate_buy} 
                     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, ${moment(NGAYPH).toISOString()}, 
-                    ${moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString()}, 
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment(NGAYPH).toISOString()}', 
+                    '${moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString()}', 
                     '${moment().toISOString()}', ${1});
                 `
-                console.log(insInterestRateBuy, 3);
                 await pool.request().query(insInterestRateBuy);
                 res.send('Create data successful!');
             } catch (error) {

@@ -123,6 +123,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);
+        console.log(moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString());
         if(rsDup.recordset.length === 0) {
             try {
                 const insBond = `INSERT INTO ${tbl_bond} 
@@ -139,13 +140,13 @@ router.post('/', header.verifyToken, async (req, res) => {
                 '${moment().toISOString()}', ${1});
                 SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
 
-                const rs = await pool.request().query(insBond);
+                //const rs = await pool.request().query(insBond);
                 const insRoomVCSC = `
                     INSERT INTO ${tbl_roomVCSC} 
                     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
                 `;
-                await pool.request().query(insRoomVCSC);
+                //await pool.request().query(insRoomVCSC);
                 
                 const insInterestRateBuy = `
                     INSERT INTO ${tbl_interest_rate_buy} 
@@ -154,7 +155,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                     '${moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString()}', 
                     '${moment().toISOString()}', ${1});
                 `
-                await pool.request().query(insInterestRateBuy);
+                //await pool.request().query(insInterestRateBuy);
                 res.send('Create data successful!');
             } catch (error) {
                 res.status(500).json({ error: error.message });

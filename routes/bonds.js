@@ -55,7 +55,6 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             p.KYHAN,
                             p.BONDID,
                             p.HANMUC_CHO,
-                            p.LAISUAT_HH,
                             p.MENHGIA, 
                             p.NGAYPH, 
                             p.NGAYDH, 
@@ -65,6 +64,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             e.TENLOAI_TP, 
                             e.GHICHU AS GHICHU_LTP, 
                             a.DIEUKHOAN_LS, 
+                            a.LS_TOIDA AS LAISUAT_MUA,
                             d.LOAI_TT, 
                             f.SONGAYTINHLAI,
                             g.GIATRI_HIENTAI, 
@@ -127,12 +127,12 @@ router.post('/', header.verifyToken, async (req, res) => {
             try {
                 // Body Room VCSC
                 const rs = await pool.request().query(`INSERT INTO ${tbl_bond} 
-                    (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, LAISUAT_HH, 
+                    (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, 
                     MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
                     NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
                     TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
                     (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
-                    N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, ${LAISUAT_HH}, N'${MAVIETTAT}', 
+                    N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, N'${MAVIETTAT}', 
                     N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
                     '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
                     '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
@@ -141,8 +141,8 @@ router.post('/', header.verifyToken, async (req, res) => {
                     SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`);
                 await pool.request().query(`
                     INSERT INTO ${tbl_roomVCSC} 
-                    (BOND_ID, LAISUATNAM, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_HH}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
+                    (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
                 `);
 
                 await pool.request().query(`
@@ -171,7 +171,6 @@ router.put('/', header.verifyToken, async (req, res) => {
         const MS_KYHANTT = req.body.MS_KYHANTT;
         const MS_LTP = req.body.MS_LTP;
         const MS_NTLTN = req.body.MS_NTLTN;
-        const LAISUAT_HH = req.body.LAISUAT_HH;
         const MAVIETTAT = req.body.MAVIETTAT;
         const TT_TRAIPHIEU = req.body.TT_TRAIPHIEU;
         const MENHGIA = req.body.MENHGIA;
@@ -197,7 +196,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MS_KYHANTT = N'${MS_KYHANTT}', 
                         MS_LTP = N'${MS_LTP}', 
                         MS_NTLTN = ${MS_NTLTN}, 
-                        LAISUAT_HH = ${LAISUAT_HH}, 
                         MAVIETTAT = N'${MAVIETTAT}', 
                         TT_TRAIPHIEU = N'${TT_TRAIPHIEU}', 
                         MENHGIA = ${MENHGIA}, 
@@ -222,7 +220,6 @@ router.put('/', header.verifyToken, async (req, res) => {
             await pool.request().query(`
             UPDATE ${tbl_roomVCSC} SET 
                 BOND_ID = ${BONDID}, 
-                LAISUATNAM = ${LAISUAT_HH}, 
                 HANMUC = ${TONGHANMUC_HUYDONG}, 
                 DANGCHO = ${0}, 
                 THANGCONLAI = ${month}, 

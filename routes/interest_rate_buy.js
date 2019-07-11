@@ -44,6 +44,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 FROM ${tbl} 
                 WHERE TRANGTHAI = ${1} AND BOND_ID = ${BOND_ID}`
             );
+            console.log(rsDup);
             await pool.request().query(`UPDATE ${tbl} SET 
                 TRANGTHAI = ${0}
             WHERE MSLS = ${rsDup.recordset[0].MSLS}`);

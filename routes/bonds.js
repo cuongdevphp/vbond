@@ -36,6 +36,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                     LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
                     LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                     LEFT JOIN ${tbl_interest_rate_buy} g ON g.BOND_ID = p.BONDID
+                    WHERE g.TRANGTHAI = ${1}
                     ORDER BY
                         p.BONDID DESC;
                 `;

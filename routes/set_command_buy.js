@@ -6,7 +6,6 @@ const tbl = '[dbo].[TB_DATLENMUA]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSLENHMUA] DESC');
@@ -17,7 +16,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MS_NDT = req.body.MS_NDT;
         const MS_ROOM = req.body.MS_ROOM;
@@ -53,7 +51,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSLENHMUA = req.body.MSLENHMUA;
         const MS_NDT = req.body.MS_NDT;
@@ -100,7 +97,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSLENHMUA = req.body.MSLENHMUA;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSLENHMUA = ${MSLENHMUA}`;

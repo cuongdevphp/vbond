@@ -36,14 +36,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const LS_TOIDA = req.body.LS_TOIDA;
         const LS_TH = req.body.LS_TH;
         const LS_BIENDO = req.body.LS_BIENDO;
-        const LS_BINHQUAN = req.body.LS_BINHQUAN;
-        const MA_NH01 = req.body.MA_NH01 || 0;
-        const MA_NH02 = req.body.MA_NH02 || 0;
-        const MA_NH03 = req.body.MA_NH03 || 0;
-        const MA_NH04 = req.body.MA_NH04 || 0;
-        const MA_NH05 = req.body.MA_NH05 || 0;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
-        const CONGTHUC = req.body.CONGTHUC;
         
         const bondData = await pool.request().query(`
             SELECT MENHGIA, KYHAN, LAISUAT_HH FROM ${tbl_bond} WHERE BONDID = '${BOND_ID}'

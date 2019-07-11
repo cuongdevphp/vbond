@@ -147,8 +147,8 @@ router.post('/', header.verifyToken, async (req, res) => {
 
                 await pool.request().query(`
                     INSERT INTO ${tbl_interest_rate} 
-                    (BOND_ID, LS_TOIDA, NGAYTAO, FLAG) VALUES 
-                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, '${moment().toISOString()}', ${1});
+                    (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment().toISOString()}', ${1});
                 `);
                 res.send('Create data successful!');
             } catch (error) {

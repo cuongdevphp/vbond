@@ -149,7 +149,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                 console.log(KYHAN);
                 console.log(NGAYPH);
                 console.log(moment(NGAYPH, "DD-MM-YYYY").add((KYHAN * 30), 'days').toISOString());
-                console.log(moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+6))));
+                console.log(moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+KYHAN))).toISOString());
                 // await pool.request().query(`
                 //     INSERT INTO ${tbl_interest_rate_buy} 
                 //     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 

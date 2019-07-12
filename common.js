@@ -28,6 +28,13 @@ module.exports = {
     recipeBondPrice: (k = 0, n, MG, C, Y1) => {
         return (MG + (0) + ((C - Y1) * MG * n / 365));
     },
+
+    diffDate: (firstDate, secondDate) => {
+        const oneDay = 24*60*60*1000;
+        firstDate = new Date(firstDate);
+        secondDate = new Date(secondDate);
+        return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+    },
 };
 
 function diffMonth (dateFrom, dateTo) {

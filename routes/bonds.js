@@ -162,8 +162,18 @@ router.post('/', header.verifyToken, async (req, res) => {
                     (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment(NGAYPH).toISOString()}', 
                     '${moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+ getKHTT.recordset[0].LOAI_TT))).toISOString()}', 
                     '${moment().toISOString()}', ${1});
-                `
-                await pool.request().query(insInterestRateBuy);
+                    SELECT MSLS FROM ${tbl_interest_rate_buy} WHERE MSLS = SCOPE_IDENTITY();
+                `;
+                const rsInterestBuy = await pool.request().query(insInterestRateBuy);
+                const dataLSB = await pool.request().query(`SELECT MSTP FROM ${tbl_interest_rate_sales} WHERE MSLS = '${MS_LSB}'`);
+                const n = await common.diffDate(NGAYPH, NGAYDH);
+                const priceBond = await common.recipeBondPrice(0, n, MENHGIA, LAISUAT_MUA, dataLSB.recordset[0].LS_TOIDA);
+                const insBondPrice = `
+                    INSERT INTO ${tbl_bond_price} 
+                    (MS_LSM, BOND_ID, GIATRI_HIENTAI, NGAYBATDAU, NGAYKETTHUC, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${rsInterestBuy.recordset[0].MSLS}, ${rs.recordset[0].BONDID}, ${priceBond}, 
+                    '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', '', ${1}, '${moment().toISOString()}', ${1}); `;
+                await pool.request().query(insBondPrice);
                 res.send('Create data successful!');
             } catch (error) {
                 res.status(500).json({ error: error.message });

@@ -7,7 +7,6 @@ const tbl = '[dbo].[TB_GIAYCHUNGNHAN]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSGIAYCHUNGNHAN] DESC');
@@ -18,7 +17,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSGIAYCHUNGNHAN = req.body.MSGIAYCHUNGNHAN;
         const MS_TS = req.body.MS_TS;
@@ -48,7 +46,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSGIAYCHUNGNHAN = req.body.MSGIAYCHUNGNHAN;
         const MS_TS = req.body.MS_TS;
@@ -76,7 +73,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSGIAYCHUNGNHAN = req.body.MSGIAYCHUNGNHAN;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSGIAYCHUNGNHAN = '${MSGIAYCHUNGNHAN}'`;

@@ -6,7 +6,6 @@ const router = express.Router();
 const tbl = '[dbo].[TB_LOAITRAIPHIEU]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSLTP] DESC');
@@ -17,7 +16,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 });
 
 router.post('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSLTP = req.body.MSLTP;
         const TENLOAI_TP = req.body.TENLOAI_TP;
@@ -45,7 +43,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 });
 
 router.put('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSLTP = req.body.MSLTP;
         const TENLOAI_TP = req.body.TENLOAI_TP;
@@ -70,7 +67,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSLTP = req.body.MSLTP;
         const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSLTP = '${MSLTP}'`;

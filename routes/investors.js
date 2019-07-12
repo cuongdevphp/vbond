@@ -123,7 +123,6 @@ router.put('/', header.verifyToken, async (req, res) => {
 });
 
 router.delete('/', header.verifyToken, async (req, res) => {
-    header.jwtVerify(req, res);
     try {
         const MSNDT = req.body.MSNDT;
         const sql = `UPDATE ${tbl_NDT} SET FLAG = ${0} WHERE MSNDT = N'${MSNDT}'`;

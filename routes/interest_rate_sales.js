@@ -12,10 +12,9 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                p.*, a.MSTP, a.BONDID 
+                p.*
             FROM
                 ${tbl} p 
-            LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
             ORDER BY
                 p.MSLS DESC;
         `;
@@ -29,30 +28,27 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-
-        const BOND_ID = req.body.BOND_ID;
+        
+        const MSLS = req.body.MSLS;
         const LS_TOIDA = req.body.LS_TOIDA;
-        const LS_BIENDO = req.body.LS_BIENDO;
-        const TRANGTHAI = req.body.TRANGTHAI;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
+        const NGAYKETTHUC = req.body.NGAYKETTHUC;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
-        if(TRANGTHAI === 1) {
-            const rsDup = await pool.request().query(`
-                SELECT MSLS 
-                FROM ${tbl} 
-                WHERE TRANGTHAI = ${1} AND BOND_ID = ${BOND_ID}`
-            );
-            await pool.request().query(`UPDATE ${tbl} SET 
-                TRANGTHAI = ${0}
-            WHERE MSLS = ${rsDup.recordset[0].MSLS}`);
-        }
-        const sql = `INSERT INTO ${tbl}
-            (BOND_ID, LS_TOIDA, LS_BIENDO, DIEUKHOAN_LS, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            (${BOND_ID}, ${LS_TOIDA}, ${LS_BIENDO}, N'${DIEUKHOAN_LS}', ${TRANGTHAI} '${moment().toISOString()}', ${1});`
-        try {
-            await pool.request().query(sql);
-            res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+
+        const queryDulicate = `SELECT MSLS FROM ${tbl} WHERE MSLS = '${MSLS}'`;
+        const rsDup = await pool.request().query(queryDulicate);
+        if(rsDup.recordset.length === 0) {
+            const sql = `INSERT INTO ${tbl}
+            (MSLS, LS_TOIDA, DIEUKHOAN_LS, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
+            (N'${MSLS}', ${LS_TOIDA}, N'${DIEUKHOAN_LS}', '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', '${moment().toISOString()}', ${1});`
+            try {
+                await pool.request().query(sql);
+                res.send('Create data successful!');
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        } else {
+            res.status(500).json({ error: 'MSGIAYCHUNGNHAN bị trùng!'});
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -62,19 +58,19 @@ router.post('/', header.verifyToken, async (req, res) => {
 router.put('/', header.verifyToken, async (req, res) => {
     try {
         const MSLS = req.body.MSLS;
-        const BOND_ID = req.body.BOND_ID;
         const LS_TOIDA = req.body.LS_TOIDA;
-        const LS_BIENDO = req.body.LS_BIENDO;
-        const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
+        const NGAYKETTHUC = req.body.NGAYKETTHUC;
+        const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
         
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
-                        BOND_ID = ${BOND_ID}, 
                         LS_TOIDA = ${LS_TOIDA}, 
-                        LS_BIENDO = ${LS_BIENDO}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                        NGAYBATDAU = '${moment().toISOString(NGAYBATDAU)}', 
+                        NGAYKETTHUC = '${moment().toISOString(NGAYKETTHUC)}', 
                         NGAYUPDATE = '${moment().toISOString()}' 
-                    WHERE MSLS = ${MSLS}`;
+                    WHERE MSLS = '${MSLS}'`;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');
@@ -86,26 +82,6 @@ router.put('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.put('/status', header.verifyToken, async (req, res) => {
-    try {
-        const MSLS = req.body.MSLS;
-        const TRANGTHAI = req.body.TRANGTHAI;
-        
-        const pool = await poolPromise;
-        const sql = `UPDATE ${tbl} SET 
-                        TRANGTHAI = ${TRANGTHAI}, 
-                        NGAYUPDATE = '${moment().toISOString()}' 
-                    WHERE MSLS = ${MSLS}`;
-        try {
-            await pool.request().query(sql);
-            res.send('Update data successfully');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 router.delete('/', header.verifyToken, async (req, res) => {
     try {

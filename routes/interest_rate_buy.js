@@ -144,6 +144,7 @@ router.put('/updateItemInterest', header.verifyToken, async (req, res) => {
 
 router.put('/status', header.verifyToken, async (req, res) => {
     try {
+        console.log(req.body);
         const pool = await poolPromise;
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;

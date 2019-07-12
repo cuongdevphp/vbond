@@ -165,7 +165,7 @@ router.post('/', header.verifyToken, async (req, res) => {
                     SELECT MSLS FROM ${tbl_interest_rate_buy} WHERE MSLS = SCOPE_IDENTITY();
                 `;
                 const rsInterestBuy = await pool.request().query(insInterestRateBuy);
-                const dataLSB = await pool.request().query(`SELECT MSTP FROM ${tbl_interest_rate_sales} WHERE MSLS = '${MS_LSB}'`);
+                const dataLSB = await pool.request().query(`SELECT LS_TOIDA FROM ${tbl_interest_rate_sales} WHERE MSLS = '${MS_LSB}'`);
                 const n = await common.diffDate(NGAYPH, NGAYDH);
                 const priceBond = await common.recipeBondPrice(0, n, MENHGIA, LAISUAT_MUA, dataLSB.recordset[0].LS_TOIDA);
                 const insBondPrice = `

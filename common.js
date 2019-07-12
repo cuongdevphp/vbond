@@ -27,6 +27,7 @@ module.exports = {
 
     recipeBondPrice: (k = 0, n, MG, C, Y1) => {
         console.log(n, MG, C, Y1);
+        console.log( typeof (n, MG, C, Y1));
         return (MG + (0) + (((C - Y1) / 100 ) * MG * n / 365));
     },
 

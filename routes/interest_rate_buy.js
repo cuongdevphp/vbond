@@ -89,7 +89,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const MSLS = req.body.MSLS;
         const BOND_ID = req.body.BOND_ID;
-        const LS_TOIDA = req.body.LS_TOIDA;
+        const LS_TOIDA = req.body.LAISUAT_MUA;
         const LS_BIENDO = req.body.LS_BIENDO;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS;
         const NGAYBATDAU = req.body.NGAYBATDAU;
@@ -103,6 +103,31 @@ router.put('/', header.verifyToken, async (req, res) => {
                         NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         LS_BIENDO = ${LS_BIENDO}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                        NGAYUPDATE = '${moment().toISOString()}' 
+                    WHERE MSLS = ${MSLS}`;
+        try {
+            await pool.request().query(sql);
+            res.send('Update data successfully');
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put('/updateItemInterest', header.verifyToken, async (req, res) => {
+    try {
+        const MSLS = req.body.MSLS;
+        const LS_TOIDA = req.body.LAISUAT_MUA;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
+        const NGAYKETTHUC = req.body.NGAYKETTHUC;
+
+        const pool = await poolPromise;
+        const sql = `UPDATE ${tbl} SET 
+                        LS_TOIDA = ${LS_TOIDA}, 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSLS = ${MSLS}`;
         try {

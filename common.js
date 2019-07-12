@@ -25,18 +25,9 @@ module.exports = {
         return await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
     },
 
-    recipeBondPrice: (C, r, F, n, recipe) => {
-        switch(recipe) {
-            case 12:
-                return Math.round(( (C/100) * ( (1 - Math.pow((1 + (r/100)), ((-1) * n) ) ) / (r/100) ) + F * (Math.pow((1 + (r/100)), ((-1) * n)))) * 100) / 100;
-            case 6:
-                return Math.round(( (C/200) *( (1 - Math.pow((1 + (r/200)), ((-1) * n) ) ) / (r/200) ) + F * (Math.pow((1 + (r/200)), ((-2) * n)))) * 100) / 100;
-            case 3:
-                return Math.round(( (C/400) *( (1 - Math.pow((1 + (r/400)), ((-1) * n) ) ) / (r/400) ) + F * (Math.pow((1 + (r/400)), ((-4) * n)))) * 100) / 100;
-            default:
-                break;
-        }
-    }
+    recipeBondPrice: (k = 0, n, MG, C, Y1) => {
+        return (MG + (0) + ((C - Y1) * MG * n / 365));
+    },
 };
 
 function diffMonth (dateFrom, dateTo) {

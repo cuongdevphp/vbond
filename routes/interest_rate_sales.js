@@ -56,7 +56,6 @@ router.post('/', header.verifyToken, async (req, res) => {
 
 router.put('/', header.verifyToken, async (req, res) => {
     try {
-        console.log(req.body);
         const MSLS = req.body.MSLS;
         const LS_TOIDA = req.body.LS_TOIDA;
         const NGAYBATDAU = req.body.NGAYBATDAU;
@@ -67,8 +66,8 @@ router.put('/', header.verifyToken, async (req, res) => {
         const sql = `UPDATE ${tbl} SET 
                         LS_TOIDA = ${LS_TOIDA}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
-                        NGAYBATDAU = '${moment().toISOString(NGAYBATDAU)}', 
-                        NGAYKETTHUC = '${moment().toISOString(NGAYKETTHUC)}', 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSLS = '${MSLS}'`;
         try {

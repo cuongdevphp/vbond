@@ -14,6 +14,7 @@ const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
 const tbl_interest_rate_buy = '[dbo].[TB_LAISUATMUA]';
 const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
+const tbl_interest_rate_sales = '[dbo].[TB_LAISUATBAN]';
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -27,7 +28,8 @@ router.get('/', header.verifyToken, async (req, res) => {
                         e.TENLOAI_TP, 
                         f.SONGAYTINHLAI, 
                         g.LS_TOIDA AS LAISUAT_MUA, 
-                        g.MSLS AS MSLSM
+                        g.MSLS AS MSLSM,
+                        h.LS_TOIDA AS LAISUAT_BAN
                     FROM
                         ${tbl_bond} p
                     LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
@@ -36,6 +38,7 @@ router.get('/', header.verifyToken, async (req, res) => {
                     LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
                     LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                     LEFT JOIN ${tbl_interest_rate_buy} g ON g.BOND_ID = p.BONDID
+                    LEFT JOIN ${tbl_interest_rate_sales} h ON h.MSLS = p.MS_LSB
                     WHERE g.TRANGTHAI = ${1}
                     ORDER BY
                         p.BONDID DESC;
@@ -66,12 +69,13 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             e.TENLOAI_TP, 
                             e.GHICHU AS GHICHU_LTP, 
                             a.DIEUKHOAN_LS, 
-                            a.LS_TOIDA AS LAISUAT_MUA,
+                            a.LS_TOIDA AS LAISUAT_MUA, 
                             d.LOAI_TT, 
-                            f.SONGAYTINHLAI,
+                            f.SONGAYTINHLAI, 
                             g.GIATRI_HIENTAI, 
                             c.TRANGTHAI, 
-                            c.MSROOM 
+                            c.MSROOM, 
+                            h.LS_TOIDA AS LAISUAT_BAN
                         FROM 
                             ${tbl_bond} p 
                         LEFT JOIN ${tbl_interest_rate_buy} a ON a.BOND_ID = p.BONDID 
@@ -81,6 +85,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
                         LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
                         LEFT JOIN ${tbl_bond_price} g ON g.BOND_ID = p.BONDID
+                        LEFT JOIN ${tbl_interest_rate_sales} h ON h.MSLS = p.MS_LSB
                         WHERE BONDID = ${bondId} 
                         ORDER BY 
                             p.BONDID DESC;
@@ -107,6 +112,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TT_TRAIPHIEU = req.body.TT_TRAIPHIEU;
         const MENHGIA = req.body.MENHGIA;
         const SL_PHTD = req.body.SL_PHTD;
+        const MS_LSB = req.body.MS_LSB;
         const SL_DPH = req.body.SL_DPH || 0;
         const SL_LH = req.body.SL_LH || 0;
         const SL_TH = req.body.SL_TH || 0;
@@ -132,13 +138,13 @@ router.post('/', header.verifyToken, async (req, res) => {
                 (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, 
                 MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
                 NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
-                TT_NIEMYET, TS_DAMBAO, SL_LUUKY, NGAYTAO, FLAG) VALUES 
+                TT_NIEMYET, TS_DAMBAO, SL_LUUKY, MS_LSB, NGAYTAO, FLAG) VALUES 
                 (N'${MSTP}', N'${SO_HD}', N'${MS_DN}', 
                 N'${MS_KYHANTT}', N'${MS_LTP}', ${MS_NTLTN}, N'${MAVIETTAT}', 
                 N'${TT_TRAIPHIEU}', ${MENHGIA}, ${SL_PHTD}, ${SL_DPH}, ${SL_LH}, ${SL_TH}, 
                 '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', 
                 '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
-                ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, 
+                ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, '${MS_LSB}',
                 '${moment().toISOString()}', ${1});
                 SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
 
@@ -175,6 +181,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const BONDID = req.body.BONDID;
         const MSTP = req.body.MSTP;
+        const MS_LSB = req.body.MS_LSB;
         const SO_HD = req.body.SO_HD;
         const MS_DN = req.body.MS_DN;
         const MS_KYHANTT = req.body.MS_KYHANTT;
@@ -205,6 +212,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         MS_KYHANTT = ${MS_KYHANTT}, 
                         MS_LTP = N'${MS_LTP}', 
                         MS_NTLTN = ${MS_NTLTN}, 
+                        MS_LSB = N'${MS_LSB}',
                         MAVIETTAT = N'${MAVIETTAT}', 
                         TT_TRAIPHIEU = N'${TT_TRAIPHIEU}', 
                         MENHGIA = ${MENHGIA}, 

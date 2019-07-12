@@ -56,6 +56,7 @@ router.post('/', header.verifyToken, async (req, res) => {
 
 router.put('/', header.verifyToken, async (req, res) => {
     try {
+        console.log(req.body);
         const MSLS = req.body.MSLS;
         const LS_TOIDA = req.body.LS_TOIDA;
         const NGAYBATDAU = req.body.NGAYBATDAU;

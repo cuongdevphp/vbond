@@ -13,7 +13,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                p.*, a.MSTP, a.BONDID 
+                p.*, a.MSTP
             FROM
                 ${tbl} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
@@ -34,7 +34,7 @@ router.get('/:bondId', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `SELECT
-                p.*, a.MSTP, a.BONDID 
+                p.*, a.MSTP
             FROM
                 ${tbl} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 

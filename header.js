@@ -20,13 +20,5 @@ module.exports = {
             // Forbidden
             res.sendStatus(403);
         }
-    },
-
-    jwtVerify: (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err) => {
-            if(err) {
-                return res.status(403).json({ error: err.message });
-            }
-        });
     }
 };

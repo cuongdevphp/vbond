@@ -118,6 +118,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
 router.put('/updateItemInterest', header.verifyToken, async (req, res) => {
     try {
+        console.log(req.body);
         const MSLS = req.body.MSLS;
         const LS_TOIDA = req.body.LAISUAT_MUA;
         const NGAYBATDAU = req.body.NGAYBATDAU;

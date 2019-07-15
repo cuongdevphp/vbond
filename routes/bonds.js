@@ -53,7 +53,7 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.get('/:id/:k', header.verifyToken, async (req, res) => {
     const bondId = req.params.id;
     const k = req.params.k;
-    if(bondId) {
+    if(bondId && k) {
         try {
             const pool = await poolPromise;
             const sql = `SELECT 
@@ -107,6 +107,8 @@ router.get('/:id/:k', header.verifyToken, async (req, res) => {
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
+    } else {
+        res.status(500).json({ error: "Not found bondID and k" });
     }
 });
 

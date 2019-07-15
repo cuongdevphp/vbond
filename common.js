@@ -31,6 +31,7 @@ module.exports = {
         const days = parseInt(n);
         const LSM = parseFloat(C);
         const LSB = parseFloat(Y1);
+        console.log(cp, mg, days, LSM, LSB);
 
         return (mg + (LSM * cp / 365) + (((LSM - LSB) / 100 ) * mg * days / 365));
     },

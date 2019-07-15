@@ -26,12 +26,13 @@ module.exports = {
     },
 
     recipeBondPrice: (k = 0, n, MG, C, Y1) => {
+        const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);
         const LSM = parseFloat(C);
         const LSB = parseFloat(Y1);
 
-        return (mg + (0) + (((LSM - LSB) / 100 ) * mg * days / 365));
+        return (mg + (LSM * cp / 365) + (((LSM - LSB) / 100 ) * mg * days / 365));
     },
 
     diffDate: (firstDate, secondDate) => {

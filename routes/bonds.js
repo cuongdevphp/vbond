@@ -91,18 +91,20 @@ router.get('/:id/:k', header.verifyToken, async (req, res) => {
                         ORDER BY 
                             p.BONDID DESC;
             `;
+            //console.log("fdf");
             const result = await pool.request().query(sql);
-            const data = result.recordset[0];
-            const n = await common.diffDate(data.NGAYPH, data.NGAYDH);
-            const priceBond = await common.recipeBondPrice(k, n, data.MENHGIA, data.LAISUAT_MUA, data.LS_TOIDA);
-            await pool.request().query(`
-                UPDATE ${tbl_bond_price} SET 
-                    GIATRI_HIENTAI = ${priceBond}, 
-                    NGAYUPDATE = '${moment().toISOString()}'
-                WHERE BOND_ID = ${bondId} 
-            `);
-            data.GIATRI_HIENTAI = priceBond;
-            return res.json(data);
+            // const data = result.recordset[0];
+            // const n = await common.diffDate(data.NGAYPH, data.NGAYDH);
+            // const priceBond = await common.recipeBondPrice(k, n, data.MENHGIA, data.LAISUAT_MUA, data.LS_TOIDA);
+            
+            // await pool.request().query(`
+            //     UPDATE ${tbl_bond_price} SET 
+            //         GIATRI_HIENTAI = ${priceBond}, 
+            //         NGAYUPDATE = '${moment().toISOString()}'
+            //     WHERE BOND_ID = ${bondId} 
+            // `);
+            // data.GIATRI_HIENTAI = priceBond;
+            return res.json(result.recordset[0]);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

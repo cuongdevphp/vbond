@@ -9,6 +9,7 @@ const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
 const tbl_assets = '[dbo].[TB_TAISAN]';
 const tbl_NTL = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
+const tbl_RoomVCSC = '[dbo].[TB_ROOMVCSC]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
@@ -39,11 +40,12 @@ router.get('/:status', header.verifyToken, async (req, res) => {
 
 router.put('/updateStatus', header.verifyToken, async (req, res) => {
     try {
+        const pool = await poolPromise;
+
         const MSDL = req.body.MSDL;
         const status = req.body.status;
         const MSTS = req.body.MSTS;
-        const pool = await poolPromise;
-
+        
         try {
             const fetchCommand = await pool.request().query(`
                 SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
@@ -76,13 +78,23 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
                     `);
                     const exceptBondQuatity = fetchCommand.recordset[0].SL_DPH - fetchCommand.recordset[0].SOLUONG;
-                    // console.log(exceptBondQuatity);
                     await pool.request().query(`
                         UPDATE ${tbl_bond} SET 
                             SL_DPH = ${exceptBondQuatity}, 
                             NGAYUPDATE = '${moment().toISOString()}' 
                         WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
                     );
+
+                    try {
+                        await pool.request().query(`
+                            UPDATE ${tbl_RoomVCSC} SET 
+                            DANGCHO = DANGCHO - ${fetchCommand.recordset[0].SOLUONG} 
+                            WHERE BOND_ID = ${fetchCommand.recordset[0].BOND_ID}
+                        `);
+                    } catch(err) {
+                        res.status(500).json({ error: err.message });
+                    }
+
                     break;
                 case 3: 
                     const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
@@ -98,17 +110,27 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         console.log(err, 1);
                     }
 
-                    try{
+                    try {
                         await pool.request().query(`
                             UPDATE ${tbl_bond} SET 
                                 SL_DPH = ${SLDPH}, 
                                 NGAYUPDATE = '${moment().toISOString()}' 
                             WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
                         );
-
                     } catch (err) {
                         console.log(err, 2);
                     }
+                    
+                    try {
+                        await pool.request().query(`
+                            UPDATE ${tbl_RoomVCSC} SET 
+                            DANGCHO = DANGCHO - ${fetchCommand.recordset[0].SOLUONG} 
+                            WHERE BOND_ID = ${fetchCommand.recordset[0].BOND_ID}
+                        `);
+                    } catch(err) {
+                        res.status(500).json({ error: err.message });
+                    }
+
                     break;
                 default:
                     break;
@@ -144,15 +166,24 @@ router.post('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
-        (BOND_ID, MS_NDT, MS_ROOM,
-        MS_NGUOI_GT, SOLUONG, DONGIA, TONGGIATRI, LAISUAT_DH, NGAY_GD, 
-        TRANGTHAI_LENH, NGAY_TRAITUC, GHICHU, NGAYTAO, FLAG) VALUES 
-        (${BOND_ID}, N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
-        '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
-        '${moment().toISOString()}', ${1});`
-        console.log(sql);
+            (BOND_ID, MS_NDT, MS_ROOM,
+            MS_NGUOI_GT, SOLUONG, DONGIA, TONGGIATRI, LAISUAT_DH, NGAY_GD, 
+            TRANGTHAI_LENH, NGAY_TRAITUC, GHICHU, NGAYTAO, FLAG) VALUES 
+            (${BOND_ID}, N'${MS_NDT}', ${MS_ROOM}, N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
+            '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
+            '${moment().toISOString()}', ${1});`;
+
         try {
             await pool.request().query(sql);
+            try {
+                await pool.request().query(`
+                    UPDATE ${tbl_RoomVCSC} SET 
+                    DANGCHO = DANGCHO + ${SOLUONG} 
+                    WHERE MSROOM = ${MS_ROOM}
+                `);
+            } catch(err) {
+                res.status(500).json({ error: err.message });
+            }
             res.send('Create data successful!');
         } catch (error) {
             res.status(500).json({ error: error.message });

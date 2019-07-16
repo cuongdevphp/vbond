@@ -102,7 +102,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                 WHERE BOND_ID = ${bondId} 
             `);
             data.GIATRI_HIENTAI = priceBond;
-            return res.json(result.recordset[0]);
+            return res.json(data);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
@@ -188,7 +188,6 @@ router.post('/', header.verifyToken, async (req, res) => {
             } catch (error) {
                 res.status(500).json({ error: error.message });
             }
-            
         } else {
             res.status(500).json({ error: 'MSTP bị trùng!'});
         }

@@ -5,15 +5,17 @@ const { poolPromise } = require('../db');
 const router = express.Router();
 const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
+const tbl_interest_sales = '[dbo].[TB_LAISUATBAN]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT 
-                p.*, a.MSTP, a.SL_DPH 
+                p.*, a.MSTP, a.SL_DPH, b.LS_TOIDA AS LAISUAT_BAN
             FROM
                 ${tbl_roomVCSC} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
+            LEFT JOIN ${tbl_interest_sales} b ON b.MSLS = p.MS_LSB 
             ORDER BY
                 p.MSROOM DESC;
         `;

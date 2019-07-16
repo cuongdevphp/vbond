@@ -17,14 +17,34 @@ router.get('/', header.verifyToken, async (req, res) => {
 
 router.post('/', header.verifyToken, async (req, res) => {
     try {
+        const pool = await poolPromise;
+
         const TENPHI = req.body.TENPHI;
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
-        const TRANGTHAI = req.body.TRANGTHAI;
+        const TRANGTHAI = parseInt(req.body.TRANGTHAI);
 
-        const pool = await poolPromise;
+        switch(LOAIGIAODICH) {
+            case 1: // Phí giao dịch
+                if(TRANGTHAI === 1) {
+                    await pool.request().query(`UPDATE ${tbl} SET 
+                        TRANGTHAI = ${0}
+                    WHERE LOAIGIAODICH = 1`);
+                }
+                break;
+            case 2: // Thuế
+                if(TRANGTHAI === 1) {
+                    await pool.request().query(`UPDATE ${tbl} SET 
+                        TRANGTHAI = ${0}
+                    WHERE LOAIGIAODICH = 2`);
+                }
+                break;
+            default:
+                break;
+        }
+
         const sql = `INSERT INTO ${tbl}
             (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
             (N'${TENPHI}', '${TYLETINH}', '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
@@ -41,24 +61,41 @@ router.post('/', header.verifyToken, async (req, res) => {
 
 router.put('/', header.verifyToken, async (req, res) => {
     try {
+        const pool = await poolPromise;
+
         const MSPHI = req.body.MSPHI;
         const TENPHI = req.body.TENPHI;
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
-        const TRANGTHAI = req.body.TRANGTHAI;
-
-        const pool = await poolPromise;
+        const TRANGTHAI = parseInt(req.body.TRANGTHAI);
+        switch(LOAIGIAODICH) {
+            case 1: // Phí giao dịch
+                if(TRANGTHAI === 1) {
+                    await pool.request().query(`UPDATE ${tbl} SET 
+                        TRANGTHAI = ${0}
+                    WHERE LOAIGIAODICH = 1`);
+                }
+                break;
+            case 2: // Thuế
+                if(TRANGTHAI === 1) {
+                    await pool.request().query(`UPDATE ${tbl} SET 
+                        TRANGTHAI = ${0}
+                    WHERE LOAIGIAODICH = 2`);
+                }
+                break;
+            default:
+                break;
+        }
         const sql = `UPDATE ${tbl} SET 
                         TENPHI = N'${TENPHI}', 
                         TYLETINH = '${TYLETINH}', 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        LOAIGIAODICH = ${LOAIGIAODICH}, 
                         NGAYAPDUNG = '${moment(NGAYAPDUNG).toISOString()}', 
                         GHICHU = N'${GHICHU}', 
                         NGAYUPDATE = '${moment().toISOString()}'
-                    WHERE MSPHI = '${MSPHI}' `;
+                    WHERE MSPHI = ${MSPHI} `;
         try {
             await pool.request().query(sql);
             res.send('Update data successfully');

@@ -21,11 +21,13 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
+        const LOAIGIAODICH = req.body.LOAIGIAODICH;
+        const TRANGTHAI = req.body.TRANGTHAI;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${tbl}
-            (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, NGAYTAO, FLAG) VALUES 
-            (N'${TENPHI}', '${TYLETINH}', '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', '${new Date(Date.now()).toISOString()}', ${1});`
+            (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            (N'${TENPHI}', '${TYLETINH}', '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -44,11 +46,15 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
+        const LOAIGIAODICH = req.body.LOAIGIAODICH;
+        const TRANGTHAI = req.body.TRANGTHAI;
 
         const pool = await poolPromise;
         const sql = `UPDATE ${tbl} SET 
                         TENPHI = N'${TENPHI}', 
                         TYLETINH = '${TYLETINH}', 
+                        TRANGTHAI = ${TRANGTHAI}, 
+                        LOAIGIAODICH = ${LOAIGIAODICH}, 
                         NGAYAPDUNG = '${moment(NGAYAPDUNG).toISOString()}', 
                         GHICHU = N'${GHICHU}', 
                         NGAYUPDATE = '${moment().toISOString()}'

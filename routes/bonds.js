@@ -107,7 +107,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: err.message });
         }
     } else {
-        res.status(500).json({ error: "Not found bondID and k" });
+        res.status(500).json({ error: "Not found bondID" });
     }
 });
 

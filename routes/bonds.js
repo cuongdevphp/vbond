@@ -94,7 +94,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             const result = await pool.request().query(sql);
             const data = result.recordset[0];
             const rsKN = await common.reciptKN(new Date(), data.NGAYPH, data.NGAYDH, (data.LOAI_TT * 30));
-            const priceBond = await common.recipeBondPrice(rsKN.k, rsKN.n, data.MENHGIA, data.LAISUAT_MUA, data.LAISUAT_BAN);
+            const priceBond = Math.round(await common.recipeBondPrice(rsKN.k, rsKN.n, data.MENHGIA, data.LAISUAT_MUA, data.LAISUAT_BAN) * 100) / 100;
             await pool.request().query(`
                 UPDATE ${tbl_bond_price} SET 
                     GIATRI_HIENTAI = ${priceBond}, 

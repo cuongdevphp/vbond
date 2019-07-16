@@ -150,6 +150,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         (${BOND_ID}, N'${MS_NDT}', N'${MS_ROOM}', N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
         '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
         '${moment().toISOString()}', ${1});`
+        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

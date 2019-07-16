@@ -90,18 +90,18 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                         ORDER BY 
                             p.BONDID DESC;
             `;
-            const result = await pool.request().query(sql);
-            // const data = result.recordset[0];
-            // const n = await common.diffDate(data.NGAYPH, data.NGAYDH);
-            // const priceBond = await common.recipeBondPrice(k, n, data.MENHGIA, data.LAISUAT_MUA, data.LAISUAT_BAN);
             
-            // await pool.request().query(`
-            //     UPDATE ${tbl_bond_price} SET 
-            //         GIATRI_HIENTAI = ${priceBond}, 
-            //         NGAYUPDATE = '${moment().toISOString()}'
-            //     WHERE BOND_ID = ${bondId} 
-            // `);
-            // data.GIATRI_HIENTAI = priceBond;
+            const result = await pool.request().query(sql);
+            const data = result.recordset[0];
+            const rsKN = await common.reciptKN(new Date(), data.NGAYPH, data.NGAYDH, (data.LOAI_TT * 30));
+            const priceBond = await common.recipeBondPrice(rsKN.k, rsKN.n, data.MENHGIA, data.LAISUAT_MUA, data.LAISUAT_BAN);
+            await pool.request().query(`
+                UPDATE ${tbl_bond_price} SET 
+                    GIATRI_HIENTAI = ${priceBond}, 
+                    NGAYUPDATE = '${moment().toISOString()}'
+                WHERE BOND_ID = ${bondId} 
+            `);
+            data.GIATRI_HIENTAI = priceBond;
             return res.json(result.recordset[0]);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -178,15 +178,12 @@ router.post('/', header.verifyToken, async (req, res) => {
                     SELECT MSLS FROM ${tbl_interest_rate_buy} WHERE MSLS = SCOPE_IDENTITY();
                 `;
                 const rsInterestBuy = await pool.request().query(insInterestRateBuy);
-                // const dataLSB = await pool.request().query(`SELECT LS_TOIDA FROM ${tbl_interest_rate_sales} WHERE MSLS = '${MS_LSB}'`);
-                // const n = await common.diffDate(NGAYPH, NGAYDH);
-                // const priceBond = await common.recipeBondPrice(0, n, MENHGIA, LAISUAT_MUA, dataLSB.recordset[0].LS_TOIDA);
-                // const insBondPrice = `
-                //     INSERT INTO ${tbl_bond_price} 
-                //     (MS_LSM, BOND_ID, GIATRI_HIENTAI, NGAYBATDAU, NGAYKETTHUC, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-                //     (${rsInterestBuy.recordset[0].MSLS}, ${rs.recordset[0].BONDID}, ${priceBond}, 
-                //     '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', '', ${1}, '${moment().toISOString()}', ${1}); `;
-                // await pool.request().query(insBondPrice);
+                const insBondPrice = `
+                    INSERT INTO ${tbl_bond_price} 
+                    (MS_LSM, BOND_ID, GIATRI_HIENTAI, NGAYBATDAU, NGAYKETTHUC, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+                    (${rsInterestBuy.recordset[0].MSLS}, ${rs.recordset[0].BONDID}, ${0}, 
+                    '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', '', ${1}, '${moment().toISOString()}', ${1}); `;
+                await pool.request().query(insBondPrice);
                 res.send('Create data successful!');
             } catch (error) {
                 res.status(500).json({ error: error.message });

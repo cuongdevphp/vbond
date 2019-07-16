@@ -41,12 +41,38 @@ module.exports = {
         secondDate = new Date(secondDate);
         return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
     },
+
+    reciptKN: (dateBuy, dateF, dateT, expired) => {
+        let k = 0, n = 0;
+        let dateExpired = new Date(moment(dateF, "DD-MM-YYYY").add(expired, 'days').toISOString());
+        if(dateBuy <= dateF) {
+            let n = diffDate(dateT, dateF);
+            return {k, n};
+        } else {
+            if(dateExpired < dateBuy) {
+               return recursiveReciptKN(dateBuy, dateExpired, dateT, expired);
+            }
+            k = diffD(dateBuy, dateF);
+            n = diffD(dateT, dateBuy);
+        }
+        return {k, n};
+    }
 };
+
+function recursiveReciptKN (dateBuy, dateExpired, dateT, expired) {
+    return module.exports.reciptKN(dateBuy, dateExpired, dateT, expired);
+}
 
 function diffMonth (dateFrom, dateTo) {
     dateFrom = new Date(dateFrom);
     dateTo = new Date(dateTo);
     return dateTo.getMonth() - dateFrom.getMonth() +  (12 * (dateTo.getFullYear() - dateFrom.getFullYear()));
+}
+
+function diffD (firstDate, secondDate) {
+    var a = moment(firstDate);
+    var b = moment(secondDate);
+    return a.diff(b, 'days');
 }
 
 function diffDate (firstDate, secondDate) {

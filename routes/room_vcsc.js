@@ -12,10 +12,10 @@ router.get('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const sql = `SELECT 
                 p.*, a.MSTP, a.SL_DPH, b.LS_TOIDA AS LAISUAT_BAN
-            FROM
+            FROM 
                 ${tbl_roomVCSC} p 
             LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID 
-            LEFT JOIN ${tbl_interest_sales} b ON b.MSLS = p.MS_LSB 
+            LEFT JOIN ${tbl_interest_sales} b ON b.MSLS = a.MS_LSB 
             ORDER BY
                 p.MSROOM DESC;
         `;

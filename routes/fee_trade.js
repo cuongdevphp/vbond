@@ -8,7 +8,7 @@ const tbl = '[dbo].[TB_PHIGIAODICH]';
 router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM '+ tbl +' ORDER BY [MSPHI] DESC');
+        const result = await pool.request().query(`SELECT * FROM ${tbl} ORDER BY [TRANGTHAI] DESC`);
         return res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message});

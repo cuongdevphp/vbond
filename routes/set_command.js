@@ -58,7 +58,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                 LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
-                LEFT JOIN ${tbl_interest_rate_buy} d ON a.BOND_ID = d.BONDID
+                LEFT JOIN ${tbl_interest_rate_buy} d ON a.BONDID = d.BOND_ID
                 WHERE MSDL = ${MSDL}`
             );
 

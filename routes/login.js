@@ -79,10 +79,11 @@ router.put('/core', async (req, res) => {
     try {
         console.log(req.body);
         const MSNDT = req.body.MSNDT;
-        const SOTIEN = req.body.SOTIEN || '';
+        const SOTIEN = req.body.SOTIEN || 0;
         const pool = await poolPromise;
+
         const sql = `UPDATE ${tbl_NDT} SET 
-            SOTIEN = ${SOTIEN}, 
+            SOTIEN = ${SOTIEN} 
         WHERE MSNDT = N'${MSNDT}'`;
         try {
             await pool.request().query(sql);

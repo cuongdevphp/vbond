@@ -10,6 +10,7 @@ const tbl_investors = '[dbo].[TB_NHADAUTU]';
 const tbl_assets = '[dbo].[TB_TAISAN]';
 const tbl_NTL = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_RoomVCSC = '[dbo].[TB_ROOMVCSC]';
+const tbl_interest_rate_buy = '[dbo].[TB_LAISUATMUA]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
@@ -49,13 +50,15 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
         try {
             const fetchCommand = await pool.request().query(`
                 SELECT p.MS_NDT, p.BOND_ID, p.NGAY_GD, p.SOLUONG, p.DONGIA, p.MSDL, p.TONGGIATRI, 
-                    a.LAISUAT_HH, a.NGAYPH, a.NGAYDH, a.SL_DPH,
+                    a.NGAYPH, a.NGAYDH, a.SL_DPH,
                     b.SONGAYTINHLAI,
-                    c.SOLUONG AS SOLUONGTS
+                    c.SOLUONG AS SOLUONGTS,
+                    d.LS_TOIDA AS LAISUAT_MUA
                 FROM ${tbl} p 
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                 LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
+                LEFT JOIN ${tbl_interest_rate_buy} d ON a.BOND_ID = d.BONDID
                 WHERE MSDL = ${MSDL}`
             );
 
@@ -73,7 +76,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                         SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
                         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
                         (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
-                        ${fetchCommand.recordset[0].LAISUAT_HH}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
+                        ${fetchCommand.recordset[0].LAISUAT_MUA}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
                         ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
                         ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
                     `);

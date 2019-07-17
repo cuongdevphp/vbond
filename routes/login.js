@@ -77,6 +77,7 @@ router.post('/core', async (req, res) => {
 
 router.put('/core', async (req, res) => {
     try {
+        console.log(req.body);
         const MSNDT = req.body.MSNDT;
         const SOTIEN = req.body.SOTIEN || '';
         const pool = await poolPromise;

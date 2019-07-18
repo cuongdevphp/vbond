@@ -24,11 +24,10 @@ router.post('/', header.verifyToken, async (req, res) => {
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
-        const TRANGTHAI = parseInt(req.body.TRANGTHAI);
 
         const sql = `INSERT INTO ${tbl}
             (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            (N'${TENPHI}', '${TYLETINH}', '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${TRANGTHAI}, '${new Date(Date.now()).toISOString()}', ${1});`
+            (N'${TENPHI}', ${TYLETINH}, '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');

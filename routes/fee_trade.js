@@ -20,14 +20,16 @@ router.post('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
 
         const TENPHI = req.body.TENPHI;
+        const PHIMIN = req.body.PHIMIN;
+        const PHIMAX = req.body.PHIMAX;
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
 
         const sql = `INSERT INTO ${tbl}
-            (TENPHI, TYLETINH, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            (N'${TENPHI}', ${TYLETINH}, '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});`
+            (TENPHI, TYLETINH, PHIMIN, PHIMAX, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            (N'${TENPHI}', ${TYLETINH}, ${PHIMIN}, ${PHIMAX}, '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -45,16 +47,18 @@ router.put('/', header.verifyToken, async (req, res) => {
 
         const MSPHI = req.body.MSPHI;
         const TENPHI = req.body.TENPHI;
+        const PHIMIN = req.body.PHIMIN;
+        const PHIMAX = req.body.PHIMAX;
         const TYLETINH = req.body.TYLETINH;
         const NGAYAPDUNG = req.body.NGAYAPDUNG;
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
-        const TRANGTHAI = req.body.TRANGTHAI;
 
         const sql = `UPDATE ${tbl} SET 
                         TENPHI = N'${TENPHI}', 
-                        TYLETINH = '${TYLETINH}', 
-                        TRANGTHAI = ${TRANGTHAI}, 
+                        TYLETINH = ${TYLETINH}, 
+                        PHIMIN = ${PHIMIN}, 
+                        PHIMAX = ${PHIMAX}, 
                         NGAYAPDUNG = '${moment(NGAYAPDUNG).toISOString()}', 
                         GHICHU = N'${GHICHU}', 
                         LOAIGIAODICH = ${LOAIGIAODICH},

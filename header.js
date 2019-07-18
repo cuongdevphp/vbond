@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-
 module.exports = {
     verifyToken: (req, res, next) => {
         // FORMAT OF TOKEN

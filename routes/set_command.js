@@ -11,6 +11,7 @@ const tbl_assets = '[dbo].[TB_TAISAN]';
 const tbl_NTL = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
 const tbl_RoomVCSC = '[dbo].[TB_ROOMVCSC]';
 const tbl_interest_rate_buy = '[dbo].[TB_LAISUATMUA]';
+const tbl_history = '[dbo].[TB_HISTORY]';
 
 /* GET listing. */
 router.get('/:status', header.verifyToken, async (req, res) => {
@@ -38,7 +39,7 @@ router.get('/:status', header.verifyToken, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
+// Admin approve
 router.put('/updateStatus', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
@@ -61,98 +62,83 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                 LEFT JOIN ${tbl_interest_rate_buy} d ON a.BONDID = d.BOND_ID
                 WHERE MSDL = ${MSDL}`
             );
-
+            const rsData = fetchCommand.recordset[0];
             switch(status) {
                 case 1: 
                     const day = await common.genTotalDateHolding(
-                        fetchCommand.recordset[0].NGAY_GD, 
-                        fetchCommand.recordset[0].NGAYPH,
-                        fetchCommand.recordset[0].NGAYDH,
-                        fetchCommand.recordset[0].SONGAYTINHLAI
+                        rsData.NGAY_GD, 
+                        rsData.NGAYPH,
+                        rsData.NGAYDH,
+                        rsData.SONGAYTINHLAI
                     );
                     await pool.request().query(`
                         INSERT INTO ${tbl_assets} 
                         (MS_NDT, MS_DL, BOND_ID, LAISUATKHIMUA, 
                         SONGAYNAMGIU, NGAYMUA, SOLUONG, DONGIA, TONGGIATRI, SL_KHADUNG, SL_DABAN, GIATRIKHIBAN, 
                         LAISUATKHIBAN, TRANGTHAI, CAPGIAY_CN, NGAYTAO, FLAG) VALUES 
-                        (N'${fetchCommand.recordset[0].MS_NDT}', N'${fetchCommand.recordset[0].MSDL}', ${fetchCommand.recordset[0].BOND_ID}, 
-                        ${fetchCommand.recordset[0].LAISUAT_MUA}, ${day}, '${moment().toISOString()}', ${fetchCommand.recordset[0].SOLUONG}, ${fetchCommand.recordset[0].DONGIA}, 
-                        ${fetchCommand.recordset[0].TONGGIATRI}, ${fetchCommand.recordset[0].SOLUONG}, ${0}, ${0}, 
+                        (N'${rsData.MS_NDT}', N'${rsData.MSDL}', ${rsData.BOND_ID}, 
+                        ${rsData.LAISUAT_MUA}, ${day}, '${moment().toISOString()}', ${rsData.SOLUONG}, ${rsData.DONGIA}, 
+                        ${rsData.TONGGIATRI}, ${rsData.SOLUONG}, ${0}, ${0}, 
                         ${0}, ${1}, ${1}, '${moment().toISOString()}', ${1});
                     `);
-                    const exceptBondQuatity = fetchCommand.recordset[0].SL_DPH - fetchCommand.recordset[0].SOLUONG;
+                    const exceptBondQuatity = rsData.SL_DPH - rsData.SOLUONG;
                     await pool.request().query(`
                         UPDATE ${tbl_bond} SET 
                             SL_DPH = ${exceptBondQuatity}, 
                             NGAYUPDATE = '${moment().toISOString()}' 
-                        WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
+                        WHERE BONDID = ${rsData.BOND_ID}`
                     );
-
-                    try {
-                        await pool.request().query(`
-                            UPDATE ${tbl_RoomVCSC} SET 
-                            DANGCHO = DANGCHO - ${fetchCommand.recordset[0].SOLUONG} 
-                            WHERE BOND_ID = ${fetchCommand.recordset[0].BOND_ID}
-                        `);
-                    } catch(err) {
-                        res.status(500).json({ error: err.message });
-                    }
-
+                    await pool.request().query(`
+                        UPDATE ${tbl_RoomVCSC} SET 
+                        DANGCHO = DANGCHO - ${rsData.SOLUONG} 
+                        WHERE BOND_ID = ${rsData.BOND_ID}
+                    `);
                     break;
                 case 3: 
-                    const SLDPH = fetchCommand.recordset[0].SOLUONGTS + fetchCommand.recordset[0].SL_DPH;
-                    try {
-                        await pool.request().query(`
-                            UPDATE ${tbl_assets} SET 
-                                SOLUONG = ${0}, 
-                                NGAYUPDATE = '${moment().toISOString()}' 
-                            WHERE MSTS = ${MSTS}`
-                        );
-
-                    } catch (err) {
-                        console.log(err, 1);
-                    }
-
-                    try {
-                        await pool.request().query(`
-                            UPDATE ${tbl_bond} SET 
-                                SL_DPH = ${SLDPH}, 
-                                NGAYUPDATE = '${moment().toISOString()}' 
-                            WHERE BONDID = ${fetchCommand.recordset[0].BOND_ID}`
-                        );
-                    } catch (err) {
-                        console.log(err, 2);
-                    }
-                    
-                    try {
-                        await pool.request().query(`
-                            UPDATE ${tbl_RoomVCSC} SET 
-                            DANGCHO = DANGCHO - ${fetchCommand.recordset[0].SOLUONG} 
-                            WHERE BOND_ID = ${fetchCommand.recordset[0].BOND_ID}
-                        `);
-                    } catch(err) {
-                        res.status(500).json({ error: err.message });
-                    }
-
+                    const SLDPH = rsData.SOLUONGTS + rsData.SL_DPH;
+                    await pool.request().query(`
+                        UPDATE ${tbl_assets} SET 
+                            SOLUONG = ${0}, 
+                            NGAYUPDATE = '${moment().toISOString()}' 
+                        WHERE MSTS = ${MSTS}`
+                    );
+                    await pool.request().query(`
+                        UPDATE ${tbl_bond} SET 
+                            SL_DPH = ${SLDPH}, 
+                            NGAYUPDATE = '${moment().toISOString()}' 
+                        WHERE BONDID = ${rsData.BOND_ID}`
+                    );
+                    await pool.request().query(`
+                        UPDATE ${tbl_RoomVCSC} SET 
+                        DANGCHO = DANGCHO - ${rsData.SOLUONG} 
+                        WHERE BOND_ID = ${rsData.BOND_ID}
+                    `);
                     break;
                 default:
                     break;
             }
+
             await pool.request().query(`
                 UPDATE ${tbl} SET 
                     TRANGTHAI_LENH = ${status}
                 WHERE MSDL = ${MSDL}`
             );
+            
+            await pool.request().query(`
+                INSERT INTO ${tbl_history}
+                (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 
+                (${MSDL}, ${rsData.BOND_ID}, ${status}, N'${MS_NDT}', '${moment().toISOString()}');`
+            );
+
             res.status(200).json({ message: 'Duyệt lệnh thành công' });
         } catch (error) {
-            console.log("loi");
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
-
+// User buy
 router.post('/', header.verifyToken, async (req, res) => {
     try {
         const BOND_ID = req.body.BOND_ID;
@@ -174,19 +160,21 @@ router.post('/', header.verifyToken, async (req, res) => {
             TRANGTHAI_LENH, NGAY_TRAITUC, GHICHU, NGAYTAO, FLAG) VALUES 
             (${BOND_ID}, N'${MS_NDT}', ${MS_ROOM}, N'${MS_NGUOI_GT}', ${SOLUONG}, ${DONGIA}, ${TONGGIATRI}, ${LAISUAT_DH}, 
             '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
-            '${moment().toISOString()}', ${1});`;
+            '${moment().toISOString()}', ${1});
+            SELECT MSDL FROM ${tbl} WHERE MSDL = SCOPE_IDENTITY();`;
 
         try {
-            await pool.request().query(sql);
-            try {
-                await pool.request().query(`
-                    UPDATE ${tbl_RoomVCSC} SET 
-                    DANGCHO = DANGCHO + ${SOLUONG} 
-                    WHERE MSROOM = ${MS_ROOM}
-                `);
-            } catch(err) {
-                res.status(500).json({ error: err.message });
-            }
+            const rsSetCommand = await pool.request().query(sql);
+            await pool.request().query(`
+                UPDATE ${tbl_RoomVCSC} SET 
+                DANGCHO = DANGCHO + ${SOLUONG} 
+                WHERE MSROOM = ${MS_ROOM}
+            `);
+            await pool.request().query(`
+                INSERT INTO ${tbl_history}
+                (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 
+                (${rsSetCommand.recordset[0].MSDL}, ${BOND_ID}, ${0}, N'${MS_NDT}', '${moment().toISOString()}');`
+            );
             res.send('Create data successful!');
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -4,7 +4,6 @@ const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
 const tbl = '[dbo].[TB_LAISUATBAN]';
-
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     try {

@@ -54,12 +54,14 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
                     a.NGAYPH, a.NGAYDH, a.SL_DPH,
                     b.SONGAYTINHLAI,
                     c.SOLUONG AS SOLUONGTS,
-                    d.LS_TOIDA AS LAISUAT_MUA
+                    d.LS_TOIDA AS LAISUAT_MUA,
+                    e.MSNDT
                 FROM ${tbl} p 
                 LEFT JOIN ${tbl_bond} a ON a.BONDID = p.BOND_ID
                 LEFT JOIN ${tbl_NTL} b ON a.MS_NTLTN = b.MSNTLTN
                 LEFT JOIN ${tbl_assets} c ON c.MS_DL = p.MSDL 
                 LEFT JOIN ${tbl_interest_rate_buy} d ON a.BONDID = d.BOND_ID
+                LEFT JOIN ${tbl_investors} e ON e.MSNDT = p.MS_NDT 
                 WHERE MSDL = ${MSDL}`
             );
             const rsData = fetchCommand.recordset[0];
@@ -127,7 +129,7 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
             await pool.request().query(`
                 INSERT INTO ${tbl_history}
                 (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 
-                (${MSDL}, ${rsData.BOND_ID}, ${status}, N'${MS_NDT}', '${moment().toISOString()}');`
+                (${MSDL}, ${rsData.BOND_ID}, ${status}, N'${rsData.MS_NDT}', '${moment().toISOString()}');`
             );
 
             res.status(200).json({ message: 'Duyệt lệnh thành công' });

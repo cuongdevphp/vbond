@@ -14,7 +14,7 @@ const tbl_history = '[dbo].[TB_HISTORY]';
 router.get('/:MSNDT', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-        const MSNDT = req.body.MSNDT;
+        const MSNDT = req.params.MSNDT;
 
         const sql = `SELECT
                         p.*, 

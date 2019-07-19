@@ -11,7 +11,7 @@ const tbl_set_command = '[dbo].[TB_DATLENH]';
 const tbl_history = '[dbo].[TB_HISTORY]';
 
 /* GET listing. */
-router.get('/:MSNDT', header.verifyTokenUser, async (req, res) => {
+router.get('/:MSNDT', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const MSNDT = req.body.MSNDT;

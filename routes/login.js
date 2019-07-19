@@ -1,11 +1,11 @@
-var express = require('express');
-var jwt = require('jsonwebtoken');
-var moment = require('moment');
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const common = require('../common');
+const moment = require('moment');
 const { poolPromise } = require('../db');
-var router = express.Router();
+const router = express.Router();
 const tbl = '[dbo].[TB_USER]';
 const tbl_NDT = '[dbo].[TB_NHADAUTU]';
-
 router.post('/', async (req, res) => {
     try {
         const USERNAME = req.body.USERNAME;
@@ -43,7 +43,11 @@ router.post('/core', async (req, res) => {
         const SO_TKCK = req.body.SO_TKCK || '';
         const MS_NGUOIGIOITHIEU = req.body.MS_NGUOIGIOITHIEU || '';
         const pool = await poolPromise;
-        const queryDulicateAccount = `SELECT * FROM ${tbl_NDT} WHERE MSNDT = N'${MSNDT}'`;
+        const queryDulicateAccount = `
+            SELECT MSNDT, LOAINDT, TENNDT, CMND_GPKD, NGAYCAP, NOICAP, SO_TKCK, SOTIEN, MS_NGUOIGIOITHIEU
+            FROM ${tbl_NDT} 
+            WHERE MSNDT = N'${MSNDT}'
+        `;
         const rsDup = await pool.request().query(queryDulicateAccount);
         if(rsDup.recordset.length === 0) {
             const sql = `INSERT INTO ${tbl_NDT} 
@@ -63,45 +67,34 @@ router.post('/core', async (req, res) => {
                     SO_TKCK: SO_TKCK,
                     MS_NGUOIGIOITHIEU: MS_NGUOIGIOITHIEU
                 }
-                createToken(res, [user]);
+                createToken(res, [user], 1);
             } catch (error) {
                 res.status(500).json({ error: error.message });
             }
         } else {
-            createToken(res, rsDup.recordset);
+            createToken(res, rsDup.recordset, 1);
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-router.put('/core', async (req, res) => {
-    try {
-        console.log(req.body);
-        const MSNDT = req.body.MSNDT;
-        const SOTIEN = req.body.SOTIEN || 0;
-        const pool = await poolPromise;
-
-        const sql = `UPDATE ${tbl_NDT} SET 
-            SOTIEN = ${SOTIEN} 
-        WHERE MSNDT = N'${MSNDT}'`;
-        try {
-            await pool.request().query(sql);
-            res.send("Update money successful!");
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+const createToken = (res, data, type = 0) => {
+    jwt.sign({ data }, 'secretkey', { expiresIn: '8h' }, async (err, token) => {
+        if(type) {
+            const lastToken = await common.lastToken(token);
+            const pool = await poolPromise;
+            await pool.request().query(`
+                UPDATE ${tbl_NDT} SET 
+                    TOKEN = '${lastToken}'
+                WHERE MSNDT = N'${data[0].MSNDT}'
+            `);
         }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-function createToken (res, data) {
-    jwt.sign({ data }, 'secretkey', { expiresIn: '8h' }, (err, token) => {
         res.json({
             token,
             user: data[0]
         });
     });
 }
+
 module.exports = router;

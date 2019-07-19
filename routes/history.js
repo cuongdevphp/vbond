@@ -11,10 +11,10 @@ const tbl_set_command = '[dbo].[TB_DATLENH]';
 const tbl_history = '[dbo].[TB_HISTORY]';
 
 /* GET listing. */
-router.get('/:MSNDT', header.verifyToken, async (req, res) => {
+router.get('/', header.verifyTokenUser, async (req, res) => {
     try {
         const pool = await poolPromise;
-        const MSNDT = req.params.MSNDT;
+        const MSNDT = req.MSNDT;
 
         const sql = `SELECT
                         p.*, 
@@ -29,7 +29,6 @@ router.get('/:MSNDT', header.verifyToken, async (req, res) => {
                     ORDER BY
                         p.HISTORYID DESC;
                 `;
-        console.log(sql);
         const result = await pool.request().query(sql);
         return res.json(result.recordset);
     } catch (err) {

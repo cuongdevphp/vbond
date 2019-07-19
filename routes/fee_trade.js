@@ -27,7 +27,12 @@ router.get('/:LOAIGIAODICH/:SOTIEN', header.verifyToken, async (req, res) => {
             FROM ${tradeFeeTbl} 
             WHERE LOAIGIAODICH = ${LOAIGIAODICH} AND ${SOTIEN} BETWEEN PHIMIN AND PHIMAX
         `);
-        return res.json(result.recordset[0]);
+        
+        if(result.recordset.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy tỉ lệ tính" });
+        } else {
+            return res.json(result.recordset[0]);
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

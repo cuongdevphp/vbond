@@ -88,25 +88,19 @@ router.post('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.put('/updateWallet', header.verifyToken, async (req, res) => {
+router.put('/updateWallet', header.verifyTokenUser, async (req, res) => {
     try {
         const pool = await poolPromise;
-        //const MSNDT = req.body.MSNDT;
+
         const SOTIEN = req.body.SOTIEN || 0;
-        const TOKEN = req.token;
+        const MSNDT = req.MSNDT;
 
-        const checkToken = await pool.request().query(`
-            SELECT MSNDT FROM ${tbl_NDT} WHERE CONVERT(VARCHAR, TOKEN) = '${TOKEN}'
-        `);
-        console.log(`SELECT MSNDT FROM ${tbl_NDT} WHERE CONVERT(VARCHAR, TOKEN) = '${TOKEN}'`);
-        console.log(checkToken);
+        const sql = `UPDATE ${tbl_NDT} SET 
+            SOTIEN = ${SOTIEN},
+        WHERE MSNDT = '${MSNDT}'`;
 
-        // const sql = `UPDATE ${tbl_NDT} SET 
-        //     SOTIEN = ${SOTIEN},
-        //     TOKEN = '${TOKEN}'
-        // WHERE MSNDT = N'${MSNDT}'`;
         try {
-            //await pool.request().query(sql);
+            await pool.request().query(sql);
             res.send("Update money successful!");
         } catch (error) {
             res.status(500).json({ error: error.message });

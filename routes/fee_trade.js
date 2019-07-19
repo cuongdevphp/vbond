@@ -2,16 +2,34 @@ const express = require('express');
 const header = require('../header');
 const moment = require('moment');
 const { poolPromise } = require('../db');
+const { tradeFeeTbl } = require('../tbl');
 const router = express.Router();
-const tbl = '[dbo].[TB_PHIGIAODICH]';
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query(`SELECT * FROM ${tbl} ORDER BY [MSPHI] DESC`);
+        const result = await pool.request().query(`SELECT * FROM ${tradeFeeTbl} ORDER BY [MSPHI] DESC`);
         return res.json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: err.message});
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/:LOAIGIAODICH/:SOTIEN', header.verifyToken, async (req, res) => {
+    try {
+        const pool = await poolPromise;
+
+        const LOAIGIAODICH = req.params.LOAIGIAODICH;
+        const SOTIEN = req.params.SOTIEN;
+
+        const result = await pool.request().query(`
+            SELECT * 
+            FROM ${tradeFeeTbl} 
+            WHERE LOAIGIAODICH = ${LOAIGIAODICH} AND ${SOTIEN} BETWEEN PHIMIN AND PHIMAX
+        `);
+        return res.json(result.recordset[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -27,7 +45,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
 
-        const sql = `INSERT INTO ${tbl}
+        const sql = `INSERT INTO ${tradeFeeTbl}
             (TENPHI, TYLETINH, PHIMIN, PHIMAX, NGAYAPDUNG, GHICHU, LOAIGIAODICH, TRANGTHAI, NGAYTAO, FLAG) VALUES 
             (N'${TENPHI}', ${TYLETINH}, ${PHIMIN}, ${PHIMAX}, '${moment(NGAYAPDUNG).toISOString()}', N'${GHICHU}', ${LOAIGIAODICH}, ${1}, '${new Date(Date.now()).toISOString()}', ${1});`
         try {
@@ -37,7 +55,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
     } catch (err) {
-        res.status(500).json({ error: err.message});
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -54,7 +72,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU;
         const LOAIGIAODICH = req.body.LOAIGIAODICH;
 
-        const sql = `UPDATE ${tbl} SET 
+        const sql = `UPDATE ${tradeFeeTbl} SET 
                         TENPHI = N'${TENPHI}', 
                         TYLETINH = ${TYLETINH}, 
                         PHIMIN = ${PHIMIN}, 
@@ -79,7 +97,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 router.delete('/', header.verifyToken, async (req, res) => {
     try {
         const MSPHI = req.body.MSPHI;
-        const sql = `UPDATE ${tbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;
+        const sql = `UPDATE ${tradeFeeTbl} SET FLAG = ${0} WHERE MSPHI = ${MSPHI}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);
@@ -89,7 +107,7 @@ router.delete('/', header.verifyToken, async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500).json({ error: err.message});
+        res.status(500).json({ error: err.message });
     }
 });
 

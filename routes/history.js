@@ -8,6 +8,7 @@ const router = express.Router();
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_investors = '[dbo].[TB_NHADAUTU]';
 const tbl_set_command = '[dbo].[TB_DATLENH]';
+const tbl_history = '[dbo].[TB_HISTORY]';
 
 /* GET listing. */
 router.get('/:MSNDT', header.verifyToken, async (req, res) => {

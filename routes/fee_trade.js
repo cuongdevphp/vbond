@@ -23,7 +23,7 @@ router.get('/:LOAIGIAODICH/:SOTIEN', header.verifyToken, async (req, res) => {
         const SOTIEN = req.params.SOTIEN;
 
         const result = await pool.request().query(`
-            SELECT * 
+            SELECT TYLETINH
             FROM ${tradeFeeTbl} 
             WHERE LOAIGIAODICH = ${LOAIGIAODICH} AND ${SOTIEN} BETWEEN PHIMIN AND PHIMAX
         `);

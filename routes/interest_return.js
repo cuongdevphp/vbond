@@ -3,7 +3,7 @@ const header = require('../header');
 const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
-const { interestAgainTbl, bondTbl } = require('../tbl');
+const { interestReturnTbl, bondTbl } = require('../tbl');
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -11,7 +11,7 @@ router.get('/', header.verifyToken, async (req, res) => {
         const pool = await poolPromise;
         const result = await pool.request().query(`
             SELECT p.*, a.MSTP 
-            FROM ${interestAgainTbl} p 
+            FROM ${interestReturnTbl} p 
             LEFT JOIN ${bondTbl} a ON a.BONDID = p.BOND_ID
             ORDER BY p.MSTDT DESC`
         );
@@ -36,7 +36,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const TONGTIEN = req.body.TONGTIEN;
 
         const pool = await poolPromise;
-        const sql = `INSERT INTO ${interestAgainTbl}
+        const sql = `INSERT INTO ${interestReturnTbl}
             (BOND_ID, MS_NDT, KYHUONGLAI, TUNGAY, TOINGAY, SOTIEN, LS_APDUNG, SONGAYDUKIEN, SONGAYTHUCTE, TIENLAI, TONGTIEN, NGAYTAO, FLAG) VALUES 
             (N'${BOND_ID}', N'${MS_NDT}', ${KYHUONGLAI}, '${moment(TUNGAY).toISOString()}', '${moment(TOINGAY).toISOString()}', ${SOTIEN}, ${LS_APDUNG}, ${SONGAYDUKIEN}, ${SONGAYTHUCTE}, ${TIENLAI}, ${TONGTIEN}, '${moment().toISOString()}', ${1});`
         try {
@@ -66,7 +66,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const TONGTIEN = req.body.TONGTIEN;
         
         const pool = await poolPromise;
-        const sql = `UPDATE ${interestAgainTbl} SET 
+        const sql = `UPDATE ${interestReturnTbl} SET 
                         BOND_ID = ${BOND_ID}, 
                         MS_NDT = N'${MS_NDT}', 
                         KYHUONGLAI = ${KYHUONGLAI}, 
@@ -94,7 +94,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 router.delete('/', header.verifyToken, async (req, res) => {
     try {
         const MSTDT = req.body.MSTDT;
-        const sql = `UPDATE ${interestAgainTbl} SET FLAG = ${0} WHERE MSTDT = ${MSTDT}`;
+        const sql = `UPDATE ${interestReturnTbl} SET FLAG = ${0} WHERE MSTDT = ${MSTDT}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

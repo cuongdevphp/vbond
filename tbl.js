@@ -11,7 +11,7 @@ const roundPayTbl = `${db}[TB_KYHANTHANHTOAN]`;
 const interestSalesTbl = `${db}[TB_LAISUATBAN]`;
 const interestBuyTbl = `${db}[TB_LAISUATMUA]`;
 const interestBankTbl = `${db}[TB_LAISUATNGANHANG]`;
-const interestAgainTbl = `${db}[TB_LAITAIDAUTU]`;
+const interestReturnTbl = `${db}[TB_LAITAIDAUTU]`;
 const bondTypeTbl = `${db}[TB_LOAITRAIPHIEU]`;
 const interestYearTbl = `${db}[TB_NGAYTINHLAITRONGNAM]`;
 const investorsTbl = `${db}[TB_NHADAUTU]`;
@@ -35,7 +35,7 @@ module.exports = {
     interestSalesTbl, 
     interestBuyTbl, 
     interestBankTbl, 
-    interestAgainTbl, 
+    interestReturnTbl, 
     bondTypeTbl, 
     interestYearTbl, 
     investorsTbl, 

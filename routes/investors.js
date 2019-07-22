@@ -96,7 +96,7 @@ router.put('/updateWallet', header.verifyTokenUser, async (req, res) => {
         const MSNDT = req.MSNDT;
 
         const sql = `UPDATE ${tbl_NDT} SET 
-            SOTIEN = ${SOTIEN},
+            SOTIEN = ${SOTIEN}
         WHERE MSNDT = '${MSNDT}'`;
 
         try {

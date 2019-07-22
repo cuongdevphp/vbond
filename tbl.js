@@ -22,8 +22,10 @@ const roomVcscTbl = `${db}[TB_ROOMVCSC]`;
 const assetTbl = `${db}[TB_TAISAN]`;
 const bondTbl = `${db}[TB_TRAIPHIEU]`;
 const userTbl = `${db}[TB_USER]`;
+const interestRateReturnTbl = `${db}[TB_LAISUATTAIDAUTU]`;
 
 module.exports = {
+    interestRateReturnTbl,
     historyTbl, 
     branchVcscTbl, 
     companyTbl, 

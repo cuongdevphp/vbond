@@ -98,7 +98,6 @@ router.put('/updateWallet', header.verifyTokenUser, async (req, res) => {
         const sql = `UPDATE ${tbl_NDT} SET 
             SOTIEN = ${SOTIEN}
         WHERE MSNDT = '${MSNDT}'`;
-        console.log(sql);
         try {
             await pool.request().query(sql);
             res.send("Update money successful!");

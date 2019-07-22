@@ -34,6 +34,7 @@ const setCommandRouter = require('./routes/set_command');
 const dateInterestYearRouter = require('./routes/date_interest_year');
 const assetRouter = require('./routes/asset');
 const historyRouter = require('./routes/history');
+const interestAgainRouter = require('./routes/interest_again');
 /**
  * Get port from environment and store in Express.
  */
@@ -97,6 +98,7 @@ app.use('/dateInterestYear', dateInterestYearRouter);
 app.use('/assets', assetRouter);
 app.use('/interestRateSales', interestRateSalesRouter);
 app.use('/history', historyRouter);
+app.use('/interestAgain', interestAgainRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

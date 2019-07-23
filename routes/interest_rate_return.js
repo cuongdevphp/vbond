@@ -21,6 +21,30 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
+
+
+router.put('/getDataRateByCouponDate', header.verifyToken, async (req, res) => {
+    const data = JSON.parse(req.body.arrData) || [];
+    if(data.length > 0) {
+        try {
+            for(let i = 0; i < data.length; i++) {
+                const pool = await poolPromise;
+                const result = await pool.request().query(`
+                    SELECT LS_TOIDA 
+                    FROM ${interestRateReturnTbl} 
+                    WHERE '${data[i].date}' BETWEEN NGAYAPDUNG AND NGAYKETTHUC
+                `);
+                if(result.recordset.length > 0) {
+                    data[i].LS_TOIDA = result.recordset[0].LS_TOIDA;
+                }
+            }
+            return res.json(data);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    }
+});
+
 router.post('/', header.verifyToken, async (req, res) => {
     try {
         const LS_TOIDA = req.body.LS_TOIDA;

@@ -23,16 +23,18 @@ router.get('/', header.verifyToken, async (req, res) => {
 
 router.put('/getDataRateByCouponDate', header.verifyToken, async (req, res) => {
     const data = JSON.parse(req.body.arrData) || [];
+    const test = [];
     if(data.length > 0) {
         try {
             for(let i = 0; i < data.length; i++) {
-                data[i].LS_TOIDA = 0;
+                data[i].LS_TOIDA = 1;
                 const pool = await poolPromise;
                 const result = await pool.request().query(`
                     SELECT LS_TOIDA 
                     FROM ${interestRateReturnTbl} 
                     WHERE '${data[i].date}' BETWEEN NGAYAPDUNG AND NGAYKETTHUC AND FLAG = 1
                 `);
+
                 if(result.recordset.length > 0) {
                     data[i].LS_TOIDA = result.recordset[0].LS_TOIDA;
                 }

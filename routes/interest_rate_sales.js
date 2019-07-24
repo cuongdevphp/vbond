@@ -92,12 +92,12 @@ router.put('/', header.verifyToken, async (req, res) => {
                 }
                 await pool.request().query(`
                     UPDATE ${setCommandTbl} SET 
-                        NGAY_TRAITUC = ${JSON.stringify(rsNGAYTRAITUC)}
+                        NGAY_TRAITUC = '${JSON.stringify(rsNGAYTRAITUC)}'
                     WHERE MSLS = '${rs.recordset[i].MSLS}'
                 `);
             }
         }
-        
+
         const sql = `UPDATE ${interestSalesTbl} SET 
                         LS_TOIDA = ${LS_TOIDA}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 

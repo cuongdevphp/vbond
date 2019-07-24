@@ -64,6 +64,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
 
+        const TRANGTHAI = req.body.TRANGTHAI;
         const LS_TOIDA = req.body.LS_TOIDA;
         const MSLS = req.body.MSLS;
         const NGAYBATDAU = req.body.NGAYBATDAU;
@@ -79,7 +80,7 @@ router.put('/', header.verifyToken, async (req, res) => {
             WHERE MSLS = '${MSLS}'
         `);
         
-        const rsNGAYTRAITUC = []
+        const rsNGAYTRAITUC = [];
         if(rs.recordset.length > 0) {
             for(let i = 0; i < rs.recordset.length; i++) {
                 const data = JSON.parse(rs.recordset[i].NGAY_TRAITUC);
@@ -98,15 +99,61 @@ router.put('/', header.verifyToken, async (req, res) => {
             }
         }
 
-        const sql = `UPDATE ${interestSalesTbl} SET 
+        switch (TRANGTHAI) {
+            case 1:
+                await pool.request().query(`
+                UPDATE ${interestSalesTbl} SET 
+                    LS_TOIDA = ${LS_TOIDA}, 
+                    DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                    NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                    NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                    NGAYUPDATE = '${moment().toISOString()}' 
+                WHERE MSLS = '${MSLS}'`);
+                break;
+            case 2:
+                const rsLICHSUCAPNHAT = await pool.request().query(`
+                    SELECT LICHSUCAPNHAT, LS_TOIDA, NGAYBATDAU, NGAYKETTHUC
+                    FROM ${interestSalesTbl} 
+                    WHERE MSLS = '${MSLS}'
+                `);
+                if(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT === null) {
+                    const arrLICHSU = [];
+                    arrLICHSU.LS_TOIDA = rsLICHSUCAPNHAT.recordset[0].LS_TOIDA;
+                    arrLICHSU.NGAYBATDAU = rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU;
+                    arrLICHSU.NGAYKETTHUC = rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC;
+                    await pool.request().query(`
+                    UPDATE ${interestSalesTbl} SET 
+                        LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}'
                         LS_TOIDA = ${LS_TOIDA}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
                         NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
                         NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         NGAYUPDATE = '${moment().toISOString()}' 
-                    WHERE MSLS = '${MSLS}'`;
+                    WHERE MSLS = '${MSLS}'`);
+                } else {
+                    const rsLICHSUCAPNHAT = JSON.parse(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT);
+                    rsLICHSUCAPNHAT.push({
+                        "LS_TOIDA": rsLICHSUCAPNHAT.recordset[0].LS_TOIDA, 
+                        "NGAYBATDAU": rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU, 
+                        "NGAYKETTHUC": rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC
+                    });
+
+                    await pool.request().query(`
+                    UPDATE ${interestSalesTbl} SET 
+                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}'
+                        LS_TOIDA = ${LS_TOIDA}, 
+                        DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                        NGAYUPDATE = '${moment().toISOString()}' 
+                    WHERE MSLS = '${MSLS}'`);
+                }
+                break;
+            default:
+                break;
+        }
         try {
-            await pool.request().query(sql);
+            
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });

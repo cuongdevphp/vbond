@@ -122,7 +122,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                         LS_TOIDA: rsLICHSUCAPNHAT.recordset[0].LS_TOIDA,
                         NGAYBATDAU: rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU,
                         NGAYKETTHUC: rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC,
-                    })
+                    });
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
                         LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}',
@@ -134,21 +134,22 @@ router.put('/', header.verifyToken, async (req, res) => {
                     WHERE MSLS = '${MSLS}'`);
                 } else {
                     const rsLICHSUCAPNHAT = JSON.parse(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT);
-                    rsLICHSUCAPNHAT.push({
-                        "LS_TOIDA": rsLICHSUCAPNHAT.recordset[0].LS_TOIDA, 
-                        "NGAYBATDAU": rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU, 
-                        "NGAYKETTHUC": rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC
-                    });
+                    console.log(rsLICHSUCAPNHAT);
+                    // rsLICHSUCAPNHAT.push({
+                    //     "LS_TOIDA": rsLICHSUCAPNHAT.recordset[0].LS_TOIDA, 
+                    //     "NGAYBATDAU": rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU, 
+                    //     "NGAYKETTHUC": rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC
+                    // });
 
-                    await pool.request().query(`
-                    UPDATE ${interestSalesTbl} SET 
-                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
-                        LS_TOIDA = ${LS_TOIDA}, 
-                        DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
-                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
-                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
-                        NGAYUPDATE = '${moment().toISOString()}' 
-                    WHERE MSLS = '${MSLS}'`);
+                    // await pool.request().query(`
+                    // UPDATE ${interestSalesTbl} SET 
+                    //     LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
+                    //     LS_TOIDA = ${LS_TOIDA}, 
+                    //     DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                    //     NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                    //     NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                    //     NGAYUPDATE = '${moment().toISOString()}' 
+                    // WHERE MSLS = '${MSLS}'`);
                 }
                 break;
             default:

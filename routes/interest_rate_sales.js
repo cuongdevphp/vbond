@@ -8,6 +8,7 @@ const {
     bondTbl, 
     interestSalesTbl,
     setCommandTbl, 
+    interestYearTbl
 } = require('../tbl');
 
 /* GET listing. */
@@ -70,28 +71,42 @@ router.put('/', header.verifyToken, async (req, res) => {
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
         
         const rs = await pool.request().query(`
-            SELECT p.NGAY_TRAITUC 
+            SELECT p.NGAY_TRAITUC, p.TONGGIATRITRUOCPHI, c.SONGAYTINHLAI, p.MSDL 
             FROM ${setCommandTbl} p 
             LEFT JOIN ${bondTbl} a ON a.BONDID = p.BOND_ID
             LEFT JOIN ${interestSalesTbl} b ON b.MSLS = a.MS_LSB
+            LEFT JOIN ${interestYearTbl} c ON c.MSNTLTN = a.MS_NTLTN
             WHERE MSLS = '${MSLS}'
         `);
-        console.log(rs);
-        // for(let i = 0; i < NGAYTRAITUC.length; i++){
-        //     if(NGAYTRAITUC[i].date >= NGAYBATDAU) {
-        //         const rs = (TONGGIATRITRUOCPHI * LS_TOIDA) * NGAYTRAITUC[i].n / SONGAYTINHLAI
-        //     }
-        // }
-
-        // const sql = `UPDATE ${interestSalesTbl} SET 
-        //                 LS_TOIDA = ${LS_TOIDA}, 
-        //                 DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
-        //                 NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
-        //                 NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
-        //                 NGAYUPDATE = '${moment().toISOString()}' 
-        //             WHERE MSLS = '${MSLS}'`;
+        
+        const rsNGAYTRAITUC = []
+        if(rs.recordset.length > 0) {
+            for(let i = 0; i < rs.recordset.length; i++) {
+                const data = JSON.parse(rs.recordset[i].NGAY_TRAITUC);
+                for(let j = 0; j < data.length; j++) {
+                    if(data[j].date > NGAYBATDAU) {
+                        data[j].interestRate = parseInt(LS_TOIDA);
+                        data[j].moneyReceived = rs.recordset[i].TONGGIATRITRUOCPHI * LS_TOIDA * data[j].totalDay / rs.recordset[i].SONGAYTINHLAI / 100 ;
+                    }
+                    rsNGAYTRAITUC.push(data[j]);
+                }
+                await pool.request().query(`
+                    UPDATE ${setCommandTbl} SET 
+                        NGAY_TRAITUC = ${JSON.stringify(rsNGAYTRAITUC)}
+                    WHERE MSLS = '${rs.recordset[i].MSLS}'
+                `);
+            }
+        }
+        
+        const sql = `UPDATE ${interestSalesTbl} SET 
+                        LS_TOIDA = ${LS_TOIDA}, 
+                        DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                        NGAYUPDATE = '${moment().toISOString()}' 
+                    WHERE MSLS = '${MSLS}'`;
         try {
-            //await pool.request().query(sql);
+            await pool.request().query(sql);
             res.send('Update data successfully');
         } catch (error) {
             res.status(500).json({ error: error.message });

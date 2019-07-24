@@ -146,6 +146,8 @@ router.put('/updateStatus', header.verifyToken, async (req, res) => {
 // User buy
 router.post('/', header.verifyToken, async (req, res) => {
     try {
+        //const data = JSON.parse(req.body.arrData) || [];
+
         const BOND_ID = req.body.BOND_ID;
         const MS_NDT = req.body.MS_NDT;
         const MS_ROOM = req.body.MS_ROOM;
@@ -156,8 +158,9 @@ router.post('/', header.verifyToken, async (req, res) => {
         const LAISUAT_DH = req.body.LAISUAT_DH;
         const NGAY_GD = req.body.NGAY_GD;
         const GHICHU = req.body.GHICHU || '';
-        const NGAY_TRAITUC = req.body.NGAY_TRAITUC;
-        const TRANGTHAI_MUA = req.body.TRANGTHAI_MUA || 0;
+        const NGAY_TRAITUC = JSON.parse(req.body.NGAY_TRAITUC) || [];
+        console.log(req.body);
+
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${setCommandTbl}
@@ -169,22 +172,22 @@ router.post('/', header.verifyToken, async (req, res) => {
             ${TRANGTHAI_MUA}, '${moment().toISOString()}', ${1});
             SELECT MSDL FROM ${setCommandTbl} WHERE MSDL = SCOPE_IDENTITY();`;
 
-        try {
-            const rsSetCommand = await pool.request().query(sql);
-            await pool.request().query(`
-                UPDATE ${roomVcscTbl} SET 
-                DANGCHO = DANGCHO + ${SOLUONG} 
-                WHERE MSROOM = ${MS_ROOM}
-            `);
-            await pool.request().query(`
-                INSERT INTO ${historyTbl}
-                (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 
-                (${rsSetCommand.recordset[0].MSDL}, ${BOND_ID}, ${0}, N'${MS_NDT}', '${moment().toISOString()}');`
-            );
-            res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+        // try {
+        //     const rsSetCommand = await pool.request().query(sql);
+        //     await pool.request().query(`
+        //         UPDATE ${roomVcscTbl} SET 
+        //         DANGCHO = DANGCHO + ${SOLUONG} 
+        //         WHERE MSROOM = ${MS_ROOM}
+        //     `);
+        //     await pool.request().query(`
+        //         INSERT INTO ${historyTbl}
+        //         (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 
+        //         (${rsSetCommand.recordset[0].MSDL}, ${BOND_ID}, ${0}, N'${MS_NDT}', '${moment().toISOString()}');`
+        //     );
+        //     res.send('Create data successful!');
+        // } catch (error) {
+        //     res.status(500).json({ error: error.message });
+        // }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

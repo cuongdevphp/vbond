@@ -117,6 +117,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                     WHERE MSLS = '${MSLS}'
                 `);
                 if(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT === null) {
+                    console.log("dsad");
                     const arrLICHSU = [];
                     arrLICHSU.push({
                         LS_TOIDA: rsLICHSUCAPNHAT.recordset[0].LS_TOIDA,
@@ -133,7 +134,8 @@ router.put('/', header.verifyToken, async (req, res) => {
                         NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSLS = '${MSLS}'`);
                 } else {
-                    const rsLICHSUCAPNHAT = JSON.parse(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT);
+                    console.log("not null");
+                    //const rsLICHSUCAPNHAT = JSON.parse(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT);
                     console.log(rsLICHSUCAPNHAT);
                     // rsLICHSUCAPNHAT.push({
                     //     "LS_TOIDA": rsLICHSUCAPNHAT.recordset[0].LS_TOIDA, 

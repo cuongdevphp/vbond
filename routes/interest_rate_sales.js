@@ -124,7 +124,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                     arrLICHSU.NGAYKETTHUC = rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC;
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
-                        LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}'
+                        LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}',
                         LS_TOIDA = ${LS_TOIDA}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
                         NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
@@ -141,7 +141,7 @@ router.put('/', header.verifyToken, async (req, res) => {
 
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
-                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}'
+                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
                         LS_TOIDA = ${LS_TOIDA}, 
                         DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
                         NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 

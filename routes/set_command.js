@@ -169,6 +169,7 @@ router.post('/', header.verifyToken, async (req, res) => {
             '${moment(NGAY_GD).toISOString()}', '${0}', '${NGAY_TRAITUC}', N'${GHICHU}',
             ${TRANGTHAI_MUA}, '${moment().toISOString()}', ${1});
             SELECT MSDL FROM ${setCommandTbl} WHERE MSDL = SCOPE_IDENTITY();`;
+            console.log(sql);
         try {
             const rsSetCommand = await pool.request().query(sql);
             // await pool.request().query(`

@@ -100,7 +100,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         }
 
         switch (TRANGTHAI) {
-            case 1:
+            case 2:
                 await pool.request().query(`
                 UPDATE ${interestSalesTbl} SET 
                     LS_TOIDA = ${LS_TOIDA}, 
@@ -110,7 +110,8 @@ router.put('/', header.verifyToken, async (req, res) => {
                     NGAYUPDATE = '${moment().toISOString()}' 
                 WHERE MSLS = '${MSLS}'`);
                 break;
-            case 2:
+            case 1:
+                
                 const rsLICHSUCAPNHAT = await pool.request().query(`
                     SELECT LICHSUCAPNHAT, LS_TOIDA, NGAYBATDAU, NGAYKETTHUC
                     FROM ${interestSalesTbl} 

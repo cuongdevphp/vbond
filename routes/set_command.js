@@ -172,11 +172,11 @@ router.post('/', header.verifyToken, async (req, res) => {
             console.log(sql);
         try {
             const rsSetCommand = await pool.request().query(sql);
-            // await pool.request().query(`
-            //     UPDATE ${roomVcscTbl} SET 
-            //     DANGCHO = DANGCHO + ${SOLUONG} 
-            //     WHERE MSROOM = ${MS_ROOM}
-            // `);
+            await pool.request().query(`
+                UPDATE ${roomVcscTbl} SET 
+                DANGCHO = DANGCHO + ${SOLUONG} 
+                WHERE MSROOM = ${MS_ROOM}
+            `);
             await pool.request().query(`
                 INSERT INTO ${historyTbl}
                 (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 

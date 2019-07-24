@@ -150,7 +150,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const MS_NDT = req.body.MS_NDT;
         const MS_ROOM = req.body.MS_ROOM;
         const MS_NGUOI_GT = req.body.MS_NGUOI_GT;
-        const TONGIATRITRUOCPHI = req.body.TONGIATRITRUOCPHI;
+        const TONGIATRITRUOCPHI = req.body.TONGIATRITRUOCPHI || 0;
         const SOLUONG = req.body.SOLUONG;
         const DONGIA = req.body.DONGIA;
         const TONGGIATRI = req.body.TONGGIATRI;
@@ -159,7 +159,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const GHICHU = req.body.GHICHU || '';
         const NGAY_TRAITUC = req.body.NGAY_TRAITUC;
         const TRANGTHAI_MUA = req.body.TRANGTHAI_MUA || 0;
-
+        console.log(req.body);
         const pool = await poolPromise;
         const sql = `INSERT INTO ${setCommandTbl}
             (BOND_ID, MS_NDT, MS_ROOM, TONGIATRITRUOCPHI,

@@ -171,11 +171,11 @@ router.post('/', header.verifyToken, async (req, res) => {
             SELECT MSDL FROM ${setCommandTbl} WHERE MSDL = SCOPE_IDENTITY();`;
         try {
             const rsSetCommand = await pool.request().query(sql);
-            await pool.request().query(`
-                UPDATE ${roomVcscTbl} SET 
-                DANGCHO = DANGCHO + ${SOLUONG} 
-                WHERE MSROOM = ${MS_ROOM}
-            `);
+            // await pool.request().query(`
+            //     UPDATE ${roomVcscTbl} SET 
+            //     DANGCHO = DANGCHO + ${SOLUONG} 
+            //     WHERE MSROOM = ${MS_ROOM}
+            // `);
             await pool.request().query(`
                 INSERT INTO ${historyTbl}
                 (MS_DL, BOND_ID, TRANGTHAI, MS_NDT, NGAYTAO) VALUES 

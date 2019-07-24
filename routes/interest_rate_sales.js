@@ -93,7 +93,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                 await pool.request().query(`
                     UPDATE ${setCommandTbl} SET 
                         NGAY_TRAITUC = '${JSON.stringify(rsNGAYTRAITUC)}'
-                    WHERE MSLS = '${rs.recordset[i].MSLS}'
+                    WHERE MSDL = '${rs.recordset[i].MSDL}'
                 `);
             }
         }

@@ -64,7 +64,7 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
 
-        const TRANGTHAI = req.body.TRANGTHAI;
+        const TRANGTHAI = parseInt(req.body.TRANGTHAI);
         const LS_TOIDA = req.body.LS_TOIDA;
         const MSLS = req.body.MSLS;
         const NGAYBATDAU = req.body.NGAYBATDAU;
@@ -100,7 +100,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         }
 
         switch (TRANGTHAI) {
-            case 2:
+            case 1:
                 await pool.request().query(`
                 UPDATE ${interestSalesTbl} SET 
                     LS_TOIDA = ${LS_TOIDA}, 
@@ -110,8 +110,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                     NGAYUPDATE = '${moment().toISOString()}' 
                 WHERE MSLS = '${MSLS}'`);
                 break;
-            case 1:
-                
+            case 2:
                 const rsLICHSUCAPNHAT = await pool.request().query(`
                     SELECT LICHSUCAPNHAT, LS_TOIDA, NGAYBATDAU, NGAYKETTHUC
                     FROM ${interestSalesTbl} 
@@ -119,9 +118,11 @@ router.put('/', header.verifyToken, async (req, res) => {
                 `);
                 if(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT === null) {
                     const arrLICHSU = [];
-                    arrLICHSU.LS_TOIDA = rsLICHSUCAPNHAT.recordset[0].LS_TOIDA;
-                    arrLICHSU.NGAYBATDAU = rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU;
-                    arrLICHSU.NGAYKETTHUC = rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC;
+                    arrLICHSU.push({
+                        LS_TOIDA: rsLICHSUCAPNHAT.recordset[0].LS_TOIDA,
+                        NGAYBATDAU: rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU,
+                        NGAYKETTHUC: rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC,
+                    })
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
                         LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}',

@@ -23,7 +23,6 @@ router.get('/', header.verifyToken, async (req, res) => {
 
 router.put('/getDataRateByCouponDate', header.verifyToken, async (req, res) => {
     const data = JSON.parse(req.body.arrData) || [];
-    const test = [];
     if(data.length > 0) {
         try {
             for(let i = 0; i < data.length; i++) {

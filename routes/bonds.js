@@ -5,6 +5,22 @@ const moment = require('moment');
 
 const { poolPromise } = require('../db');
 const router = express.Router();
+
+const { 
+    bondTbl, 
+    companyTbl,
+    roundPayTbl,
+    bondTypeTbl,
+    interestYearTbl, 
+
+    setCommandTbl, 
+    investorsTbl, 
+    assetTbl, 
+    roomVcscTbl, 
+    interestBuyTbl, 
+    historyTbl 
+} = require('../tbl');
+
 const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
 const tbl_company = '[dbo].[TB_CONGTY]';
 const tbl_KHTT = '[dbo].[TB_KYHANTHANHTOAN]';
@@ -267,6 +283,25 @@ router.put('/', header.verifyToken, async (req, res) => {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/exceptBondExistsInterestRateBuy', header.verifyToken, async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const BONDID = req.body.BONDID;
+        const rsInterestRateBuy = await pool.request().query(
+            `SELECT BOND_ID FROM `
+        )
+        /// const sql = `UPDATE ${tbl_bond} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
+        // try {
+        //     await pool.request().query(sql);
+        //     res.send('Delete data successfully');
+        // } catch (error) {
+        //     res.status(500).json({ error: error.message });
+        // }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

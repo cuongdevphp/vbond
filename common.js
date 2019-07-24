@@ -8,7 +8,7 @@ module.exports = {
         const dateFToTime = dateToTime(dateF);
         const dateBuyToTime = dateToTime(dateBuy);
         const lstTmp = totalYearHoldBond*totalDayInterestYear;
-    
+
         if(dateFToTime < dateBuyToTime) {
             const deductHoldBond = diffDate(dateF, dateBuy);
             return lstTmp - deductHoldBond;
@@ -75,8 +75,8 @@ const diffMonth = (dateFrom, dateTo) => {
 }
 
 const diffD = (firstDate, secondDate) => {
-    var a = moment(firstDate);
-    var b = moment(secondDate);
+    let a = moment(firstDate);
+    let b = moment(secondDate);
     return a.diff(b, 'days');
 }
 const diffDate = (firstDate, secondDate) => {
@@ -89,30 +89,3 @@ const diffDate = (firstDate, secondDate) => {
 const dateToTime = (date) => {
     return moment(new Date(date)).format().valueOf();
 }
-
-// function recursiveReciptKN (dateBuy, dateExpired, dateT, expired) {
-//     return module.exports.reciptKN(dateBuy, dateExpired, dateT, expired);
-// }
-
-// function diffMonth (dateFrom, dateTo) {
-//     dateFrom = new Date(dateFrom);
-//     dateTo = new Date(dateTo);
-//     return dateTo.getMonth() - dateFrom.getMonth() +  (12 * (dateTo.getFullYear() - dateFrom.getFullYear()));
-// }
-
-// function diffD (firstDate, secondDate) {
-//     var a = moment(firstDate);
-//     var b = moment(secondDate);
-//     return a.diff(b, 'days');
-// }
-
-// function diffDate (firstDate, secondDate) {
-//     let oneDay = 24*60*60*1000;
-//     firstDate = new Date(firstDate);
-//     secondDate = new Date(secondDate);
-//     return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-// }
-
-// function dateToTime (date) {
-//     return moment(new Date(date)).format().valueOf();
-// }

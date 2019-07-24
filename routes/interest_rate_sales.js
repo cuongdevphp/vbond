@@ -111,18 +111,18 @@ router.put('/', header.verifyToken, async (req, res) => {
                 WHERE MSLS = '${MSLS}'`);
                 break;
             case 2:
-                const rsLICHSUCAPNHAT = await pool.request().query(`
+                const rs = await pool.request().query(`
                     SELECT LICHSUCAPNHAT, LS_TOIDA, NGAYBATDAU, NGAYKETTHUC
                     FROM ${interestSalesTbl} 
                     WHERE MSLS = '${MSLS}'
                 `);
-                if(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT === null) {
+                if(rs.recordset[0].LICHSUCAPNHAT === null) {
                     console.log("dsad");
                     const arrLICHSU = [];
                     arrLICHSU.push({
-                        LS_TOIDA: rsLICHSUCAPNHAT.recordset[0].LS_TOIDA,
-                        NGAYBATDAU: rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU,
-                        NGAYKETTHUC: rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC,
+                        LS_TOIDA: rs.recordset[0].LS_TOIDA,
+                        NGAYBATDAU: rs.recordset[0].NGAYBATDAU,
+                        NGAYKETTHUC: rs.recordset[0].NGAYKETTHUC,
                     });
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
@@ -135,23 +135,23 @@ router.put('/', header.verifyToken, async (req, res) => {
                     WHERE MSLS = '${MSLS}'`);
                 } else {
                     console.log("not null");
-                    //const rsLICHSUCAPNHAT = JSON.parse(rsLICHSUCAPNHAT.recordset[0].LICHSUCAPNHAT);
+                    const rsLICHSUCAPNHAT = JSON.parse(rs.recordset[0].LICHSUCAPNHAT);
+                    
+                    rsLICHSUCAPNHAT.push({
+                        "LS_TOIDA": rs.recordset[0].LS_TOIDA, 
+                        "NGAYBATDAU": rs.recordset[0].NGAYBATDAU, 
+                        "NGAYKETTHUC": rs.recordset[0].NGAYKETTHUC
+                    });
                     console.log(rsLICHSUCAPNHAT);
-                    // rsLICHSUCAPNHAT.push({
-                    //     "LS_TOIDA": rsLICHSUCAPNHAT.recordset[0].LS_TOIDA, 
-                    //     "NGAYBATDAU": rsLICHSUCAPNHAT.recordset[0].NGAYBATDAU, 
-                    //     "NGAYKETTHUC": rsLICHSUCAPNHAT.recordset[0].NGAYKETTHUC
-                    // });
-
-                    // await pool.request().query(`
-                    // UPDATE ${interestSalesTbl} SET 
-                    //     LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
-                    //     LS_TOIDA = ${LS_TOIDA}, 
-                    //     DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
-                    //     NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
-                    //     NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
-                    //     NGAYUPDATE = '${moment().toISOString()}' 
-                    // WHERE MSLS = '${MSLS}'`);
+                    await pool.request().query(`
+                    UPDATE ${interestSalesTbl} SET 
+                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
+                        LS_TOIDA = ${LS_TOIDA}, 
+                        DIEUKHOAN_LS = N'${DIEUKHOAN_LS}', 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                        NGAYUPDATE = '${moment().toISOString()}' 
+                    WHERE MSLS = '${MSLS}'`);
                 }
                 break;
             default:

@@ -62,18 +62,15 @@ router.post('/', header.verifyToken, async (req, res) => {
 router.put('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-        const TONGGIATRITRUOCPHI = req.body.TONGGIATRITRUOCPHI;
-        const NGAYTRAITUC = req.body.NGAYTRAITUC;
-        const SONGAYTINHLAI = req.body.SONGAYTINHLAI;
+
         const LS_TOIDA = req.body.LS_TOIDA;
         const MSLS = req.body.MSLS;
-
         const NGAYBATDAU = req.body.NGAYBATDAU;
         const NGAYKETTHUC = req.body.NGAYKETTHUC;
         const DIEUKHOAN_LS = req.body.DIEUKHOAN_LS || '';
         
         const rs = await pool.request().query(`
-            SELECT p.NGAYTRAITUC 
+            SELECT p.NGAY_TRAITUC 
             FROM ${setCommandTbl} p 
             LEFT JOIN ${bondTbl} a ON a.BONDID = p.BOND_ID
             LEFT JOIN ${interestSalesTbl} b ON b.MSLS = a.MS_LSB

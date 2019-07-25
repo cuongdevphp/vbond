@@ -119,10 +119,10 @@ router.put('/', header.verifyToken, async (req, res) => {
                 if(rs.recordset[0].LICHSUCAPNHAT === null) {
                     const arrLICHSU = [];
                     arrLICHSU.push({
-                        LS: rs.recordset[0].LS_TOIDA,
-                        NBD: rs.recordset[0].NGAYBATDAU,
-                        NKT: rs.recordset[0].NGAYKETTHUC,
-                        NT: moment().toISOString()
+                        "LS": rs.recordset[0].LS_TOIDA,
+                        "NBD": rs.recordset[0].NGAYBATDAU,
+                        "NKT": rs.recordset[0].NGAYKETTHUC,
+                        "NT": moment().toISOString()
                     });
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
@@ -137,10 +137,10 @@ router.put('/', header.verifyToken, async (req, res) => {
                     const rsLICHSUCAPNHAT = JSON.parse(rs.recordset[0].LICHSUCAPNHAT);
                     
                     rsLICHSUCAPNHAT.push({
-                        LS: rs.recordset[0].LS_TOIDA, 
-                        NBT: rs.recordset[0].NGAYBATDAU, 
-                        NKT: rs.recordset[0].NGAYKETTHUC,
-                        NT: moment().toISOString()
+                        "LS": rs.recordset[0].LS_TOIDA, 
+                        "NBT": rs.recordset[0].NGAYBATDAU, 
+                        "NKT": rs.recordset[0].NGAYKETTHUC,
+                        "NT": moment().toISOString()
                     });
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 

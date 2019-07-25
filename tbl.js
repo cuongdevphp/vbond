@@ -23,8 +23,10 @@ const assetTbl = `${db}[TB_TAISAN]`;
 const bondTbl = `${db}[TB_TRAIPHIEU]`;
 const userTbl = `${db}[TB_USER]`;
 const interestRateReturnTbl = `${db}[TB_LAISUATTAIDAUTU]`;
+const active = `FLAG = 1`;
 
 module.exports = {
+    active,
     interestRateReturnTbl,
     historyTbl, 
     branchVcscTbl, 

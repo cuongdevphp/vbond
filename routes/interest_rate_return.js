@@ -3,7 +3,7 @@ const header = require('../header');
 const moment = require('moment');
 const { poolPromise } = require('../db');
 const router = express.Router();
-const { interestRateReturnTbl } = require('../tbl');
+const { interestRateReturnTbl, bondTbl, active } = require('../tbl');
 
 /* GET listing. */
 
@@ -11,8 +11,10 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const result = await pool.request().query(`
-            SELECT p.* 
+            SELECT p.*, a.MSTP 
             FROM ${interestRateReturnTbl} p 
+            LEFT JOIN ${bondTbl} a ON a.BONDID = p.BOND_ID
+            WHERE p.${active}
             ORDER BY p.MSLSTDT DESC`
         );
         return res.json(result.recordset);

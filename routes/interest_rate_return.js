@@ -31,7 +31,7 @@ router.post('/', header.verifyToken, async (req, res) => {
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${interestRateReturnTbl}
-            (LS_TOIDA, BOND_ID NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            (LS_TOIDA, BOND_ID, NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
             (${LS_TOIDA}, ${BOND_ID}, '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);

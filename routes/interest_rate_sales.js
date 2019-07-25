@@ -117,12 +117,12 @@ router.put('/', header.verifyToken, async (req, res) => {
                     WHERE MSLS = '${MSLS}'
                 `);
                 if(rs.recordset[0].LICHSUCAPNHAT === null) {
-                    console.log("dsad");
                     const arrLICHSU = [];
                     arrLICHSU.push({
-                        LS_TOIDA: rs.recordset[0].LS_TOIDA,
-                        NGAYBATDAU: rs.recordset[0].NGAYBATDAU,
-                        NGAYKETTHUC: rs.recordset[0].NGAYKETTHUC,
+                        LS: rs.recordset[0].LS_TOIDA,
+                        NBD: rs.recordset[0].NGAYBATDAU,
+                        NKT: rs.recordset[0].NGAYKETTHUC,
+                        NT: moment().toISOString()
                     });
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
@@ -134,15 +134,14 @@ router.put('/', header.verifyToken, async (req, res) => {
                         NGAYUPDATE = '${moment().toISOString()}' 
                     WHERE MSLS = '${MSLS}'`);
                 } else {
-                    console.log("not null");
                     const rsLICHSUCAPNHAT = JSON.parse(rs.recordset[0].LICHSUCAPNHAT);
                     
                     rsLICHSUCAPNHAT.push({
-                        "LS_TOIDA": rs.recordset[0].LS_TOIDA, 
-                        "NGAYBATDAU": rs.recordset[0].NGAYBATDAU, 
-                        "NGAYKETTHUC": rs.recordset[0].NGAYKETTHUC
+                        LS: rs.recordset[0].LS_TOIDA, 
+                        NBT: rs.recordset[0].NGAYBATDAU, 
+                        NKT: rs.recordset[0].NGAYKETTHUC,
+                        NT: moment().toISOString()
                     });
-                    console.log(rsLICHSUCAPNHAT);
                     await pool.request().query(`
                     UPDATE ${interestSalesTbl} SET 
                         LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
@@ -156,12 +155,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                 break;
             default:
                 break;
-        }
-        try {
-            
-            res.send('Update data successfully');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

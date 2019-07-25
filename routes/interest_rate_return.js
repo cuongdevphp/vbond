@@ -21,41 +21,18 @@ router.get('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.put('/getDataRateByCouponDate', header.verifyToken, async (req, res) => {
-    const data = JSON.parse(req.body.arrData) || [];
-    if(data.length > 0) {
-        try {
-            for(let i = 0; i < data.length; i++) {
-                data[i].LS_TOIDA = 1;
-                const pool = await poolPromise;
-                const result = await pool.request().query(`
-                    SELECT LS_TOIDA 
-                    FROM ${interestRateReturnTbl} 
-                    WHERE '${data[i].date}' BETWEEN NGAYAPDUNG AND NGAYKETTHUC AND FLAG = 1
-                `);
-
-                if(result.recordset.length > 0) {
-                    data[i].LS_TOIDA = result.recordset[0].LS_TOIDA;
-                }
-            }
-            return res.json(data);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    }
-});
-
 router.post('/', header.verifyToken, async (req, res) => {
     try {
         const LS_TOIDA = req.body.LS_TOIDA;
-        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
         const NGAYKETTHUC = req.body.NGAYKETTHUC;
         const TRANGTHAI = req.body.TRANGTHAI;
+        const BOND_ID = req.body.BOND_ID;
 
         const pool = await poolPromise;
         const sql = `INSERT INTO ${interestRateReturnTbl}
-            (LS_TOIDA, NGAYAPDUNG, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
-            (${LS_TOIDA}, '${moment(NGAYAPDUNG).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
+            (LS_TOIDA, BOND_ID NGAYBATDAU, NGAYKETTHUC, TRANGTHAI, NGAYTAO, FLAG) VALUES 
+            (${LS_TOIDA}, ${BOND_ID}, '${moment(NGAYBATDAU).toISOString()}', '${moment(NGAYKETTHUC).toISOString()}', ${TRANGTHAI}, '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -71,23 +48,72 @@ router.put('/', header.verifyToken, async (req, res) => {
     try {
         const MSLSTDT = req.body.MSLSTDT;
         const LS_TOIDA = req.body.LS_TOIDA;
-        const NGAYAPDUNG = req.body.NGAYAPDUNG;
+        const NGAYBATDAU = req.body.NGAYBATDAU;
         const NGAYKETTHUC = req.body.NGAYKETTHUC;
+        const BOND_ID = req.body.BOND_ID;
         const TRANGTHAI = req.body.TRANGTHAI;
+        const KIEUDULIEU = req.body.KIEUDULIEU;
         
         const pool = await poolPromise;
-        const sql = `UPDATE ${interestRateReturnTbl} SET 
+        switch (KIEUDULIEU) {
+            case 1:
+                await pool.request().query(`
+                UPDATE ${interestRateReturnTbl} SET 
+                    BOND_ID = ${BOND_ID}, 
+                    LS_TOIDA = ${LS_TOIDA}, 
+                    NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                    NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                    TRANGTHAI = ${TRANGTHAI}, 
+                    NGAYUPDATE = '${moment().toISOString()}' 
+                WHERE MSLSTDT = ${MSLSTDT}`);
+                break;
+            case 2:
+                const rs = await pool.request().query(`
+                    SELECT LICHSUCAPNHAT, LS_TOIDA, NGAYBATDAU, NGAYKETTHUC
+                    FROM ${interestRateReturnTbl} 
+                    WHERE MSLSTDT = ${MSLSTDT}
+                `);
+                if(rs.recordset[0].LICHSUCAPNHAT === null) {
+                    const arrLICHSU = [];
+                    arrLICHSU.push({
+                        LS: rs.recordset[0].LS_TOIDA, 
+                        NBT: rs.recordset[0].NGAYBATDAU, 
+                        NKT: rs.recordset[0].NGAYKETTHUC,
+                        NT: moment().toISOString()
+                    });
+                    await pool.request().query(`
+                    UPDATE ${interestRateReturnTbl} SET 
+                        LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}',
                         LS_TOIDA = ${LS_TOIDA}, 
+                        BOND_ID = ${BOND_ID}, 
                         TRANGTHAI = ${TRANGTHAI}, 
-                        NGAYAPDUNG = '${moment(NGAYAPDUNG).toISOString()}', 
+                        NGAYAPDUNG = '${moment(NGAYBATDAU).toISOString()}', 
                         NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
                         NGAYUPDATE = '${moment().toISOString()}' 
-                    WHERE MSLSTDT = ${MSLSTDT}`;
-        try {
-            await pool.request().query(sql);
-            res.send('Update data successfully');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+                    WHERE MSLSTDT = ${MSLSTDT}`);
+                } else {
+                    const rsLICHSUCAPNHAT = JSON.parse(rs.recordset[0].LICHSUCAPNHAT);
+                    
+                    rsLICHSUCAPNHAT.push({
+                        LS: rs.recordset[0].LS_TOIDA, 
+                        NBT: rs.recordset[0].NGAYBATDAU, 
+                        NKT: rs.recordset[0].NGAYKETTHUC,
+                        NT: moment().toISOString()
+                    });
+                    await pool.request().query(`
+                    UPDATE ${interestRateReturnTbl} SET 
+                        LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
+                        LS_TOIDA = ${LS_TOIDA}, 
+                        TRANGTHAI = ${TRANGTHAI}, 
+                        BOND_ID = ${BOND_ID}, 
+                        NGAYBATDAU = '${moment(NGAYBATDAU).toISOString()}', 
+                        NGAYKETTHUC = '${moment(NGAYKETTHUC).toISOString()}', 
+                        NGAYUPDATE = '${moment().toISOString()}' 
+                    WHERE MSLSTDT = ${MSLSTDT}`);
+                }
+                break;
+            default:
+                break;
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

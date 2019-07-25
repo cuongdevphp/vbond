@@ -98,8 +98,6 @@ router.put('/', header.verifyToken, async (req, res) => {
                 `);
             }
         }
-        console.log(TRANGTHAI);
-        console.log("fdf");
         switch (TRANGTHAI) {
             case 1:
                 await pool.request().query(`

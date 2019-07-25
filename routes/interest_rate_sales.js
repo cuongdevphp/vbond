@@ -157,6 +157,7 @@ router.put('/', header.verifyToken, async (req, res) => {
             default:
                 break;
         }
+        res.send('Update data successful!');
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

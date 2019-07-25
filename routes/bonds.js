@@ -20,6 +20,20 @@ const {
     interestRateReturnTbl
 } = require('../tbl');
 
+router.get('/getInterestRateReturnByBondId/:bondId', header.verifyToken, async (req, res) => {
+    const pool = await poolPromise;
+    const bondId = req.params.bondId;
+    try {
+        const rsInterestRateReturn = await pool.request().query(
+            `SELECT LS_TOIDA, MSLSTDT FROM ${interestRateReturnTbl} WHERE BOND_ID = ${bondId} AND FLAG = 1`
+        );
+        return res.json(rsInterestRateReturn.recordset[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 router.get('/exceptBondExistsInterestRateReturn', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;

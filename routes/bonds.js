@@ -12,25 +12,39 @@ const {
     roundPayTbl,
     bondTypeTbl,
     interestYearTbl, 
-
-    setCommandTbl, 
-    investorsTbl, 
-    assetTbl, 
-    roomVcscTbl, 
-    interestBuyTbl, 
-    historyTbl 
+    contractTbl,
+    roomVcscTbl,
+    interestBuyTbl,
+    bondPriceTbl,
+    interestSalesTbl,
+    interestRateReturnTbl
 } = require('../tbl');
 
-const tbl_bond = '[dbo].[TB_TRAIPHIEU]';
-const tbl_company = '[dbo].[TB_CONGTY]';
-const tbl_KHTT = '[dbo].[TB_KYHANTHANHTOAN]';
-const tbl_bondType = '[dbo].[TB_LOAITRAIPHIEU]';
-const tbl_NTLTN = '[dbo].[TB_NGAYTINHLAITRONGNAM]';
-const tbl_contractVCSC = '[dbo].[TB_HOPDONGMUA_VCSC]';
-const tbl_roomVCSC = '[dbo].[TB_ROOMVCSC]';
-const tbl_interest_rate_buy = '[dbo].[TB_LAISUATMUA]';
-const tbl_bond_price = '[dbo].[TB_GIATRITRAIPHIEU]';
-const tbl_interest_rate_sales = '[dbo].[TB_LAISUATBAN]';
+router.get('/exceptBondExistsInterestRateReturn', header.verifyToken, async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const rsInterestRateReturn = await pool.request().query(
+            `SELECT BOND_ID FROM ${interestRateReturnTbl} WHERE FLAG = 1`
+        );
+        if(rsInterestRateReturn.recordset.length > 0) {
+            const arrData = [];
+            for (let i = 0; i < rsInterestRateReturn.recordset.length; i++) {
+                arrData.push(rsInterestRateReturn.recordset[i].BOND_ID);
+            }
+            const rsGetBond = await pool.request().query(
+                `SELECT BONDID, MSTP FROM ${bondTbl} WHERE BONDID NOT IN (${arrData.toString()}) AND FLAG = 1`
+            );
+            return res.json(rsGetBond.recordset);
+        } else {
+            const rsGetBond = await pool.request().query(
+                `SELECT BONDID, MSTP FROM ${bondTbl} WHERE FLAG = 1`
+            );
+            return res.json(rsGetBond.recordset);
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 /* GET listing. */
 router.get('/', header.verifyToken, async (req, res) => {
@@ -47,14 +61,14 @@ router.get('/', header.verifyToken, async (req, res) => {
                         g.MSLS AS MSLSM,
                         h.LS_TOIDA AS LAISUAT_BAN
                     FROM
-                        ${tbl_bond} p
-                    LEFT JOIN ${tbl_contractVCSC} a ON a.SOHD = p.SO_HD
-                    LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN
-                    LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT
-                    LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP
-                    LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
-                    LEFT JOIN ${tbl_interest_rate_buy} g ON g.BOND_ID = p.BONDID
-                    LEFT JOIN ${tbl_interest_rate_sales} h ON h.MSLS = p.MS_LSB
+                        ${bondTbl} p
+                    LEFT JOIN ${contractTbl} a ON a.SOHD = p.SO_HD
+                    LEFT JOIN ${companyTbl} b ON b.MSDN = p.MS_DN
+                    LEFT JOIN ${roundPayTbl} d ON d.MSKYHANTT = p.MS_KYHANTT
+                    LEFT JOIN ${bondTypeTbl} e ON e.MSLTP = p.MS_LTP
+                    LEFT JOIN ${interestYearTbl} f ON f.MSNTLTN = p.MS_NTLTN
+                    LEFT JOIN ${interestBuyTbl} g ON g.BOND_ID = p.BONDID
+                    LEFT JOIN ${interestSalesTbl} h ON h.MSLS = p.MS_LSB
                     WHERE g.TRANGTHAI = ${1}
                     ORDER BY
                         p.BONDID DESC;
@@ -93,15 +107,15 @@ router.get('/:id', header.verifyToken, async (req, res) => {
                             c.MSROOM, 
                             h.LS_TOIDA AS LAISUAT_BAN
                         FROM 
-                            ${tbl_bond} p 
-                        LEFT JOIN ${tbl_interest_rate_buy} a ON a.BOND_ID = p.BONDID 
-                        LEFT JOIN ${tbl_company} b ON b.MSDN = p.MS_DN 
-                        LEFT JOIN ${tbl_roomVCSC} c ON c.BOND_ID = p.BONDID 
-                        LEFT JOIN ${tbl_KHTT} d ON d.MSKYHANTT = p.MS_KYHANTT 
-                        LEFT JOIN ${tbl_bondType} e ON e.MSLTP = p.MS_LTP 
-                        LEFT JOIN ${tbl_NTLTN} f ON f.MSNTLTN = p.MS_NTLTN
-                        LEFT JOIN ${tbl_bond_price} g ON g.BOND_ID = p.BONDID
-                        LEFT JOIN ${tbl_interest_rate_sales} h ON h.MSLS = p.MS_LSB
+                            ${bondTbl} p 
+                        LEFT JOIN ${interestBuyTbl} a ON a.BOND_ID = p.BONDID 
+                        LEFT JOIN ${companyTbl} b ON b.MSDN = p.MS_DN 
+                        LEFT JOIN ${roomVcscTbl} c ON c.BOND_ID = p.BONDID 
+                        LEFT JOIN ${roundPayTbl} d ON d.MSKYHANTT = p.MS_KYHANTT 
+                        LEFT JOIN ${bondTypeTbl} e ON e.MSLTP = p.MS_LTP 
+                        LEFT JOIN ${interestYearTbl} f ON f.MSNTLTN = p.MS_NTLTN
+                        LEFT JOIN ${bondPriceTbl} g ON g.BOND_ID = p.BONDID
+                        LEFT JOIN ${interestSalesTbl} h ON h.MSLS = p.MS_LSB
                         WHERE BONDID = ${bondId} 
                         ORDER BY 
                             p.BONDID DESC;
@@ -112,7 +126,7 @@ router.get('/:id', header.verifyToken, async (req, res) => {
             const rsKN = await common.reciptKN(new Date(), data.NGAYPH, data.NGAYDH, (data.LOAI_TT * 30));
             const priceBond = Math.round(await common.recipeBondPrice(rsKN.k, rsKN.n, data.MENHGIA, data.LAISUAT_MUA, data.LAISUAT_BAN));
             await pool.request().query(`
-                UPDATE ${tbl_bond_price} SET 
+                UPDATE ${bondPriceTbl} SET 
                     GIATRI_HIENTAI = ${priceBond}, 
                     NGAYUPDATE = '${moment().toISOString()}'
                 WHERE BOND_ID = ${bondId} 
@@ -157,13 +171,13 @@ router.post('/', header.verifyToken, async (req, res) => {
 
         const month = await common.monthDiff(new Date(), new Date(NGAYDH));
         const pool = await poolPromise;
-        const queryDulicateMSTP = `SELECT MSTP FROM ${tbl_bond} WHERE MSTP = '${MSTP}'`;
+        const queryDulicateMSTP = `SELECT MSTP FROM ${bondTbl} WHERE MSTP = '${MSTP}'`;
         const rsDup = await pool.request().query(queryDulicateMSTP);
         if(rsDup.recordset.length === 0) {
             try {
-                const getKHTT = await pool.request().query(`SELECT LOAI_TT FROM ${tbl_KHTT} WHERE MSKYHANTT = ${MS_KYHANTT}`);
+                const getKHTT = await pool.request().query(`SELECT LOAI_TT FROM ${roundPayTbl} WHERE MSKYHANTT = ${MS_KYHANTT}`);
                 
-                const insBond = `INSERT INTO ${tbl_bond} 
+                const insBond = `INSERT INTO ${bondTbl} 
                 (MSTP, SO_HD, MS_DN, MS_KYHANTT, MS_LTP, MS_NTLTN, 
                 MAVIETTAT, TT_TRAIPHIEU, MENHGIA, SL_PHTD, SL_DPH, SL_LH, SL_TH, NGAYPH, 
                 NGAYDH, NGAY_KTPH, TONGHANMUC_HUYDONG, HANMUC_CHO, KYHAN, 
@@ -175,27 +189,27 @@ router.post('/', header.verifyToken, async (req, res) => {
                 '${moment(NGAY_KTPH).toISOString()}', ${TONGHANMUC_HUYDONG}, ${HANMUC_CHO}, 
                 ${KYHAN}, ${TT_NIEMYET}, N'${TS_DAMBAO}', ${SL_LUUKY}, '${MS_LSB}',
                 '${moment().toISOString()}', ${1});
-                SELECT BONDID FROM ${tbl_bond} WHERE BONDID = SCOPE_IDENTITY();`;
+                SELECT BONDID FROM ${bondTbl} WHERE BONDID = SCOPE_IDENTITY();`;
 
                 const rs = await pool.request().query(insBond);
                 const insRoomVCSC = `
-                    INSERT INTO ${tbl_roomVCSC} 
+                    INSERT INTO ${roomVcscTbl} 
                     (BOND_ID, HANMUC, DANGCHO, THANGCONLAI, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${TONGHANMUC_HUYDONG}, ${0}, ${month}, ${1}, '${moment().toISOString()}', ${1});
                 `;
                 await pool.request().query(insRoomVCSC);
                 
                 const insInterestRateBuy = `
-                    INSERT INTO ${tbl_interest_rate_buy} 
+                    INSERT INTO ${interestBuyTbl} 
                     (BOND_ID, LS_TOIDA, TRANGTHAI, NGAYBATDAU, NGAYKETTHUC, NGAYTAO, FLAG) VALUES 
                     (${rs.recordset[0].BONDID}, ${LAISUAT_MUA}, ${1}, '${moment(NGAYPH).toISOString()}', 
                     '${moment(new Date(new Date(new Date(NGAYPH)).setMonth(new Date(NGAYPH).getMonth()+ getKHTT.recordset[0].LOAI_TT))).toISOString()}', 
                     '${moment().toISOString()}', ${1});
-                    SELECT MSLS FROM ${tbl_interest_rate_buy} WHERE MSLS = SCOPE_IDENTITY();
+                    SELECT MSLS FROM ${interestBuyTbl} WHERE MSLS = SCOPE_IDENTITY();
                 `;
                 const rsInterestBuy = await pool.request().query(insInterestRateBuy);
                 const insBondPrice = `
-                    INSERT INTO ${tbl_bond_price} 
+                    INSERT INTO ${bondPriceTbl} 
                     (MS_LSM, BOND_ID, GIATRI_HIENTAI, NGAYBATDAU, NGAYKETTHUC, GHICHU, TRANGTHAI, NGAYTAO, FLAG) VALUES 
                     (${rsInterestBuy.recordset[0].MSLS}, ${rs.recordset[0].BONDID}, ${0}, 
                     '${moment(NGAYPH).toISOString()}', '${moment(NGAYDH).toISOString()}', '', ${1}, '${moment().toISOString()}', ${1}); `;
@@ -240,7 +254,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         const SL_LUUKY = req.body.SL_LUUKY;
 
         const pool = await poolPromise;
-        const sql = `UPDATE ${tbl_bond} SET 
+        const sql = `UPDATE ${bondTbl} SET 
                         MSTP = N'${MSTP}', 
                         SO_HD = N'${SO_HD}', 
                         MS_DN = N'${MS_DN}', 
@@ -270,7 +284,7 @@ router.put('/', header.verifyToken, async (req, res) => {
         try {
             await pool.request().query(sql);
             await pool.request().query(`
-            UPDATE ${tbl_roomVCSC} SET 
+            UPDATE ${roomVcscTbl} SET 
                 BOND_ID = ${BONDID}, 
                 HANMUC = ${TONGHANMUC_HUYDONG}, 
                 DANGCHO = ${0}, 
@@ -288,29 +302,11 @@ router.put('/', header.verifyToken, async (req, res) => {
     }
 });
 
-router.get('/exceptBondExistsInterestRateBuy', header.verifyToken, async (req, res) => {
-    try {
-        const pool = await poolPromise;
-        const BONDID = req.body.BONDID;
-        const rsInterestRateBuy = await pool.request().query(
-            `SELECT BOND_ID FROM `
-        )
-        /// const sql = `UPDATE ${tbl_bond} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
-        // try {
-        //     await pool.request().query(sql);
-        //     res.send('Delete data successfully');
-        // } catch (error) {
-        //     res.status(500).json({ error: error.message });
-        // }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 router.delete('/', header.verifyToken, async (req, res) => {
     try {
         const BONDID = req.body.BONDID;
-        const sql = `UPDATE ${tbl_bond} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
+        const sql = `UPDATE ${bondTbl} SET FLAG = ${0} WHERE BONDID = ${BONDID}`;
         const pool = await poolPromise;
         try {
             await pool.request().query(sql);

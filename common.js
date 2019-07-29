@@ -25,15 +25,16 @@ module.exports = {
         return await pool.request().query(`SELECT ${field} FROM ${tbl} WHERE ${field} = '${data}'`);
     },
 
-    recipeBondPrice: (k = 0, n, MG, C, Y1) => {
-        console.log(k, n, MG, C, Y1, "-------------");
+    recipeBondPrice: (k = 0, n, MG, C, Y1, SONGAYTINHLAI) => {
+        console.log(k, n, MG, C, Y1, SONGAYTINHLAI, "-------------");
         const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);
         const LSM = parseFloat(C);
         const LSB = parseFloat(Y1);
 
-        return (mg + (LSM * cp / 365) + (((LSM - LSB) / 100 ) * mg * days / 365));
+
+        return (mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * days / SONGAYTINHLAI));
     },
 
     diffDate: (firstDate, secondDate) => {

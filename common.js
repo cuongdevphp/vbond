@@ -26,6 +26,7 @@ module.exports = {
     },
 
     recipeBondPrice: (k = 0, n, MG, C, Y1) => {
+        console.log(k, n, MG, C, Y1, "-------------");
         const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);
@@ -36,7 +37,6 @@ module.exports = {
     },
 
     diffDate: (firstDate, secondDate) => {
-        console.log(firstDate, secondDate);
         const oneDay = 24*60*60*1000;
         firstDate = new Date(firstDate);
         secondDate = new Date(secondDate);

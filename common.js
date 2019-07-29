@@ -36,6 +36,7 @@ module.exports = {
     },
 
     diffDate: (firstDate, secondDate) => {
+        console.log(firstDate, secondDate);
         const oneDay = 24*60*60*1000;
         firstDate = new Date(firstDate);
         secondDate = new Date(secondDate);
@@ -43,6 +44,7 @@ module.exports = {
     },
 
     reciptKN: (dateBuy, dateF, dateT, expired) => {
+        console.log(dateBuy, dateF, dateT, expired);
         let k = 0, n = 0;
         let dateExpired = new Date(moment(dateF, "DD-MM-YYYY").add(expired, 'days').toISOString());
         if(dateBuy <= dateF) {

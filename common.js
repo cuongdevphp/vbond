@@ -26,14 +26,11 @@ module.exports = {
     },
 
     recipeBondPrice: (k = 0, n, MG, C, Y1, SONGAYTINHLAI) => {
-        console.log(k, n, MG, C, Y1, SONGAYTINHLAI, "-------------");
         const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);
         const LSM = parseFloat(C);
         const LSB = parseFloat(Y1);
-
-
         return (mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * days / SONGAYTINHLAI));
     },
 
@@ -45,7 +42,6 @@ module.exports = {
     },
 
     reciptKN: (dateBuy, dateF, dateT, expired) => {
-        console.log(dateBuy, dateF, dateT, expired);
         let k = 0, n = 0;
         let dateExpired = new Date(moment(dateF, "DD-MM-YYYY").add(expired, 'days').toISOString());
         if(dateBuy <= dateF) {
@@ -58,7 +54,6 @@ module.exports = {
             k = diffD(dateBuy, dateF);
             n = diffD(dateT, dateBuy);
         }
-        console.log(dateT, dateBuy, k, n);
         return {k, n};
     },
     

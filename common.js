@@ -34,7 +34,7 @@ module.exports = {
         const LSB = parseFloat(Y1);
 
 
-        return (mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * 360 / SONGAYTINHLAI));
+        return (mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * days / SONGAYTINHLAI));
     },
 
     diffDate: (firstDate, secondDate) => {
@@ -58,6 +58,7 @@ module.exports = {
             k = diffD(dateBuy, dateF);
             n = diffD(dateT, dateBuy);
         }
+        console.log(dateT, dateBuy, k, n);
         return {k, n};
     },
     

@@ -43,7 +43,6 @@ module.exports = {
     },
 
     reciptKN: (dateBuy, dateF, dateT, expired) => {
-        console.log(dateBuy, dateF, dateT, expired);
         let k = 0, n = 0;
         let dateExpired = new Date(moment(dateF, "DD-MM-YYYY").add(expired, 'days').toISOString());
         if(dateBuy <= dateF) {
@@ -53,10 +52,9 @@ module.exports = {
             if(dateExpired < dateBuy) {
                return recursiveReciptKN(dateBuy, dateExpired, dateT, expired);
             }
-            k = diffDate(dateBuy, dateF);
+            k = diffDate(dateBuy, dateF) + 1;
             n = diffDate(dateT, dateBuy);
         }
-        console.log( k, n ); 
         return {k, n};
     },
     

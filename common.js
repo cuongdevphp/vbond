@@ -53,8 +53,8 @@ module.exports = {
             if(dateExpired < dateBuy) {
                return recursiveReciptKN(dateBuy, dateExpired, dateT, expired);
             }
-            k = diffD(dateBuy, dateF);
-            n = diffD(dateT, dateBuy);
+            k = diffDate(dateBuy, dateF);
+            n = diffDate(dateT, dateBuy);
         }
         console.log( k, n ); 
         return {k, n};
@@ -77,8 +77,9 @@ const diffMonth = (dateFrom, dateTo) => {
 }
 
 const diffD = (firstDate, secondDate) => {
-    let a = new Date(firstDate);
-    let b = new Date(secondDate);
+    let a = moment(firstDate);
+    let b = moment(secondDate);
+    console.log(a, b);
     console.log(a.diff(b, 'days'));
     return a.diff(b, 'days');
 }

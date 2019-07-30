@@ -54,7 +54,7 @@ module.exports = {
                return recursiveReciptKN(dateBuy, dateExpired, dateT, expired);
             }
             k = diffDate(dateBuy, dateF) + 1;
-            n = diffDate(dateT, dateBuy) - 1;
+            n = diffDate(dateT, dateBuy);
         }
         return {k, n};
     },

@@ -53,6 +53,7 @@ module.exports = {
             if(dateExpired < dateBuy) {
                return recursiveReciptKN(dateBuy, dateExpired, dateT, expired);
             }
+            console.log(dateBuy, dateF, "test");
             k = diffD(dateBuy, dateF);
             n = diffD(dateT, dateBuy);
         }

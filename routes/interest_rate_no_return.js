@@ -13,7 +13,7 @@ router.get('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
         const sql = `SELECT
-                p.*
+                p.* 
             FROM 
                 ${interestRateNoReturnTbl} p 
             ORDER BY

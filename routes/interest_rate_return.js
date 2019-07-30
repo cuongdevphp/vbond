@@ -79,7 +79,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                     const arrLICHSU = [];
                     arrLICHSU.push({
                         LS: rs.recordset[0].LS_TOIDA, 
-                        NBT: rs.recordset[0].NGAYBATDAU, 
+                        NBD: rs.recordset[0].NGAYBATDAU, 
                         NKT: rs.recordset[0].NGAYKETTHUC,
                         NT: moment().toISOString()
                     });
@@ -98,7 +98,7 @@ router.put('/', header.verifyToken, async (req, res) => {
                     
                     rsLICHSUCAPNHAT.push({
                         LS: rs.recordset[0].LS_TOIDA, 
-                        NBT: rs.recordset[0].NGAYBATDAU, 
+                        NBD: rs.recordset[0].NGAYBATDAU, 
                         NKT: rs.recordset[0].NGAYKETTHUC,
                         NT: moment().toISOString()
                     });

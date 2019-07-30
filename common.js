@@ -90,8 +90,8 @@ const dateTimeToDate = (date) => {
 
 const diffDate = (firstDate, secondDate) => {
     let oneDay = 24*60*60*1000;
-    firstDate = moment(new Date(firstDate)).format('YYYY-MM-DD');
-    secondDate = moment(new Date(secondDate)).format('YYYY-MM-DD');
+    firstDate = new Date(moment(new Date(firstDate)).format('YYYY-MM-DD'));
+    secondDate = new Date(moment(new Date(secondDate)).format('YYYY-MM-DD'));
     return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 }
 

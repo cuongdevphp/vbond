@@ -5,7 +5,7 @@ const { poolPromise } = require('../db');
 const router = express.Router();
 
 const {
-    interestRateNoReturnTbl
+    interestRateNoReturnTbl, active
 } = require('../tbl');
 
 /* GET listing. */
@@ -36,7 +36,7 @@ router.post('/', header.verifyToken, async (req, res) => {
         const checkMonthDup = await pool.request().query(`
             SELECT THANGGIOIHAN 
             FROM ${interestRateNoReturnTbl} 
-            WHERE THANGGIOIHAN = ${THANGGIOIHAN}
+            WHERE THANGGIOIHAN = ${THANGGIOIHAN} AND ${active}
         `);
         if(checkMonthDup.recordset.length === 0) {
             await pool.request().query(`INSERT INTO ${interestRateNoReturnTbl}

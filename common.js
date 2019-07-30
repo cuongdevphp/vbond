@@ -44,7 +44,6 @@ module.exports = {
     },
 
     reciptKN: (dateBuy, dateF, dateT, expired) => {
-        console.log(dateBuy, dateF, dateT, expired);
         let k = 0, n = 0;
         let dateExpired = new Date(moment(dateF, "DD-MM-YYYY").add(expired, 'days').toISOString());
         if(dateBuy <= dateF) {
@@ -79,13 +78,7 @@ const diffMonth = (dateFrom, dateTo) => {
 const diffD = (firstDate, secondDate) => {
     let a = moment(new Date(firstDate)).format('YYYY-MM-DD');
     let b = moment(new Date(secondDate)).format('YYYY-MM-DD');
-    console.log(a, b);
-    console.log(a.diff(b, 'days'));
     return a.diff(b, 'days');
-}
-
-const dateTimeToDate = (date) => {
-    return moment(new Date(date)).format('YYYY-MM-DD');
 }
 
 const diffDate = (firstDate, secondDate) => {

@@ -26,6 +26,7 @@ module.exports = {
     },
 
     recipeBondPrice: (k = 0, n, MG, C, Y1, SONGAYTINHLAI) => {
+        console.log(k = 0, n, MG, C, Y1, SONGAYTINHLAI); 
         const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);
@@ -54,6 +55,7 @@ module.exports = {
             k = diffD(dateBuy, dateF);
             n = diffD(dateT, dateBuy);
         }
+        console.log( k, n ); 
         return {k, n};
     },
     

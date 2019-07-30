@@ -29,12 +29,13 @@ router.get('/', header.verifyToken, async (req, res) => {
 router.post('/', header.verifyToken, async (req, res) => {
     try {
         const pool = await poolPromise;
-
+        
         const LS_TOIDA = req.body.LS_TOIDA;
-
+        const THANGGIOIHAN = req.body.THANGGIOIHAN;
+        console.log(req.body);
         const sql = `INSERT INTO ${interestRateNoReturnTbl}
-        (LS_TOIDA, NGAYTAO, FLAG) VALUES 
-        (${LS_TOIDA}, '${moment().toISOString()}', ${1});`
+        (LS_TOIDA, THANGGIOIHAN, NGAYTAO, FLAG) VALUES 
+        (${LS_TOIDA}, ${THANGGIOIHAN}, '${moment().toISOString()}', ${1});`
         try {
             await pool.request().query(sql);
             res.send('Create data successful!');
@@ -51,30 +52,34 @@ router.put('/', header.verifyToken, async (req, res) => {
         const LAISUAT_ID = req.body.LAISUAT_ID;
         const LS_TOIDA = req.body.LS_TOIDA;
         const KIEUDULIEU = req.body.KIEUDULIEU;
+        const THANGGIOIHAN = req.body.THANGGIOIHAN;
         
         const pool = await poolPromise;
         switch (KIEUDULIEU) {
             case 1:
                 await pool.request().query(`
                 UPDATE ${interestRateNoReturnTbl} SET 
+                    THANGGIOIHAN = ${THANGGIOIHAN},
                     LS_TOIDA = ${LS_TOIDA}, 
                     NGAYUPDATE = '${moment().toISOString()}' 
                 WHERE LAISUAT_ID = ${LAISUAT_ID}`);
                 break;
             case 2:
                 const rs = await pool.request().query(`
-                    SELECT LICHSUCAPNHAT, LS_TOIDA
+                    SELECT LICHSUCAPNHAT, LS_TOIDA, THANGGIOIHAN 
                     FROM ${interestRateNoReturnTbl} 
                     WHERE LAISUAT_ID = ${LAISUAT_ID}
                 `);
                 if(rs.recordset[0].LICHSUCAPNHAT === null) {
                     const arrLICHSU = [];
                     arrLICHSU.push({
+                        THANG: rs.recordset[0].THANGGIOIHAN,
                         LS: rs.recordset[0].LS_TOIDA, 
                         NT: moment().toISOString()
                     });
                     await pool.request().query(`
                     UPDATE ${interestRateNoReturnTbl} SET 
+                        THANGGIOIHAN = ${THANGGIOIHAN},
                         LICHSUCAPNHAT = '${JSON.stringify(arrLICHSU)}',
                         LS_TOIDA = ${LS_TOIDA}, 
                         NGAYUPDATE = '${moment().toISOString()}' 
@@ -83,11 +88,13 @@ router.put('/', header.verifyToken, async (req, res) => {
                     const rsLICHSUCAPNHAT = JSON.parse(rs.recordset[0].LICHSUCAPNHAT);
                     
                     rsLICHSUCAPNHAT.push({
+                        THANG: rs.recordset[0].THANGGIOIHAN,
                         LS: rs.recordset[0].LS_TOIDA, 
                         NT: moment().toISOString()
                     });
                     await pool.request().query(`
                     UPDATE ${interestRateNoReturnTbl} SET 
+                        THANGGIOIHAN = ${THANGGIOIHAN},
                         LICHSUCAPNHAT = '${JSON.stringify(rsLICHSUCAPNHAT)}',
                         LS_TOIDA = ${LS_TOIDA}, 
                         NGAYUPDATE = '${moment().toISOString()}' 

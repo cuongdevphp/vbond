@@ -17,7 +17,7 @@ router.get('/', header.verifyToken, async (req, res) => {
             FROM 
                 ${interestRateNoReturnTbl} p 
             ORDER BY
-                p.LAISUAT_ID DESC;
+                p.THANGGIOIHAN DESC;
         `;
         const result = await pool.request().query(sql);
         return res.json(result.recordset);
@@ -32,15 +32,19 @@ router.post('/', header.verifyToken, async (req, res) => {
         
         const LS_TOIDA = req.body.LS_TOIDA;
         const THANGGIOIHAN = req.body.THANGGIOIHAN;
-        console.log(req.body);
-        const sql = `INSERT INTO ${interestRateNoReturnTbl}
-        (LS_TOIDA, THANGGIOIHAN, NGAYTAO, FLAG) VALUES 
-        (${LS_TOIDA}, ${THANGGIOIHAN}, '${moment().toISOString()}', ${1});`
-        try {
-            await pool.request().query(sql);
+
+        const checkMonthDup = await pool.request().query(`
+            SELECT THANGGIOIHAN 
+            FROM ${interestRateNoReturnTbl} 
+            WHERE THANGGIOIHAN = ${THANGGIOIHAN}
+        `);
+        if(checkMonthDup.recordset.length === 0) {
+            await pool.request().query(`INSERT INTO ${interestRateNoReturnTbl}
+            (LS_TOIDA, THANGGIOIHAN, NGAYTAO, FLAG) VALUES 
+            (${LS_TOIDA}, ${THANGGIOIHAN}, '${moment().toISOString()}', ${1});`);
             res.send('Create data successful!');
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "THANGGIOIHAN bị trùng" });
         }
     } catch (err) {
         res.status(500).json({ error: err.message });

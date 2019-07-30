@@ -26,7 +26,7 @@ module.exports = {
     },
 
     recipeBondPrice: (k = 0, n, MG, C, Y1, SONGAYTINHLAI) => {
-        console.log(k = 0, n, MG, C, Y1, SONGAYTINHLAI); 
+        console.log(k, n, MG, C, Y1, SONGAYTINHLAI); 
         const cp = parseInt(k);
         const mg = parseInt(MG);
         const days = parseInt(n);

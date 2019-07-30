@@ -17,7 +17,7 @@ router.get('/', header.verifyToken, async (req, res) => {
             FROM 
                 ${interestRateNoReturnTbl} p 
             ORDER BY
-                p.THANGGIOIHAN DESC;
+                p.THANGGIOIHAN ASC;
         `;
         const result = await pool.request().query(sql);
         return res.json(result.recordset);

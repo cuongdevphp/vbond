@@ -77,8 +77,8 @@ const diffMonth = (dateFrom, dateTo) => {
 }
 
 const diffD = (firstDate, secondDate) => {
-    let a = moment(firstDate, "YYYY-MM-DD");
-    let b = moment(secondDate, "YYYY-MM-DD");
+    let a = moment(new Date(firstDate));
+    let b = moment(new Date(secondDate));
     console.log(a.diff(b, 'days'));
     return a.diff(b, 'days');
 }

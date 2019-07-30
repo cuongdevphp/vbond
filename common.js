@@ -32,6 +32,7 @@ module.exports = {
         const days = parseInt(n);
         const LSM = parseFloat(C);
         const LSB = parseFloat(Y1);
+        console.log((mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * days / SONGAYTINHLAI)));
         return (mg + (LSM * cp / SONGAYTINHLAI) + (((LSM - LSB) / 100 ) * mg * days / SONGAYTINHLAI));
     },
 
